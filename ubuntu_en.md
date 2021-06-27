@@ -3,7 +3,7 @@
 This is a script corrections to help the installation of Ubuntu with the full disc encryption. 
 These scripts are designed to achieve followings :
 - Using Ubiquity installer, for the ease of install.
-- Install to the UEFI/BIOS firmware system.
+- Automatic detection of BIOS/EFI firmware and create MBR/GPT, respectively.
 - Install Ubuntu to the LVM/LUKS volume.
 - The /boot is located in the same volume with the "/". Thus, /boot is also encrypted. 
 - The swap volume is located inside encrypted volume. 
@@ -12,19 +12,17 @@ These scripts are designed to achieve followings :
 By the configuration parameters, you can apply these scripts to relatively wide variation of the system. 
 For example, you can configure the system to accept 2, 3 or 4 distributions in a HDD/SSD, as you want. 
 
-Following is the HDD/SSD partitioning plan of these scripts. 
+Following is the HDD/SSD partitioning plan of these scripts ( In case of BIOS, the disk has MBR and doesn't have EFI partition). 
 
 ![Partition Diagram](image/partition_diagram_0.png)
 
-While the EFI partition is depicted here, that is not needed if you install to the system with BIOS.
-This can be controllable from a parameter. Also, the size of Linux "/" volume is 
-configurable from a parameter. 
+The logical volume size of each Linux distribution ($LVROOT) can be controlled from a configuration parameter. 
 
 As depicted the LVM volume group has only one physical volume. 
 
 # Test environment
 These scripts are tested with following environment. 
-- VMWare Workstation 15.5 ( EFI )
+- VMWare Workstation 15.5.7 ( EFI/BIOS )
 - Ubuntu 20.04.2 amd64 desktop
 - Ubuntu Mate 20.04.2 amd64 desktop
 
@@ -54,17 +52,14 @@ read -sr PASSPHRASE
 ## Configuration parameters
 This is a set of parameter for the configuration of : 
 - Destroy all partition on a /dev/sda.
-- Create an 100MB EFI partition in /dev/sda1.
-- Rest of the disk space is assigned to the LUKS volume in dev/sda2.
-- The EFI and LUKS partition are /dev/sda1 and /dev/sda2, respectively.
+- In case of EFI firmware, 100MB is allocated to the EFI partition.
+- Rest of the disk space is assigned to the LUKS volume.
 - Create and logical volume group named "vg1" in the encrypted volume. 
 - Create a swap volume named "swap" in the "vg1". The size is 8GB.
 - Create a volume named "ubuntu" for / in the "vg1". The size of the 50% of the entire free space.
 
 If you don't like above configuration, you can modify the following parameter before pasting to the shell window.
-
-If you set the EFIPARTITION to 0, the EFI partition is not created. 
-If you set the SWAPSIZE is "0", the swap volume is not created. 
+Note : EFI/BIOS detection is done automatically.
 ```bash
 # Device and partition setting. If you wan to MAKE /dev/sda2 as linux root partition,
 # set the DEV and CRYPTPARTITION to /dev/sda and 2, respectively.
@@ -117,7 +112,7 @@ fi
 C A U T I O N : Following script destroys all the data in your disk. Make sure you want to destroy all. 
 
 If you want to add a new distribution to the existing distribution, following script block must be skipped. 
-
+The GPT for EFI, MBR for BIOS is created. 
 ```bash
 # Optional : Create partitions for in the physical disk. 
 # Assign specified space and rest of disk to the EFI and LUKS partition, respectively.
@@ -179,7 +174,7 @@ if [ ${MAKESWAP} -eq 1 ] ; then lvcreate -L ${SWAPSIZE} -n ${LVSWAP} ${VGNAME} ;
 lvcreate -l ${ROOTSIZE} -n ${LVROOT} ${VGNAME}
 ```
 ## Run the Ubiquity installer 
-Open the Ubiquity installer, configure and run it. Ensure you map the followings correctly ( The host volume name in this example is based on the default values of the configuration parameters. Map the right volumes based on your configuration parameters)
+Open the Ubiquity installer, configure and run it. Ensure you map the followings correctly ( The host volume name in this example is based on the default values of the configuration parameters. Map the right volumes based on your configuration parameters). In case of BIOS, do not map the /dev/sda for /boot/efi.
 Host Volume            | Target Directory
 -----------------------|-----------------
 /dev/sda1              | /boot/efi
