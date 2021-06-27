@@ -179,6 +179,7 @@ Host Volume            | Target Directory
 -----------------------|-----------------
 /dev/sda1              | /boot/efi
 /dev/mapper/vg1-ubuntu | /
+/dev/mapper/swap       | swap
 
 C A U T I O N : If the installer start the file copying, execute next script quickly before the installation finishes. 
 
