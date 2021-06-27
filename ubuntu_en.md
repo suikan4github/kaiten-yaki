@@ -100,7 +100,7 @@ export CRYPTPARTITION=1
 fi
 ```
 ## Format the disk
-C A U T I O N : Following scripts destroy all the data in your disk. Make sure you want to destroy all. 
+C A U T I O N : Following script destroys all the data in your disk. Make sure you want to destroy all. 
 
 If you want to add a new distribution to the existing distribution, following script block must be skipped. 
 
@@ -118,15 +118,15 @@ sgdisk --print "${DEV}"
 ```
 ## Encrypt the volume to install and test 
 The LUKS partition is encrypted here by the pre-input passphrase. This LUKS partition have to be opened for the subsequent tasks. To open it, the script asks you type the passphrase. This is final chance for you to find your misspell. 
-
-If everything is done successfully, you will see the LUKS volume under /dev/mapper
 ```bash
 # Encrypt the partition to install the linux
 printf %s "${PASSPHRASE}" | cryptsetup luksFormat --type=luks1 --key-file - --batch-mode "${DEV}${CRYPTPARTITION}"
 
 # Open the created crypt partition. To be sure, input the passphrase manually
 cryptsetup open  "${DEV}${CRYPTPARTITION}" ${CRYPTPARTNAME}
-
+```
+If everything is done successfully, you will see the LUKS volume under /dev/mapper
+```bash
 # Check whether successful open. If mapped, it is successful. 
 ls -l /dev/mapper
 ```
@@ -138,10 +138,10 @@ pvcreate /dev/mapper/${CRYPTPARTNAME}
 vgcreate ${VGNAME} /dev/mapper/${CRYPTPARTNAME}
 
 # Optional : Create a SWAP Logical Volume on VG, if volume size is not 0.
-if [  $SIZE != "0"  -a  $SIZE != "0G"  ] ; then lvcreate -L SWAPSIZE -n ${LVSWAP} ${VGNAME} ; fi
+if [ ${SWAPSIZE} != "0"  -a  ${SWAPSIZE} != "0G" ] ; then lvcreate -L ${SWAPSIZE} -n ${LVSWAP} ${VGNAME} ; fi
 
 # Create the ROOT Logical Volume on VG. 
-lvcreate -l ROOTSIZE -n ${LVROOT} ${VGNAME}
+lvcreate -l ${ROOTSIZE} -n ${LVROOT} ${VGNAME}
 ```
 ## Run the Ubiquity installer 
 Open the Ubiquity installer, configure and run it. Ensure you map the followings correctly ( The host volume name in this example is based on the default values of the configuration parameters. Map the right volumes based on your configuration parameters)
