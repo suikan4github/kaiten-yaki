@@ -3,24 +3,24 @@
 This is a script corrections to help the installation of Ubuntu with the full disc encryption. 
 These scripts are designed to achieve followings :
 - Using Ubiquity installer, for the ease of install.
-- Install to the UEFI firmware system.
+- Install to the UEFI/BIOS firmware system.
 - Install Ubuntu to the LVM/LUKS volume.
-- /boot is installed in to the same volume with /. Thus, grub is also encrypted. 
-- The swap volume is created inside encrypted volume. 
+- The /boot is located in the same volume with the "/". Thus, /boot is also encrypted. 
+- The swap volume is located inside encrypted volume. 
 - Support multi-boot installation. You can reserve certain encrypted volume space for the other distribution. 
 
-By the configuration parameters, you can achieve these script to relatively wide configuration. 
-For example, you can configure the system to accept 2, 3 or 4 distribution in a HDD/SSD, as you want. 
+By the configuration parameters, you can apply these scripts to relatively wide variation of the system. 
+For example, you can configure the system to accept 2, 3 or 4 distributions in a HDD/SSD, as you want. 
 
-Following is the HDD/SSD partitioning plan of these script. 
+Following is the HDD/SSD partitioning plan of these scripts. 
 
 ![Partition Diagram](image/partition_diagram_0.png)
 
 While the EFI partition is depicted here, that is not needed if you install to the system with BIOS.
-This can be controllable from a parameter. Also, the size of the Linux / volume is 
+This can be controllable from a parameter. Also, the size of Linux "/" volume is 
 configurable from a parameter. 
 
-The volume group has only one physical volume. 
+As depicted the LVM volume group has only one physical volume. 
 
 # Test environment
 These scripts are tested with following environment. 
@@ -45,7 +45,7 @@ First of all, promote the shell to root. Almost of the procedure requires root p
 sudo -i
 ```
 ## Input Passphrase
-Input the passphrase to lock your crypt system. This passphrase is required to type when GRUB starts. 
+Input a passphrase to lock your crypt system. This passphrase is required to type when GRUB starts. 
 The passphrase is recorded as an environment variable to refuge the type multiple time without error. 
 ```bash
 # Setup the passphrase of the crypt partition
@@ -77,10 +77,7 @@ export DEV="/dev/sda"
 # If you set to "0", EFI partition will no be made.
 export EFISIZE="100M"
 
-# You may want to change the LVROOT for your installation
-export CRYPTPARTNAME="luks_volume"
-export VGNAME="vg1"
-export LVSWAP="swap"
+# You may want to change the LVROOT for your installation. Keep it unique from other distribution.
 export LVROOT="ubuntu"
 
 # If you set "0" to SWAPSIZE, the script skips to create the swap volume.
@@ -90,6 +87,11 @@ export SWAPSIZE="8G"
 # The ROOTSIZE is percentage to the free space in the volume group. 
 # 50% mean, new partition will use 50% of the free space in the LVM volume group. 
 export ROOTSIZE="50%FREE"
+
+# Usually, these names can be left untouched unless existing resources use. 
+export CRYPTPARTNAME="luks_volume"
+export VGNAME="vg1"
+export LVSWAP="swap"
 
 # Do not touch following lines. 
 if [  $EFISIZE != "0" -a $EFISIZE != "0M"  ] ; then 
@@ -116,7 +118,7 @@ sgdisk --new=${CRYPTPARTITION}:0:0    --change-name=${CRYPTPARTITION}:"Linux LUK
 
 sgdisk --print "${DEV}"
 
-# Encrypt the partition to install the linux
+# Encrypt the partition to install Linux
 printf %s "${PASSPHRASE}" | cryptsetup luksFormat --type=luks1 --key-file - --batch-mode "${DEV}${CRYPTPARTITION}"
 ```
 ## Open the LUKS partition
@@ -169,7 +171,7 @@ C A U T I O N : If the installer start the file copying, execute next script qui
 Run the following script on the shell window, during the Ubiquity runs. Otherwise, Ubiquity fails at the end of installation. 
 
 C A U T I O N : Do not reboot at the end of Ubiquity installation. Click "continue". 
-If you reboot at here, system will ask you the passphrase twice.
+
 ```bash
 # Make target GRUB aware to the crypt partition
 echo "GRUB_ENABLE_CRYPTODISK=y" >> /target/etc/default/grub
@@ -177,11 +179,11 @@ echo "GRUB_ENABLE_CRYPTODISK=y" >> /target/etc/default/grub
 ![Installing](image/ubuntu_installing.png)
 
 ## Click continue
-As noted above, do not reboot. Click "Continue Testing". 
+As noted above, do not reboot. Click "Continue Testing". If you reboot at here, system will ask you the passphrase twice.
 
 ![Installing](image/ubuntu_done.png)
 
-## Mount the targets
+## Mount the target file system
 After Ubiquity finish the installation, mount the target directories and chroot to that.
 ```bash
 # Mount the volume and change root
@@ -191,9 +193,13 @@ for n in proc sys dev etc/resolv.conf; do mount --rbind "/$n" "/target/$n"; done
 chroot /target /bin/bash
 ```
 ## Add auto decryption to the target kernel
-Now, we are at critical phase. To avoid system asks passphrase twice, we have to embed the key inside ramfs initial image. 
-This image with key is stored in the LUKS volume, so, it is stored in the safe storage. 
-GRUB decrypt this LUKS volume, upload the ramfs image to the RAM, and pass it to the booted Linux kernel. 
+Now, we are at critical phase. To avoid system asks passphrase twice, 
+we have to embed the encryption key inside ramfs initial image. 
+This image with key is stored in the LUKS volume, so, it is in the safe storage. 
+GRUB decrypt this LUKS volume, upload the ramfs image to the RAM, 
+and pass it to the booted Linux kernel as memory pointer. 
+
+As a result, GRUB can pass the encryption key to Linux kernel as safe way.
 ```bash
 # Mount the rest of partitions by target /etc/fstab
 mount -a
