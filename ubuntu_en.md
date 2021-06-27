@@ -176,6 +176,11 @@ echo "GRUB_ENABLE_CRYPTODISK=y" >> /target/etc/default/grub
 ```
 ![Installing](image/ubuntu_installing.png)
 
+## Click continue
+As noted above, do not reboot. Click "Continue Testing". 
+
+![Installing](image/ubuntu_done.png)
+
 ## Mount the targets
 After Ubiquity finish the installation, mount the target directories and chroot to that.
 ```bash
@@ -185,11 +190,6 @@ mount /dev/mapper/${VGNAME}-${LVROOT} /target
 for n in proc sys dev etc/resolv.conf; do mount --rbind "/$n" "/target/$n"; done
 chroot /target /bin/bash
 ```
-## Click continue
-As noted above, do not reboot. Click "Continue to test". 
-
-![Installing](image/ubuntu_done.png)
-
 ## Add auto decryption to the target kernel
 Now, we are at critical phase. To avoid system asks passphrase twice, we have to embed the key inside ramfs initial image. 
 This image with key is stored in the LUKS volume, so, it is stored in the safe storage. 
