@@ -56,27 +56,25 @@ This is very critical part of the installation. Following is a set of parameter 
 - In case of EFI firmware, 100MB is allocated to the EFI partition.
 - Rest of the disk space is assigned to the LUKS volume.
 - Create and logical volume group named "vg1" in the encrypted volume. 
-- Create a swap volume named "swap" in the "vg1". The size is 8GB.
-- Create a volume named **"ubuntu"** for / in the "vg1". The size of the **50%** of the entire free space.
+- Create a swap logical volume named "swap" in the "vg1". The size is 8GB.
+- Create a logical volume named **"ubuntu"** for / in the "vg1". The size of the **50%** of the entire free space.
 
 If you don't like above configuration, you can modify the following parameter before pasting to the shell window.
 Note : EFI/BIOS detection is done automatically.
 ```bash
-# Device and partition setting. If you wan to MAKE /dev/sda2 as linux root partition,
-# set the DEV and CRYPTPARTITION to /dev/sda and 2, respectively.
-# EFI partition is usually fixed as partition 1. If you set 0, Script will skip to make it. 
+# Device to install the linux.  
 export DEV="/dev/sda"
 
-# You may want to change the LVROOT for your installation. Keep it unique from other distribution.
+# Logical Volume name for your Linux installation. Keep it unique from other distribution.
 export LVROOT="ubuntu"
+
+# Logical volume size of the Linux installation.
+# 50% mean, new logical volume will use 50% of the free space in the LVM volume group. 
+export ROOTSIZE="50%FREE"
 
 # Configure to make swap or not. 1 : Make, 0 : Do not make. 
 # Set 0 if you add a distribution to the system, to avoid to make swap twice (it causes error).
 export MAKESWAP=1
-
-# The ROOTSIZE is percentage to the free space in the volume group. 
-# 50% mean, new partition will use 50% of the free space in the LVM volume group. 
-export ROOTSIZE="50%FREE"
 
 
 
