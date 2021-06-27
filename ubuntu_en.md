@@ -13,9 +13,14 @@ By the configuration parameters, you can achieve these script to relatively wide
 For example, you can configure the system to accept 2, 3 or 4 distribution in a HDD/SSD, as you want. 
 
 Following is the HDD/SSD partitioning plan of these script. 
+
+![Partition Diagram](image/partition_diagram_0.png)
+
 While the EFI partition is depicted here, that is not needed if you install to the system with BIOS.
 This can be controllable from a parameter. Also, the size of the Linux / volume is 
 configurable from a parameter. 
+
+The volume group has only one physical volume. 
 
 # Test environment
 These scripts are tested with following environment. 
@@ -25,7 +30,8 @@ These scripts are tested with following environment.
 
 # Preparation
 This script is designed to use by copy-and-past to the shell (bash) window. 
-So, it is strongly recommended to prepare the net work connection. 
+So, it is strongly recommended to prepare the net work connection, and show this 
+page and the shell window side-by-side 
 If it is impossible, you may want to copy these scripts into a USB memory 
 and jack into your machine, during the installation, to allow the copy-and-paste. 
 
@@ -38,6 +44,7 @@ First of all, promote the shell to root. Almost of the procedure requires root p
 # Promote to the root user
 sudo -i
 ```
+## Input Passphrase
 Input the passphrase to lock your crypt system. This passphrase is required to type when GRUB starts. 
 The passphrase is recorded as an environment variable to refuge the type multiple time without error. 
 ```bash
@@ -63,31 +70,34 @@ If you set the SWAPSIZE is "0", the swap volume is not created.
 export PASSPHRASE
 
 # Device and partition setting. If you wan to MAKE /dev/sda2 as linux root partition,
-# set the DEV and ROOTPARTITION to /dev/sda and 2, respectively.
+# set the DEV and CRYPTPARTITION to /dev/sda and 2, respectively.
 # EFI partition is usually fixed as partition 1. If you set 0, Script will skip to make it. 
 export DEV="/dev/sda"
 
 # If you set to "0", EFI partition will no be made.
 export EFISIZE="100M"
 
-if [  $EFISIZE != "0" -a $EFISIZE != "0M"  ] ; then 
-export EFIPARTITION=1
-export ROOTPARTITION=2
-else
-export ROOTPARTITION=1
-fi
-
-# You man wat to change the LVROOT for your installation
-export CRYPTPARTITION="luks_volume"
+# You may want to change the LVROOT for your installation
+export CRYPTPARTNAME="luks_volume"
 export VGNAME="vg1"
 export LVSWAP="swap"
 export LVROOT="ubuntu"
 
-# If you set SWAPSIZE "0", the script skips to create the swap volume.
-# ROOTSIZE is percentage to the free space in the volume group. 
-# 50% mean, new partition will use 50% of the free space in the LVM volume group. 
+# If you set "0" to SWAPSIZE, the script skips to create the swap volume.
+# This is useful if you add a distribution to the system which has swap volume already.
 export SWAPSIZE="8G"
+
+# The ROOTSIZE is percentage to the free space in the volume group. 
+# 50% mean, new partition will use 50% of the free space in the LVM volume group. 
 export ROOTSIZE="50%FREE"
+
+# Do not touch following lines. 
+if [  $EFISIZE != "0" -a $EFISIZE != "0M"  ] ; then 
+export EFIPARTITION=1
+export CRYPTPARTITION=2
+else
+export CRYPTPARTITION=1
+fi
 ```
 ## Format the disk
 C A U T I O N : Following scripts destroy all the data in your disk. Make sure you want to destroy all. 
@@ -102,7 +112,7 @@ if [  $EFISIZE != "0" -a $EFISIZE != "0M"  ] ; then
 sgdisk --new=${EFIPARTITION}:0:+${EFISIZE} --change-name=${EFIPARTITION}:"EFI System"  --typecode=${EFIPARTITION}:ef00 "${DEV}"  
 mkfs.vfat -F 32 -n EFI-SP "${DEV}${EFIPARTITION}"
 fi
-sgdisk --new=${ROOTPARTITION}:0:0    --change-name=${ROOTPARTITION}:"Linux LUKS" --typecode=${ROOTPARTITION}:8309 "${DEV}"
+sgdisk --new=${CRYPTPARTITION}:0:0    --change-name=${CRYPTPARTITION}:"Linux LUKS" --typecode=${CRYPTPARTITION}:8309 "${DEV}"
 
 sgdisk --print "${DEV}"
 ```
@@ -112,10 +122,10 @@ The LUKS partition is encrypted here by the pre-input passphrase. This LUKS part
 If everything is done successfully, you will see the LUKS volume under /dev/mapper
 ```bash
 # Encrypt the partition to install the linux
-printf %s "${PASSPHRASE}" | cryptsetup luksFormat --type=luks1 --key-file - --batch-mode "${DEV}${ROOTPARTITION}"
+printf %s "${PASSPHRASE}" | cryptsetup luksFormat --type=luks1 --key-file - --batch-mode "${DEV}${CRYPTPARTITION}"
 
 # Open the created crypt partition. To be sure, input the passphrase manually
-cryptsetup open  "${DEV}${ROOTPARTITION}" ${CRYPTPARTITION}
+cryptsetup open  "${DEV}${CRYPTPARTITION}" ${CRYPTPARTNAME}
 
 # Check whether successful open. If mapped, it is successful. 
 ls -l /dev/mapper
@@ -124,8 +134,8 @@ ls -l /dev/mapper
 The swap volume and / volume is created here, based on the given parameters. 
 ```bash
 # Create the Physical Volume and Volume Group. 
-pvcreate /dev/mapper/${CRYPTPARTITION}
-vgcreate ${VGNAME} /dev/mapper/${CRYPTPARTITION}
+pvcreate /dev/mapper/${CRYPTPARTNAME}
+vgcreate ${VGNAME} /dev/mapper/${CRYPTPARTNAME}
 
 # Optional : Create a SWAP Logical Volume on VG, if volume size is not 0.
 if [  $SIZE != "0"  -a  $SIZE != "0G"  ] ; then lvcreate -L SWAPSIZE -n ${LVSWAP} ${VGNAME} ; fi
@@ -181,10 +191,10 @@ chmod u=rx,go-rwx /etc/luks
 chmod u=r,go-rwx /etc/luks/boot_os.keyfile
 
 # Add a key to the key file. Use the passphrase in the environment variable. 
-printf %s "${PASSPHRASE}" | cryptsetup luksAddKey -d - "${DEV}${ROOTPARTITION}" /etc/luks/boot_os.keyfile
+printf %s "${PASSPHRASE}" | cryptsetup luksAddKey -d - "${DEV}${CRYPTPARTITION}" /etc/luks/boot_os.keyfile
 
 # Add the LUKS volume information to /etc/crypttab to decrypt by kernel.  
-echo "${CRYPTPARTITION} UUID=$(blkid -s UUID -o value ${DEV}${ROOTPARTITION}) /etc/luks/boot_os.keyfile luks,discard" >> /etc/crypttab
+echo "${CRYPTPARTNAME} UUID=$(blkid -s UUID -o value ${DEV}${CRYPTPARTITION}) /etc/luks/boot_os.keyfile luks,discard" >> /etc/crypttab
 
 # Finally, update the ramfs initial image with the key file. 
 update-initramfs -uk all
