@@ -99,7 +99,7 @@ else
 export CRYPTPARTITION=1
 fi
 ```
-## Format the disk
+## Format the disk and encrypt the LUKS partition
 C A U T I O N : Following script destroys all the data in your disk. Make sure you want to destroy all. 
 
 If you want to add a new distribution to the existing distribution, following script block must be skipped. 
@@ -115,15 +115,26 @@ fi
 sgdisk --new=${CRYPTPARTITION}:0:0    --change-name=${CRYPTPARTITION}:"Linux LUKS" --typecode=${CRYPTPARTITION}:8309 "${DEV}"
 
 sgdisk --print "${DEV}"
-```
-## Encrypt the volume to install and test 
-The LUKS partition is encrypted here by the pre-input passphrase. This LUKS partition have to be opened for the subsequent tasks. To open it, the script asks you type the passphrase. This is final chance for you to find your misspell. 
-```bash
+
 # Encrypt the partition to install the linux
 printf %s "${PASSPHRASE}" | cryptsetup luksFormat --type=luks1 --key-file - --batch-mode "${DEV}${CRYPTPARTITION}"
+```
+## Open the LUKS partition
+You have to opened the LUKS partition here for the subsequent tasks. To open it, the script asks you type the passphrase.
 
+For the first distribution to install, I recommend you to type the passphrase to open the partition, because
+you might create the partition and encrypted it this time. The encryption was done with your passphrase you set to the
+PASSPHRASE variable. So, this is the last chance whether you set the passphrase correctly or not. 
+```bash
 # Open the created crypt partition. To be sure, input the passphrase manually
 cryptsetup open  "${DEV}${CRYPTPARTITION}" ${CRYPTPARTNAME}
+```
+For the second, third, ... distribution to install, I recommend you to feed the passphrase from PASSPHRASE 
+variable automatically. The partition was encrypted in past. So, the this is the chance to check whether 
+the passphrase in the PASSPHRASE variable is correct or not.
+```bash
+# Open the created crypt partition. To be sure, input the passphrase manually
+printf %s "${PASSPHRASE}" | cryptsetup open -d - "${DEV}${CRYPTPARTITION}" ${CRYPTPARTNAME}
 ```
 If everything is done successfully, you will see the LUKS volume under /dev/mapper
 ```bash
@@ -150,16 +161,20 @@ Host Volume            | Target Directory
 /dev/sda1              | /boot/efi
 /dev/mapper/vg1-ubuntu | /
 
-C A U T I O N : Once Ubiquity starts the installation, execute the next script quickly.
+C A U T I O N : If the installer start the file copying, execute next script quickly before the installation finishes. 
+
+![Partitioning](image/ubuntu_partitioning.png)
+
 ## Configure the target GRUB during the Ubiquity runs
 Run the following script on the shell window, during the Ubiquity runs. Otherwise, Ubiquity fails at the end of installation. 
 
-C A U T I O N : DO NOT REBOOT at the end of Ubiquity installation. Click "continue". 
+C A U T I O N : Do not reboot at the end of Ubiquity installation. Click "continue". 
 If you reboot at here, system will ask you the passphrase twice.
 ```bash
 # Make target GRUB aware to the crypt partition
 echo "GRUB_ENABLE_CRYPTODISK=y" >> /target/etc/default/grub
 ```
+![Installing](image/ubuntu_installing.png)
 
 ## Mount the targets
 After Ubiquity finish the installation, mount the target directories and chroot to that.
@@ -170,6 +185,10 @@ mount /dev/mapper/${VGNAME}-${LVROOT} /target
 for n in proc sys dev etc/resolv.conf; do mount --rbind "/$n" "/target/$n"; done
 chroot /target /bin/bash
 ```
+## Click continue
+As noted above, do not reboot. Click "Continue to test". 
+
+![Installing](image/ubuntu_done.png)
 
 ## Add auto decryption to the target kernel
 Now, we are at critical phase. To avoid system asks passphrase twice, we have to embed the key inside ramfs initial image. 
