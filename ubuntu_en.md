@@ -66,35 +66,47 @@ If you don't like above configuration, you can modify the following parameter be
 If you set the EFIPARTITION to 0, the EFI partition is not created. 
 If you set the SWAPSIZE is "0", the swap volume is not created. 
 ```bash
-# export to share with entire script
-export PASSPHRASE
-
 # Device and partition setting. If you wan to MAKE /dev/sda2 as linux root partition,
 # set the DEV and CRYPTPARTITION to /dev/sda and 2, respectively.
 # EFI partition is usually fixed as partition 1. If you set 0, Script will skip to make it. 
 export DEV="/dev/sda"
 
-# If you set to "0", EFI partition will no be made.
-export EFISIZE="100M"
-
 # You may want to change the LVROOT for your installation. Keep it unique from other distribution.
 export LVROOT="ubuntu"
 
-# If you set "0" to SWAPSIZE, the script skips to create the swap volume.
-# This is useful if you add a distribution to the system which has swap volume already.
-export SWAPSIZE="8G"
+# Configure to make swap or not. 1 : Make, 0 : Do not make. 
+# Set 0 if you add a distribution to the system, to avoid to make swap twice (it causes error).
+export MAKESWAP=1
 
 # The ROOTSIZE is percentage to the free space in the volume group. 
 # 50% mean, new partition will use 50% of the free space in the LVM volume group. 
 export ROOTSIZE="50%FREE"
+
+
 
 # Usually, these names can be left untouched unless existing resources use. 
 export CRYPTPARTNAME="luks_volume"
 export VGNAME="vg1"
 export LVSWAP="swap"
 
-# Do not touch following lines. 
-if [  $EFISIZE != "0" -a $EFISIZE != "0M"  ] ; then 
+# Set the size up to your favorite. The unit is Byte. you can use M,G... notation.
+export EFISIZE="100M"
+export SWAPSIZE="8G"
+
+# DO NOT touch following lines. 
+
+# export to share with entire script
+export PASSPHRASE
+
+# Detect firmware type. 1 : EFI, 0 : BIOS
+if [ -d /sys/firmware/efi ]; then
+export ISEFI=1
+else
+export ISEFI=0
+fi
+
+# Set partition number based on the firmware type
+if [  ${ISEFI} -eq 1  ] ; then 
 export EFIPARTITION=1
 export CRYPTPARTITION=2
 else
@@ -109,14 +121,24 @@ If you want to add a new distribution to the existing distribution, following sc
 ```bash
 # Optional : Create partitions for in the physical disk. 
 # Assign specified space and rest of disk to the EFI and LUKS partition, respectively.
+if [  ${ISEFI} -eq 1 ] ; then
+# Zap existing partition table and create new GPT
 sgdisk --zap-all "${DEV}"
-if [  $EFISIZE != "0" -a $EFISIZE != "0M"  ] ; then 
+# Create EFI partition and format it
 sgdisk --new=${EFIPARTITION}:0:+${EFISIZE} --change-name=${EFIPARTITION}:"EFI System"  --typecode=${EFIPARTITION}:ef00 "${DEV}"  
 mkfs.vfat -F 32 -n EFI-SP "${DEV}${EFIPARTITION}"
-fi
+# Create Linux partition
 sgdisk --new=${CRYPTPARTITION}:0:0    --change-name=${CRYPTPARTITION}:"Linux LUKS" --typecode=${CRYPTPARTITION}:8309 "${DEV}"
-
+# Then print them
 sgdisk --print "${DEV}"
+else
+# Zap existing Mpartition table
+dd if=/dev/zero of=${DEV} bs=512 count=1
+# Create MBR and allocate max storage for Linux partition
+sfdisk ${DEV} <<EOF
+2M,,L
+EOF
+fi
 
 # Encrypt the partition to install Linux
 printf %s "${PASSPHRASE}" | cryptsetup luksFormat --type=luks1 --key-file - --batch-mode "${DEV}${CRYPTPARTITION}"
@@ -150,8 +172,8 @@ The swap volume and / volume is created here, based on the given parameters.
 pvcreate /dev/mapper/${CRYPTPARTNAME}
 vgcreate ${VGNAME} /dev/mapper/${CRYPTPARTNAME}
 
-# Optional : Create a SWAP Logical Volume on VG, if volume size is not 0.
-if [ ${SWAPSIZE} != "0"  -a  ${SWAPSIZE} != "0G" ] ; then lvcreate -L ${SWAPSIZE} -n ${LVSWAP} ${VGNAME} ; fi
+# Create a SWAP Logical Volume on VG,
+if [ ${MAKESWAP} -eq 1 ] ; then lvcreate -L ${SWAPSIZE} -n ${LVSWAP} ${VGNAME} ; fi
 
 # Create the ROOT Logical Volume on VG. 
 lvcreate -l ${ROOTSIZE} -n ${LVROOT} ${VGNAME}
