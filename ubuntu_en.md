@@ -52,12 +52,12 @@ read -sr PASSPHRASE
 ```
 ## Configuration parameters
 This is very critical part of the installation. Following is a set of parameter for the configuration of : 
-- Install to  ***/dev/sda***.
+- Install to  **/dev/sda**.
 - In case of EFI firmware, 100MB is allocated to the EFI partition.
 - Rest of the disk space is assigned to the LUKS volume.
 - Create and logical volume group named "vg1" in the encrypted volume. 
 - Create a swap volume named "swap" in the "vg1". The size is 8GB.
-- Create a volume named ***"ubuntu"*** for / in the "vg1". The size of the ***50%*** of the entire free space.
+- Create a volume named **"ubuntu"** for / in the "vg1". The size of the **50%** of the entire free space.
 
 If you don't like above configuration, you can modify the following parameter before pasting to the shell window.
 Note : EFI/BIOS detection is done automatically.
