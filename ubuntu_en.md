@@ -46,29 +46,18 @@ sudo -i
 Input a passphrase to lock your crypt system. This passphrase is required to type when GRUB starts. 
 The passphrase is recorded as an environment variable to refuge the type multiple time without error. 
 
-To be sure, passphrases are required twice here, and fail if they are not identical. 
 ```bash
 # Setup the passphrase of the crypt partition
 read -sr PASSPHRASE
-
-# Type passphrase again to confirm
-read -sr PASSPHRASE2
-
-if [ ${PASSPHRASE} = ${PASSPHRASE} ] ; then
-echo "OK"
-else
-echo "**** ERROR! The passphrases does not match. repeat this scripts again *****"
-fi
-
 ```
 ## Configuration parameters
-This is a set of parameter for the configuration of : 
-- Destroy all partition on a /dev/sda.
+This is very critical part of the installation. Following is a set of parameter for the configuration of : 
+- Install to  ***/dev/sda***.
 - In case of EFI firmware, 100MB is allocated to the EFI partition.
 - Rest of the disk space is assigned to the LUKS volume.
 - Create and logical volume group named "vg1" in the encrypted volume. 
 - Create a swap volume named "swap" in the "vg1". The size is 8GB.
-- Create a volume named "ubuntu" for / in the "vg1". The size of the 50% of the entire free space.
+- Create a volume named ***"ubuntu"*** for / in the "vg1". The size of the ***50%*** of the entire free space.
 
 If you don't like above configuration, you can modify the following parameter before pasting to the shell window.
 Note : EFI/BIOS detection is done automatically.
