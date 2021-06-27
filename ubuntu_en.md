@@ -45,9 +45,21 @@ sudo -i
 ## Input Passphrase
 Input a passphrase to lock your crypt system. This passphrase is required to type when GRUB starts. 
 The passphrase is recorded as an environment variable to refuge the type multiple time without error. 
+
+To be sure, passphrases are required twice here, and fail if they are not identical. 
 ```bash
 # Setup the passphrase of the crypt partition
 read -sr PASSPHRASE
+
+# Type passphrase again to confirm
+read -sr PASSPHRASE2
+
+if [ ${PASSPHRASE} = ${PASSPHRASE} ] ; then
+echo "OK"
+else
+echo "**** ERROR! The passphrases does not match. repeat this scripts again *****"
+fi
+
 ```
 ## Configuration parameters
 This is a set of parameter for the configuration of : 
@@ -139,24 +151,12 @@ fi
 printf %s "${PASSPHRASE}" | cryptsetup luksFormat --type=luks1 --key-file - --batch-mode "${DEV}${CRYPTPARTITION}"
 ```
 ## Open the LUKS partition
-You have to opened the LUKS partition here for the subsequent tasks. To open it, the script asks you type the passphrase.
+You have to opened the LUKS partition here for the subsequent tasks. 
 
-For the first distribution to install, I recommend you to type the passphrase to open the partition, because
-you might create the partition and encrypted it this time. The encryption was done with your passphrase you set to the
-PASSPHRASE variable. So, this is the last chance whether you set the passphrase correctly or not. 
-```bash
-# Open the created crypt partition. To be sure, input the passphrase manually
-cryptsetup open  "${DEV}${CRYPTPARTITION}" ${CRYPTPARTNAME}
-```
-For the second, third, ... distribution to install, I recommend you to feed the passphrase from PASSPHRASE 
-variable automatically. The partition was encrypted in past. So, the this is the chance to check whether 
-the passphrase in the PASSPHRASE variable is correct or not.
 ```bash
 # Open the created crypt partition. To be sure, input the passphrase manually
 printf %s "${PASSPHRASE}" | cryptsetup open -d - "${DEV}${CRYPTPARTITION}" ${CRYPTPARTNAME}
-```
-If everything is done successfully, you will see the LUKS volume under /dev/mapper
-```bash
+
 # Check whether successful open. If mapped, it is successful. 
 ls -l /dev/mapper
 ```
@@ -204,10 +204,13 @@ As noted above, do not reboot. Click "Continue Testing". If you reboot at here, 
 ## Mount the target file system
 After Ubiquity finish the installation, mount the target directories and chroot to that.
 ```bash
-# Mount the volume and change root
 # /target is created by the Ubiquity installer
 mount /dev/mapper/${VGNAME}-${LVROOT} /target
+
+# And mount other directories
 for n in proc sys dev etc/resolv.conf; do mount --rbind "/$n" "/target/$n"; done
+
+# Change root
 chroot /target /bin/bash
 ```
 ## Add auto decryption to the target kernel
