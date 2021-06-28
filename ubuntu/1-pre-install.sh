@@ -72,7 +72,7 @@ fi
 printf %s "${PASSPHRASE}" | cryptsetup open -d - "${DEV}${CRYPTPARTITION}" ${CRYPTPARTNAME}
 
 # Check whether successful open. If mapped, it is successful. 
-if [ ! -d /dev/mapper/${CRYPTPARTNAME} ] ; then 
+if [ ! -e /dev/mapper/${CRYPTPARTNAME} ] ; then 
 	cat <<HEREDOC 1>&2
 ***** ERROR : Cannot open LUKS volume ${CRYPTPARTNAME} on ${DEV}${CRYPTPARTITION}. *****
 Check the passphrase
