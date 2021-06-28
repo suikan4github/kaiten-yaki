@@ -113,8 +113,9 @@ HEREDOC
 fi	# if crypt volume is unable to open
 
 # ----- Configure the LVM in LUKS volume -----
-# Create a Physical Volume and Volume Group, if not exist
-if [ -e /dev/${VGNAME} ]; then
+# Check volume group ${VGNAME} exist or not
+vgdisplay -s ${VGNAME} > /dev/null
+if  [ $? -eq 0 ] ; then		# is return value 0? ( exist ?)
 	echo "...Volume group ${VGNAME} already exist. Skipped to create"
 else
 	echo "...Initialize a physical volume on ${CRYPTPARTNAME}"
