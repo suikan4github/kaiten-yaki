@@ -20,7 +20,7 @@ mount /dev/mapper/${VGNAME}-${LVROOTNAME} /target
 # And mount other directories
 for n in proc sys dev etc/resolv.conf; do mount --rbind "/$n" "/target/$n"; done
 
-# Change root
+# Change root and create the keyfile and ramfs image for Linux kernel. 
 cat <<HEREDOC | chroot /target /bin/bash
 ```
 # Mount the rest of partitions by target /etc/fstab
@@ -50,4 +50,8 @@ update-initramfs -uk all
 exit
 HEREDOC
 
-echo "3-para-install.sh : Done."
+cat <<HEREDOC
+
+3-pro-install.sh : Done. Ready to reboot.
+
+HEREDOC

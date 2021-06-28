@@ -39,8 +39,19 @@ source config.sh
 
 # ----- Format the disk and encrypt the LUKS partition -----
 if [ ${ERASEALL} -eq 1 ] ; then
-# Optional : Create partitions for in the physical disk. 
-# Assign specified space and rest of disk to the EFI and LUKS partition, respectively.
+# For sure ask ready to erase. 
+	echo "Are you sure you want to erase entire ${DEV}? [Y/N]"
+	read YESNO
+	if [ YESNO != "Y" -a YESNO != "y" ] ; then
+		cat <<HEREDOC 1>&2
+Check config.sh. The ERASEALL is ${ERASEALL}.
+
+Installation terminates.
+HEREDOC
+		return
+	fi
+
+	# Assign specified space and rest of disk to the EFI and LUKS partition, respectively.
 	if [  ${ISEFI} -eq 1 ] ; then
 		# Zap existing partition table and create new GPT
 		sgdisk --zap-all "${DEV}"
@@ -108,4 +119,9 @@ HEREDOC
 	return
 fi
 
-echo "1-pre-install.sh : Done."
+cat <<HEREDOC
+
+1-pre-install.sh : Done. Next, run the Ubiquity installer.
+
+HEREDOC
+

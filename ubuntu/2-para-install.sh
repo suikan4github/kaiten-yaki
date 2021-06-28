@@ -28,4 +28,9 @@ fi
 # Make target GRUB aware to the crypt partition
 echo "GRUB_ENABLE_CRYPTODISK=y" >> /target/etc/default/grub
 
-echo "2-para-install.sh : Done."
+cat <<HEREDOC
+
+2-para-install.sh : Done. 
+Make sure to click "Continue Testing", when the Ubiquity installer finishes. 
+
+HEREDOC
