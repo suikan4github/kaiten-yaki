@@ -15,7 +15,7 @@ fi
 
 
 # Check whether grub configuration file is ready to write
-if [ ! -d /target/etc/default/grub ] ; then 
+if [ ! -e /target/etc/default/grub ] ; then 
 	cat <<HEREDOC 1>&2
 ***** ERROR : The /target/etc/default/grub is not ready. *****
 Perhaps, to early to execute this script.
@@ -27,3 +27,5 @@ fi
 
 # Make target GRUB aware to the crypt partition
 echo "GRUB_ENABLE_CRYPTODISK=y" >> /target/etc/default/grub
+
+echo "2-para-install.sh : Done."

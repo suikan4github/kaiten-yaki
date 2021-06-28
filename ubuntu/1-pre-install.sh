@@ -108,4 +108,4 @@ HEREDOC
 	return
 fi
 
-
+echo "1-pre-install.sh : Done."

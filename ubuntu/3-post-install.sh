@@ -50,4 +50,4 @@ update-initramfs -uk all
 exit
 HEREDOC
 
-echo "Install finished. Ready to reboot."
+echo "3-para-install.sh : Done."
