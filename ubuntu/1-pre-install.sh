@@ -20,7 +20,7 @@ source config.sh
 # For surre ask the config.sh is edited
 echo "Did you edit config.sys? Are you ready to install? [Y/N]"
 read YESNO
-if [ YESNO != "Y" -a YESNO != "y" ] ; then
+if [ ${YESNO} != "Y" -a ${YESNO} != "y" ] ; then
 	cat <<HEREDOC 1>&2
 
 Installation terminated.
@@ -33,7 +33,7 @@ fi	# if YES
 if [ ${ERASEALL} -eq 1 ] ; then
 	echo "Are you sure you want to erase entire ${DEV}? [Y/N]"
 	read YESNO
-	if [ YESNO != "Y" -a YESNO != "y" ] ; then
+	if [ ${YESNO} != "Y" -a ${YESNO} != "y" ] ; then
 		cat <<HEREDOC 1>&2
 Check config.sh. The ERASEALL is ${ERASEALL}.
 
