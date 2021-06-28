@@ -91,7 +91,7 @@ fi	# if erase all
 
 # ----- Open the LUKS partition -----
 # Open the crypt partition. 
-printf %s "${PASSPHRASE}" | cryptsetup open -d - "${DEV}${CRYPTPARTITION}" ${CRYPTPARTNAME}
+printf %s "${PASSPHRASE}" | cryptsetup open -e - "${DEV}${CRYPTPARTITION}" ${CRYPTPARTNAME}
 
 # Check whether successful open. If mapped, it is successful. 
 if [ ! -e /dev/mapper/${CRYPTPARTNAME} ] ; then 
@@ -106,20 +106,20 @@ fi	# if crypt volume is unable to open
 
 # ----- Configure the LVM in LUKS volume -----
 # Create a Physical Volume and Volume Group, if first time
-if [ ! -d /dev/${VGNAME} ]; then
+if [ ! -e /dev/${VGNAME} ]; then
 	pvcreate /dev/mapper/${CRYPTPARTNAME}
 	vgcreate ${VGNAME} /dev/mapper/${CRYPTPARTNAME}
 fi # if /dev/volume-groupt not exist
 
 # Create a SWAP Logical Volume on VG, if it doesn't exist
-if [ -d /dev/mapper/${VGNAME}-${LVSWAPNAME} ] ; then 
+if [ -e /dev/mapper/${VGNAME}-${LVSWAPNAME} ] ; then 
 	echo "Swap volume already exist. Skipped to create" 1>&2
 else
 	lvcreate -L ${LVSWAPSIZE} -n ${LVSWAPNAME} ${VGNAME} 
 fi	# if /dev/mapper/swap volume already exit. 
 
 # Create a ROOT Logical Volume on VG. 
-if [ -d /dev/mapper/${VGNAME}-${LVROOTNAME} ] ; then 
+if [ -e /dev/mapper/${VGNAME}-${LVROOTNAME} ] ; then 
 	cat <<HEREDOC 1>&2
 ***** ERROR : Logical volume ${VGNAME}-${LVROOTNAME} already exists. *****
 Check LVROOTNAME environment variable in config.txt.
