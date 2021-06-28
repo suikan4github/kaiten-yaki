@@ -16,7 +16,7 @@ Following is the HDD/SSD partitioning plan of these scripts ( In case of BIOS, t
 
 ![Partition Diagram](image/partition_diagram_0.png)
 
-The logical volume size of each Linux distribution ($LVROOT) can be controlled from a configuration parameter. 
+The logical volume size of each Linux distribution ($LVROOTSIZE) can be controlled from a configuration parameter. 
 
 As depicted the LVM volume group has only one physical volume. 
 
@@ -66,26 +66,24 @@ Note : EFI/BIOS detection is done automatically.
 export DEV="/dev/sda"
 
 # Logical Volume name for your Linux installation. Keep it unique from other distribution.
-export LVROOT="ubuntu"
+export LVROOTNAME="ubuntu"
 
 # Logical volume size of the Linux installation.
 # 50% mean, new logical volume will use 50% of the free space in the LVM volume group. 
-export ROOTSIZE="50%FREE"
+export LVROOTSIZE="50%FREE"
 
 # Configure to make swap or not. 1 : Make, 0 : Do not make. 
 # Set 0 if you add a distribution to the system, to avoid to make swap twice (it causes error).
-export MAKESWAP=1
+export MAKESWAPVOL=1
 
+# Set the size of EFI partition and swap partition. The unit is Byte. you can use M,G... notation.
+export EFISIZE="100M"
+export LVSWAPSIZE="8G"
 
-
-# Usually, these names can be left untouched unless existing resources use. 
+# Usually, these names can be left untouched. 
 export CRYPTPARTNAME="luks_volume"
 export VGNAME="vg1"
-export LVSWAP="swap"
-
-# Set the size up to your favorite. The unit is Byte. you can use M,G... notation.
-export EFISIZE="100M"
-export SWAPSIZE="8G"
+export LVSWAPNAME="swap"
 
 # DO NOT touch following lines. 
 
@@ -101,9 +99,11 @@ fi
 
 # Set partition number based on the firmware type
 if [  ${ISEFI} -eq 1  ] ; then 
+# EFI system
 export EFIPARTITION=1
 export CRYPTPARTITION=2
 else
+# BIOS system
 export CRYPTPARTITION=1
 fi
 ```
@@ -155,20 +155,20 @@ pvcreate /dev/mapper/${CRYPTPARTNAME}
 vgcreate ${VGNAME} /dev/mapper/${CRYPTPARTNAME}
 
 # Create a SWAP Logical Volume on VG,
-if [ ${MAKESWAP} -eq 1 ] ; then lvcreate -L ${SWAPSIZE} -n ${LVSWAP} ${VGNAME} ; fi
+if [ ${MAKESWAPVOL} -eq 1 ] ; then lvcreate -L ${LVSWAPSIZE} -n ${LVSWAPNAME} ${VGNAME} ; fi
 
 # Create the ROOT Logical Volume on VG. 
-lvcreate -l ${ROOTSIZE} -n ${LVROOT} ${VGNAME}
+lvcreate -l ${LVROOTSIZE} -n ${LVROOTNAME} ${VGNAME}
 ```
 ## Run the Ubiquity installer 
-Open the Ubiquity installer, configure and run it. Ensure you map the followings correctly ( The host volume name in this example is based on the default values of the configuration parameters. Map the right volumes based on your configuration parameters). In case of BIOS, do not map the /dev/sda for /boot/efi.
-Host Volume            | Target Directory
------------------------|-----------------
-/dev/sda1              | /boot/efi
-/dev/mapper/vg1-ubuntu | /
-/dev/mapper/swap       | swap
+Open the Ubiquity installer, configure and run it. Ensure you map the followings correctly.
+Host Volume            | Target Directory | Comment
+-----------------------|------------------|-------------------------------------------------
+/dev/sda1              | /boot/efi        | EFI system only. Do not map this if BIOS system.
+/dev/mapper/vg1-ubuntu | /                | Host volume name is up to your configuration.
+/dev/mapper/swap       | swap             | Only the first distribution need to map this. 
 
-C A U T I O N : If the installer start the file copying, execute next script quickly before the installation finishes. 
+C A U T I O N : After the Ubiquity installers start the file copying, execute next script quickly before the installer finishes. 
 
 ![Partitioning](image/ubuntu_partitioning.png)
 
@@ -192,7 +192,7 @@ As noted above, do not reboot. Click "Continue Testing". If you reboot at here, 
 After Ubiquity finish the installation, mount the target directories and chroot to that.
 ```bash
 # /target is created by the Ubiquity installer
-mount /dev/mapper/${VGNAME}-${LVROOT} /target
+mount /dev/mapper/${VGNAME}-${LVROOTNAME} /target
 
 # And mount other directories
 for n in proc sys dev etc/resolv.conf; do mount --rbind "/$n" "/target/$n"; done
