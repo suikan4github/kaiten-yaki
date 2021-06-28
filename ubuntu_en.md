@@ -72,10 +72,6 @@ export LVROOTNAME="ubuntu"
 # 50% mean, new logical volume will use 50% of the free space in the LVM volume group. 
 export LVROOTSIZE="50%FREE"
 
-# Configure to make swap or not. 1 : Make, 0 : Do not make. 
-# Set 0 if you add a distribution to the system, to avoid to make swap twice (it causes error).
-export MAKESWAPVOL=1
-
 # Set the size of EFI partition and swap partition. The unit is Byte. you can use M,G... notation.
 export EFISIZE="100M"
 export LVSWAPSIZE="8G"
@@ -145,7 +141,11 @@ You have to opened the LUKS partition here for the subsequent tasks.
 printf %s "${PASSPHRASE}" | cryptsetup open -d - "${DEV}${CRYPTPARTITION}" ${CRYPTPARTNAME}
 
 # Check whether successful open. If mapped, it is successful. 
-ls -l /dev/mapper
+if [ ! -d /dev/mapper/${CRYPTPARTNAME} ] ; then 
+echo "!!!!!!!!!!!! ERROR : Cannot open LUKS volume ${CRYPTPARTNAME} on ${DEV}${CRYPTPARTITION}. !!!!!!!!!!!!"
+echo "Check the passphrase"
+exit 1
+fi
 ```
 ## Configure the LVM in LUKS volume
 The swap volume and / volume is created here, based on the given parameters. 
@@ -154,11 +154,21 @@ The swap volume and / volume is created here, based on the given parameters.
 pvcreate /dev/mapper/${CRYPTPARTNAME}
 vgcreate ${VGNAME} /dev/mapper/${CRYPTPARTNAME}
 
-# Create a SWAP Logical Volume on VG,
-if [ ${MAKESWAPVOL} -eq 1 ] ; then lvcreate -L ${LVSWAPSIZE} -n ${LVSWAPNAME} ${VGNAME} ; fi
+# Create a SWAP Logical Volume on VG, if it doesn't exist
+if [ ! -d /dev/mapper/${VGNAME}-${LVSWAPNAME} ] ; then 
+lvcreate -L ${LVSWAPSIZE} -n ${LVSWAPNAME} ${VGNAME} 
+else
+echo "Swap volume already exist. Skipped to create"
+fi
 
 # Create the ROOT Logical Volume on VG. 
+if [ ! -d /dev/mapper/${VGNAME}-${LVROOTNAME} ] ; then 
 lvcreate -l ${LVROOTSIZE} -n ${LVROOTNAME} ${VGNAME}
+else
+echo "!!!!!!!!!!!! ERROR : Logical volume ${VGNAME}-${LVROOTNAME} already exists. !!!!!!!!!!!!"
+echo "Check LVROOTNAME environment variable."
+exit 1
+fi
 ```
 ## Run the Ubiquity installer 
 Open the Ubiquity installer, configure and run it. Ensure you map the followings correctly.
