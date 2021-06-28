@@ -18,28 +18,27 @@ export EFISIZE="100M"
 export LVSWAPSIZE="8G"
 
 # Usually, these names can be left untouched. 
+# If you change, keep them consistent through all distributions in your system.
 export CRYPTPARTNAME="luks_volume"
 export VGNAME="vg1"
 export LVSWAPNAME="swap"
 
 # DO NOT touch following lines. 
 
-# export to share with entire script
-export PASSPHRASE
 
 # Detect firmware type. 1 : EFI, 0 : BIOS
 if [ -d /sys/firmware/efi ]; then
-export ISEFI=1
+export ISEFI=1  # Yes, EFI
 else
-export ISEFI=0
-fi
+export ISEFI=0  # No, BIOS
+fi # is EFI firmaare? 
 
 # Set partition number based on the firmware type
 if [  ${ISEFI} -eq 1  ] ; then 
-# EFI system
+# EFI firmware
 export EFIPARTITION=1
 export CRYPTPARTITION=2
 else
-# BIOS system
+# BIOS firmware
 export CRYPTPARTITION=1
-fi
+fi  # EFI firmware
