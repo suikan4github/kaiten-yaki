@@ -26,7 +26,7 @@ HEREDOC
 fi  # if grub file exists
 
 # Make target GRUB aware to the crypt partition
-echo "add GRUB_ENABLE_CRYPTODISK entry to /target/etc/default/grub "
+echo "...add GRUB_ENABLE_CRYPTODISK entry to /target/etc/default/grub "
 echo "GRUB_ENABLE_CRYPTODISK=y" >> /target/etc/default/grub
 
 # Finishing message
