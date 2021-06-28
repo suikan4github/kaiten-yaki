@@ -105,10 +105,11 @@ HEREDOC
 fi	# if crypt volume is unable to open
 
 # ----- Configure the LVM in LUKS volume -----
-# The swap volume and / volume is created here, based on the given parameters. 
-# Create a Physical Volume and Volume Group. 
-pvcreate /dev/mapper/${CRYPTPARTNAME}
-vgcreate ${VGNAME} /dev/mapper/${CRYPTPARTNAME}
+# Create a Physical Volume and Volume Group, if first time
+if [ ! -d /dev/${VGNAME} ]; then
+	pvcreate /dev/mapper/${CRYPTPARTNAME}
+	vgcreate ${VGNAME} /dev/mapper/${CRYPTPARTNAME}
+fi # if /dev/volume-groupt not exist
 
 # Create a SWAP Logical Volume on VG, if it doesn't exist
 if [ -d /dev/mapper/${VGNAME}-${LVSWAPNAME} ] ; then 
