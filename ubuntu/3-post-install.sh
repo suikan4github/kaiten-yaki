@@ -22,7 +22,6 @@ for n in proc sys dev etc/resolv.conf; do mount --rbind "/$n" "/target/$n"; done
 
 # Change root and create the keyfile and ramfs image for Linux kernel. 
 cat <<HEREDOC | chroot /target /bin/bash
-```
 # Mount the rest of partitions by target /etc/fstab
 mount -a
 
