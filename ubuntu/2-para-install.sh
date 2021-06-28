@@ -8,10 +8,10 @@ if [ $sourced -eq 0 ] ; then
 Execute as following : 
 source 2-para-install.sh
 
-Installation terminates.
+Installation terminated.
 HEREDOC
-	exit
-fi
+	exit    # use "exit" instead of "return", if not "sourced" execusion
+fi # "sourced" validation
 
 
 # Check whether grub configuration file is ready to write
@@ -20,14 +20,15 @@ if [ ! -e /target/etc/default/grub ] ; then
 ***** ERROR : The /target/etc/default/grub is not ready. *****
 Perhaps, to early to execute this script.
 
-Installation terminates.
+Installation terminated.
 HEREDOC
 	return
-fi
+fi  # if grub file exists
 
 # Make target GRUB aware to the crypt partition
 echo "GRUB_ENABLE_CRYPTODISK=y" >> /target/etc/default/grub
 
+# Finishing message
 cat <<HEREDOC
 
 2-para-install.sh : Done. 

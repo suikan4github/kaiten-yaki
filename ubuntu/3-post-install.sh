@@ -8,10 +8,10 @@ if [ $sourced -eq 0 ] ; then
 Execute as following : 
 source 3-post-install.sh
 
-Installation terminates.
+Installation terminated.
 HEREDOC
-	exit
-fi
+	exit    # use "exit" instead of "return", if not "sourced" execusion
+fi # "sourced" validation
 
 ## Mount the target file system
 # /target is created by the Ubiquity installer
@@ -49,6 +49,7 @@ update-initramfs -uk all
 exit
 HEREDOC
 
+# Finishing message
 cat <<HEREDOC
 
 3-pro-install.sh : Done. Ready to reboot.

@@ -8,48 +8,61 @@ if [ $sourced -eq 0 ] ; then
 Execute as following : 
 source 1-pre-install.sh
 
-Installation terminates.
+Installation terminated.
 HEREDOC
-	exit
-fi
-
-
-# ----- Set Passphrase -----
-# Input passphrase
-echo "Type passphrase for the disk encryption."
-read -sr PASSPHRASE
-
-echo "Type passphrase again, to confirm."
-read -sr PASSPHRASE_C
-
-# Validate whether both are indentical or not
-if [ ${PASSPHRASE} = ${PASSPHRASE_C} ] ; then
-	export PASSPHRASE
-else
-	cat <<HEREDOC 1>&2
-***** ERROR : Passphrase doesn't match *****
-Installation terminates.
-HEREDOC
-	return
-fi
+	exit    # use "exit" instead of "return", if not "sourced" execusion
+fi # "sourced" validation
 
 # ----- Configuration Parameter -----
 # Load the configuration parameter
 source config.sh
 
-# ----- Format the disk and encrypt the LUKS partition -----
-if [ ${ERASEALL} -eq 1 ] ; then
+# For surre ask the config.sh is edited
+echo "Did you edit config.sys? Are you ready to install? [Y/N]"
+read YESNO
+if [ YESNO != "Y" -a YESNO != "y" ] ; then
+	cat <<HEREDOC 1>&2
+
+Installation terminated.
+HEREDOC
+	return
+fi	# if YES
+
+
 # For sure ask ready to erase. 
+if [ ${ERASEALL} -eq 1 ] ; then
 	echo "Are you sure you want to erase entire ${DEV}? [Y/N]"
 	read YESNO
 	if [ YESNO != "Y" -a YESNO != "y" ] ; then
 		cat <<HEREDOC 1>&2
 Check config.sh. The ERASEALL is ${ERASEALL}.
 
-Installation terminates.
+Installation terminated.
 HEREDOC
 		return
-	fi
+	fi	# if YES
+fi	# if erase all
+
+# ----- Set Passphrase -----
+# Input passphrase
+echo "Type passphrase for the disk encryption."
+read -sr PASSPHRASE
+export PASSPHRASE
+
+echo "Type passphrase again, to confirm."
+read -sr PASSPHRASE_C
+
+# Validate whether both are indentical or not
+if [ ${PASSPHRASE} != ${PASSPHRASE_C} ] ; then
+	cat <<HEREDOC 1>&2
+***** ERROR : Passphrase doesn't match *****
+Installation terminated.
+HEREDOC
+	return
+fi	# passphrase validation
+
+# ----- Erase entire disk, create partitions, format them  and encrypt the LUKS partition -----
+if [ ${ERASEALL} -eq 1 ] ; then
 
 	# Assign specified space and rest of disk to the EFI and LUKS partition, respectively.
 	if [  ${ISEFI} -eq 1 ] ; then
@@ -69,29 +82,27 @@ HEREDOC
 		sfdisk ${DEV} <<HEREDOC
 2M,,L
 HEREDOC
-	fi
-	# if EFI firmware
+	fi	# if EFI firmware
 
 	# Encrypt the partition to install Linux
 	printf %s "${PASSPHRASE}" | cryptsetup luksFormat --type=luks1 --key-file - --batch-mode "${DEV}${CRYPTPARTITION}"
 
-fi
-# if erase all
+fi	# if erase all
 
 # ----- Open the LUKS partition -----
-# Open the created crypt partition. 
+# Open the crypt partition. 
 printf %s "${PASSPHRASE}" | cryptsetup open -d - "${DEV}${CRYPTPARTITION}" ${CRYPTPARTNAME}
 
 # Check whether successful open. If mapped, it is successful. 
 if [ ! -e /dev/mapper/${CRYPTPARTNAME} ] ; then 
 	cat <<HEREDOC 1>&2
 ***** ERROR : Cannot open LUKS volume ${CRYPTPARTNAME} on ${DEV}${CRYPTPARTITION}. *****
-Check the passphrase
+Check passphrase and config.txt
 
-Installation terminates.
+Installation terminated.
 HEREDOC
 	return
-fi
+fi	# if crypt volume is unable to open
 
 # ----- Configure the LVM in LUKS volume -----
 # The swap volume and / volume is created here, based on the given parameters. 
@@ -100,25 +111,26 @@ pvcreate /dev/mapper/${CRYPTPARTNAME}
 vgcreate ${VGNAME} /dev/mapper/${CRYPTPARTNAME}
 
 # Create a SWAP Logical Volume on VG, if it doesn't exist
-if [ ! -d /dev/mapper/${VGNAME}-${LVSWAPNAME} ] ; then 
-	lvcreate -L ${LVSWAPSIZE} -n ${LVSWAPNAME} ${VGNAME} 
-else
+if [ -d /dev/mapper/${VGNAME}-${LVSWAPNAME} ] ; then 
 	echo "Swap volume already exist. Skipped to create" 1>&2
-fi
+else
+	lvcreate -L ${LVSWAPSIZE} -n ${LVSWAPNAME} ${VGNAME} 
+fi	# if /dev/mapper/swap volume already exit. 
 
 # Create a ROOT Logical Volume on VG. 
-if [ ! -d /dev/mapper/${VGNAME}-${LVROOTNAME} ] ; then 
-	lvcreate -l ${LVROOTSIZE} -n ${LVROOTNAME} ${VGNAME}
-else
+if [ -d /dev/mapper/${VGNAME}-${LVROOTNAME} ] ; then 
 	cat <<HEREDOC 1>&2
 ***** ERROR : Logical volume ${VGNAME}-${LVROOTNAME} already exists. *****
-Check LVROOTNAME environment variable.
+Check LVROOTNAME environment variable in config.txt.
 
-Installation terminates.
+Installation terminated.
 HEREDOC
 	return
-fi
+else
+	lvcreate -l ${LVROOTSIZE} -n ${LVROOTNAME} ${VGNAME}
+fi	# if the root volun already exist
 
+# Finishing message
 cat <<HEREDOC
 
 1-pre-install.sh : Done. Next, run the Ubiquity installer.
