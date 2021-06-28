@@ -62,8 +62,13 @@ This is very critical part of the installation. Following is a set of parameter 
 If you don't like above configuration, you can modify the following parameter before pasting to the shell window.
 Note : EFI/BIOS detection is done automatically.
 ```bash
-# Device to install the linux.  
+# Storage device to install the linux.  
 export DEV="/dev/sda"
+
+# Whether you want to erase all contents of the storage device or not.
+# 1 : Yes, I want to erase all.
+# 2 : No, I want to add to the existing Linux distributions. 
+export ERASEALL=1
 
 # Logical Volume name for your Linux installation. Keep it unique from other distribution.
 export LVROOTNAME="ubuntu"
@@ -109,6 +114,7 @@ C A U T I O N : Following script destroys all the data in your disk. Make sure y
 If you want to add a new distribution to the existing distribution, following script block must be skipped. 
 The GPT for EFI, MBR for BIOS is created. 
 ```bash
+if [ ${ERASEALL} -eq 1 ] ; then
 # Optional : Create partitions for in the physical disk. 
 # Assign specified space and rest of disk to the EFI and LUKS partition, respectively.
 if [  ${ISEFI} -eq 1 ] ; then
@@ -129,9 +135,13 @@ sfdisk ${DEV} <<EOF
 2M,,L
 EOF
 fi
+# if EFI firmware
 
 # Encrypt the partition to install Linux
 printf %s "${PASSPHRASE}" | cryptsetup luksFormat --type=luks1 --key-file - --batch-mode "${DEV}${CRYPTPARTITION}"
+
+fi
+# if erase all
 ```
 ## Open the LUKS partition
 You have to opened the LUKS partition here for the subsequent tasks. 
@@ -144,7 +154,7 @@ printf %s "${PASSPHRASE}" | cryptsetup open -d - "${DEV}${CRYPTPARTITION}" ${CRY
 if [ ! -d /dev/mapper/${CRYPTPARTNAME} ] ; then 
 echo "!!!!!!!!!!!! ERROR : Cannot open LUKS volume ${CRYPTPARTNAME} on ${DEV}${CRYPTPARTITION}. !!!!!!!!!!!!"
 echo "Check the passphrase"
-exit 1
+# exit 1
 fi
 ```
 ## Configure the LVM in LUKS volume
@@ -167,7 +177,7 @@ lvcreate -l ${LVROOTSIZE} -n ${LVROOTNAME} ${VGNAME}
 else
 echo "!!!!!!!!!!!! ERROR : Logical volume ${VGNAME}-${LVROOTNAME} already exists. !!!!!!!!!!!!"
 echo "Check LVROOTNAME environment variable."
-exit 1
+# exit 1
 fi
 ```
 ## Run the Ubiquity installer 
