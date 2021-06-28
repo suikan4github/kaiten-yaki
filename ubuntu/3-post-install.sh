@@ -37,7 +37,7 @@ chmod u=rx,go-rwx /etc/luks
 chmod u=r,go-rwx /etc/luks/boot_os.keyfile
 
 # Add a key to the key file. Use the passphrase in the environment variable. 
-printf %s "${PASSPHRASE}" | cryptsetup luksAddKey -e - "${DEV}${CRYPTPARTITION}" /etc/luks/boot_os.keyfile
+printf %s "${PASSPHRASE}" | cryptsetup luksAddKey -d - "${DEV}${CRYPTPARTITION}" /etc/luks/boot_os.keyfile
 
 # Add the LUKS volume information to /etc/crypttab to decrypt by kernel.  
 echo "${CRYPTPARTNAME} UUID=$(blkid -s UUID -o value ${DEV}${CRYPTPARTITION}) /etc/luks/boot_os.keyfile luks,discard" >> /etc/crypttab

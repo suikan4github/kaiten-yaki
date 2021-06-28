@@ -91,7 +91,7 @@ fi	# if erase all
 
 # ----- Open the LUKS partition -----
 # Open the crypt partition. 
-printf %s "${PASSPHRASE}" | cryptsetup open -e - "${DEV}${CRYPTPARTITION}" ${CRYPTPARTNAME}
+printf %s "${PASSPHRASE}" | cryptsetup open -d - "${DEV}${CRYPTPARTITION}" ${CRYPTPARTNAME}
 
 # Check whether successful open. If mapped, it is successful. 
 if [ ! -e /dev/mapper/${CRYPTPARTNAME} ] ; then 
