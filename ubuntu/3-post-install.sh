@@ -61,6 +61,6 @@ HEREDOC
 # Finishing message
 cat <<HEREDOC
 
-4-pro-install.sh : Done. Ready to reboot.
-
+...3-pro-install.sh : Done. 
+...Ready to reboot.
 HEREDOC

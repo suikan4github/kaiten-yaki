@@ -32,6 +32,7 @@ echo "GRUB_ENABLE_CRYPTODISK=y" >> /target/etc/default/grub
 # Finishing message
 cat <<HEREDOC
 
-3-para-install.sh : Done. 
-
+...2-para-install.sh : Done. 
+...Click "Continue Testing" when Ubiquity finishes. 
+...And then, execute "source 3-post-install.sh"
 HEREDOC
