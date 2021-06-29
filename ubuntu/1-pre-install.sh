@@ -217,12 +217,13 @@ if [ ${ISEFI} -eq 1 ] ; then
 ...Next, open the Ubiquity installer, map the /, swap, EFI partition( if needed ) and start installation.
 ...And then, execute "source 2-para-install.sh" during the Ubiquity copies files. 
 HEREDOC
+else
 	cat <<HEREDOC
 
 ****************** Pre-install process finished ******************
 
 ...Next, open the Ubiquity installer, map the /, swap volume and start installation.
 ...And then, execute "source 2-para-install.sh" during the Ubiquity copies files. 
-else
-endif
+HEREDOC
+fi # Is EFI?
 
