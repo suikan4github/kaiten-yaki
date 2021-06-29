@@ -121,3 +121,10 @@ Installation terminated.
 HEREDOC
 	return
 fi	# passphrase validation
+
+# Finishing message
+cat <<HEREDOC
+
+1-config.sh : Done. 
+
+HEREDOC

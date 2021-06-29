@@ -32,6 +32,6 @@ echo "GRUB_ENABLE_CRYPTODISK=y" >> /target/etc/default/grub
 # Finishing message
 cat <<HEREDOC
 
-2-para-install.sh : Done. 
+3-para-install.sh : Done. 
 
 HEREDOC

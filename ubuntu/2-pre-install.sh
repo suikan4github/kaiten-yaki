@@ -102,7 +102,7 @@ fi	# if the root volun already exist
 # Finishing message
 cat <<HEREDOC
 
-1-pre-install.sh : Done. 
+2-pre-install.sh : Done. 
 
 HEREDOC
 
