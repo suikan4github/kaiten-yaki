@@ -5,14 +5,15 @@ export DEV="/dev/sda"
 
 # Whether you want to erase all contents of the storage device or not.
 # 1 : Yes, I want to erase all.
-# 2 : No, I want to add to the existing Linux distributions. 
+# 0 : No, I want to add to the existing Linux distributions. 
 export ERASEALL=1
 
 # Logical Volume name for your Linux installation. Keep it unique from other distribution.
 export LVROOTNAME="ubuntu"
 
 # Logical volume size of the Linux installation.
-# 50% mean, new logical volume will use 50% of the free space in the LVM volume group. 
+# 30% mean, new logical volume will use 30% of the free space in the LVM volume group.
+# For example, assume the free space is 100GB, and LVROOTSIZE is 30%FREE. Script will create 30GB logical volume.  
 export LVROOTSIZE="50%FREE"
 
 # Set the size of EFI partition and swap partition. The unit is Byte. you can use M,G... notation.
