@@ -13,53 +13,6 @@ HEREDOC
 	exit    # use "exit" instead of "return", if not "sourced" execusion
 fi # "sourced" validation
 
-# ----- Configuration Parameter -----
-# Load the configuration parameter
-source config.sh
-
-# For surre ask the config.sh is edited
-echo "Did you edit config.sys? Are you ready to install? [Y/N]"
-read YESNO
-if [ ${YESNO} != "Y" -a ${YESNO} != "y" ] ; then
-	cat <<HEREDOC 1>&2
-
-Installation terminated.
-HEREDOC
-	return
-fi	# if YES
-
-
-# For sure ask ready to erase. 
-if [ ${ERASEALL} -eq 1 ] ; then
-	echo "Are you sure you want to erase entire ${DEV}? [Y/N]"
-	read YESNO
-	if [ ${YESNO} != "Y" -a ${YESNO} != "y" ] ; then
-		cat <<HEREDOC 1>&2
-Check config.sh. The variable ERASEALL is ${ERASEALL}.
-
-Installation terminated.
-HEREDOC
-		return
-	fi	# if YES
-fi	# if erase all
-
-# ----- Set Passphrase -----
-# Input passphrase
-echo "Type passphrase for the disk encryption."
-read -sr PASSPHRASE
-export PASSPHRASE
-
-echo "Type passphrase again, to confirm."
-read -sr PASSPHRASE_C
-
-# Validate whether both are indentical or not
-if [ ${PASSPHRASE} != ${PASSPHRASE_C} ] ; then
-	cat <<HEREDOC 1>&2
-***** ERROR : Passphrase doesn't match *****
-Installation terminated.
-HEREDOC
-	return
-fi	# passphrase validation
 
 # ----- Erase entire disk, create partitions, format them  and encrypt the LUKS partition -----
 if [ ${ERASEALL} -eq 1 ] ; then
