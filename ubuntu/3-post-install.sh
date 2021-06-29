@@ -30,7 +30,7 @@ mount -a
 
 # Set up the kernel hook of encryption
 echo "...Install cryptsetup-initramfs package."
-apt install -y cryptsetup-initramfs
+apt -qq install -y cryptsetup-initramfs
 echo "...Register key file to the ramfs"
 echo "KEYFILE_PATTERN=/etc/luks/*.keyfile" >> /etc/cryptsetup-initramfs/conf-hook
 echo "UMASK=0077" >> /etc/initramfs-tools/initramfs.conf
@@ -38,7 +38,7 @@ echo "UMASK=0077" >> /etc/initramfs-tools/initramfs.conf
 # Prepare a key file to embed in to the ramfs.
 echo "...Prepair key file."
 mkdir /etc/luks
-dd if=/dev/urandom of=/etc/luks/boot_os.keyfile bs=4096 count=1
+dd if=/dev/urandom of=/etc/luks/boot_os.keyfile bs=4096 count=1 status=none
 chmod u=rx,go-rwx /etc/luks
 chmod u=r,go-rwx /etc/luks/boot_os.keyfile
 

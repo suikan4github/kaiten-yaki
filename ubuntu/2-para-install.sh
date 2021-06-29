@@ -18,7 +18,7 @@ fi # "sourced" validation
 if [ ! -e /target/etc/default/grub ] ; then 
 	cat <<HEREDOC 1>&2
 ***** ERROR : The /target/etc/default/grub is not ready. *****
-Perhaps, to early to execute this script.
+Perhaps, too early to execute this script.
 
 Installation terminated.
 HEREDOC
@@ -26,13 +26,12 @@ HEREDOC
 fi  # if grub file exists
 
 # Make target GRUB aware to the crypt partition
-echo "...add GRUB_ENABLE_CRYPTODISK entry to /target/etc/default/grub "
+echo "...Add GRUB_ENABLE_CRYPTODISK entry to /target/etc/default/grub "
 echo "GRUB_ENABLE_CRYPTODISK=y" >> /target/etc/default/grub
 
 # Finishing message
 cat <<HEREDOC
 
 2-para-install.sh : Done. 
-Make sure to click "Continue Testing", when the Ubiquity installer finishes. 
 
 HEREDOC

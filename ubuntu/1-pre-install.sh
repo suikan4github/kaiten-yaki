@@ -149,7 +149,7 @@ fi	# if the root volun already exist
 # Finishing message
 cat <<HEREDOC
 
-1-pre-install.sh : Done. Next, run the Ubiquity installer.
+1-pre-install.sh : Done. 
 
 HEREDOC
 
