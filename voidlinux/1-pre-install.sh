@@ -65,9 +65,13 @@ fi # "sourced" validation
 # Distribution check
 uname -a | grep void -i > /dev/null
 if [ $? -eq 1  ] ; then	# "Void" is not found in the OS name.
+	echo "*********************************************************************************"
 	uname -a
-	echo "This system seems to be not Void Linux, while this script is dediated to the Void Linux."
-	echo "Are you sure you want to run this script for installation? [Y/N]"
+	cat <<HEREDOC 
+*********************************************************************************
+This system seems to be not Void Linux, while this script is dediated to the Void Linux.
+Are you sure you want to run this script for installation? [Y/N]
+HEREDOC
 	read YESNO
 	if [ ${YESNO} != "Y" -a ${YESNO} != "y" ] ; then
 		cat <<HEREDOC 1>&2
