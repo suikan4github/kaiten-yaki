@@ -30,7 +30,7 @@ mount -a
 
 # Set up the kernel hook of encryption
 echo "...Install cryptsetup-initramfs package."
-xbps-install lvm2 cryptsetup
+xbps-install -y lvm2 cryptsetup
 
 # Prepare a key file to embed in to the ramfs.
 echo "...Prepair key file."
@@ -57,8 +57,11 @@ echo "...grub-mkconfig."
 grub-mkconfig -o /boot/grub/grub.cfg
 
 # Leave chroot
-exit
 HEREDOC
+
+# Unmount all
+echo "...Unmount all."
+umount -R /mnt/target
 
 # Finishing message
 cat <<HEREDOC
