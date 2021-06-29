@@ -178,7 +178,7 @@ fi	# if crypt volume is unable to open
 # Check volume group ${VGNAME} exist or not
 vgdisplay -s ${VGNAME} &> /dev/null
 if  [ $? -eq 0 ] ; then		# is return value 0? ( exist ?)
-	echo "...Volume group ${VGNAME} already exist. Skipped to create"
+	echo "...Volume group ${VGNAME} already exist. Skipped to create. No problem."
 else
 	echo "...Initialize a physical volume on \"${CRYPTPARTNAME}\""
 	pvcreate /dev/mapper/${CRYPTPARTNAME}
@@ -188,7 +188,7 @@ fi # if /dev/volume-groupt not exist
 
 # Create a SWAP Logical Volume on VG, if it doesn't exist
 if [ -e /dev/mapper/${VGNAME}-${LVSWAPNAME} ] ; then 
-	echo "...Swap volume already exist. Skipped to create"
+	echo "...Swap volume already exist. Skipped to create. No problem."
 else
 	echo "...Create logical volume \"${LVSWAPNAME}\" on \"${VGNAME}\"."
 	lvcreate -L ${LVSWAPSIZE} -n ${LVSWAPNAME} ${VGNAME} 
