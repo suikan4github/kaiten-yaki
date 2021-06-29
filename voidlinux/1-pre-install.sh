@@ -215,7 +215,7 @@ fi	# if the root volun already exist
 # This is magical part. I have not understood why this is required. 
 # Refer https://wiki.voidlinux.org/Install_LVM_LUKS#Installation_using_void-installer
 echo "...Modify /etc/default/grub."
-sed -i "s#loglevel=4#loglevel=4 rd.auto=1 cryptdevice=/dev/sda2:${LUKS_NAME} root=/dev/mapper/${VGNAME}-${ROOTNAME}#" /etc/default/grub
+sed -i "s#loglevel=4#loglevel=4 rd.auto=1 cryptdevice=/dev/sda2:${LUKS_NAME} root=/dev/mapper/${VGNAME}-${LVROOTNAME}#" /etc/default/grub
 
 # Finishing message
 if [ ${ISEFI} -eq 1 ] ; then
