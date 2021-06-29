@@ -67,7 +67,7 @@ if [ ${ERASEALL} -eq 1 ] ; then
 	# Assign specified space and rest of disk to the EFI and LUKS partition, respectively.
 	if [  ${ISEFI} -eq 1 ] ; then
 		# Zap existing partition table and create new GPT
-		echo "...Initialize \"${DEV}\" with GPT."
+		echo "...Initialize ${DEV} with GPT."
 		sgdisk --zap-all "${DEV}"
 		# Create EFI partition and format it
 		echo "...Create an EFI partition on ${DEV}."
@@ -75,16 +75,16 @@ if [ ${ERASEALL} -eq 1 ] ; then
 		echo "...Format the EFI parttion."
 		mkfs.vfat -F 32 -n EFI-SP "${DEV}${EFIPARTITION}"
 		# Create Linux partition
-		echo "...Create a Linux partition on \"${DEV}\"."
+		echo "...Create a Linux partition on ${DEV}."
 		sgdisk --new=${CRYPTPARTITION}:0:0    --change-name=${CRYPTPARTITION}:"Linux LUKS" --typecode=${CRYPTPARTITION}:8309 "${DEV}"
 		# Then print them
 		sgdisk --print "${DEV}"
 	else
 		# Zap existing partition table
-		echo "...Erase partition table of \"${DEV}\"."
+		echo "...Erase partition table of ${DEV}."
 		dd if=/dev/zero of=${DEV} bs=512 count=1
 		# Create MBR and allocate max storage for Linux partition
-		echo "...Create a Linux partition on \"${DEV}\" with MBR."
+		echo "...Create a Linux partition on ${DEV} with MBR."
 		sfdisk ${DEV} <<HEREDOC
 2M,,L
 HEREDOC
