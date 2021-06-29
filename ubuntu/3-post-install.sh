@@ -60,7 +60,7 @@ HEREDOC
 
 # Finishing message
 cat <<HEREDOC
+****************** Post-install process finished ******************
 
-...3-pro-install.sh : Done. 
 ...Ready to reboot.
 HEREDOC
