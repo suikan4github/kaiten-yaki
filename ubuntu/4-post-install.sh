@@ -23,7 +23,7 @@ echo "...Mount all other dirs."
 for n in proc sys dev etc/resolv.conf; do mount --rbind "/$n" "/target/$n"; done
 
 # Change root and create the keyfile and ramfs image for Linux kernel. 
-echo "Chroot."
+echo "...Chroot to /target."
 cat <<HEREDOC | chroot /target /bin/bash
 # Mount the rest of partitions by target /etc/fstab
 mount -a
