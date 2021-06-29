@@ -5,7 +5,7 @@ export DEV="/dev/sda"
 
 # Whether you want to erase all contents of the storage device or not.
 # 1 : Yes, I want to erase all.
-# 0 : No, I want to add to the existing Linux distributions. 
+# 0 : No, I don't. I want to add to the existing LUKS volume. 
 export ERASEALL=1
 
 # Logical Volume name for your Linux installation. Keep it unique from other distribution.
@@ -21,7 +21,7 @@ export EFISIZE="100M"
 export LVSWAPSIZE="8G"
 
 # Usually, these names can be left untouched. 
-# If you change, keep them consistent through all distributions in your system.
+# If you change, keep them consistent through all instllation in your system.
 export CRYPTPARTNAME="luks_volume"
 export VGNAME="vg1"
 export LVSWAPNAME="swap"
