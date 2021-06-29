@@ -33,6 +33,6 @@ echo "GRUB_ENABLE_CRYPTODISK=y" >> /mnt/target/etc/default/grub
 cat <<HEREDOC
 ****************** Para-install process finished ******************
 
-...Click "Continue Testing" when Ubiquity finishes. 
+...Select "NO" to boot, when void-installer finishes. 
 ...And then, execute "source 3-post-install.sh"
 HEREDOC
