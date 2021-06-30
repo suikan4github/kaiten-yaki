@@ -208,7 +208,7 @@ Host Volume            | Target Directory | Comment
 Make sure to click "NO",  when the void-installer ask you to reboot at 
 the end of installation. Just exit the void-installer wihout reboot.
 
-Type return key to start Ubiquity.
+Type return key to start void-installer.
 HEREDOC
 
 # waitfor a console input
@@ -217,15 +217,15 @@ read dummy_var
 # Start GUI installer 
 xterm -fa monospace -fs ${XTERMFONTSIZE} -e void-installer &
 # Record the PID
-ubiquity_pid=$!
+voidinstaller_pid=$!
 
 # While the /etc/default/grub in the install target is NOT existing, keep sleeping.
-# If ubiquity terminated without file copy, this script also terminates.
+# If void-installer terminated without file copy, this script also terminates.
 while [ ! -e /mnt/target/etc/default/grub ]
 do
 	sleep 1 # 1sec.
 
-	ps $ubiquity_pid  > /dev/null # ps return 0 if process exists.
+	ps $voidinstaller_pid  > /dev/null # ps return 0 if process exists.
 	if [ $? -ne 0 ] ; then	# If not exists
 	cat <<HEREDOC 1>&2
 The void-installer terminated unexpectedly. 
@@ -248,14 +248,14 @@ echo "GRUB_ENABLE_CRYPTODISK=y" >> /mnt/target/etc/default/grub
 
 # And then, wait for the end of void-installer process
 echo "...Waiting the end of void-installer."
-wait $ubiquity_pid
+wait $voidinstaller_pid
 
 # ******************************************************************************* 
 #                                Post-install stage 
 # ******************************************************************************* 
 
 ## Mount the target file system
-# /target is created by the Ubiquity installer
+# /mnt/target is created by the void-installer
 echo "...Mount /dev/mapper/${VGNAME}-${LVROOTNAME} on /mnt/target."
 mount /dev/mapper/${VGNAME}-${LVROOTNAME} /mnt/target
 
