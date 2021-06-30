@@ -41,6 +41,45 @@ HEREDOC
 
 fi # "Ubuntu" is not found in the OS name.
 
+# Sanity check for volume group name
+echo ${VGNAME} | grep "-" -i > /dev/null
+if [ $? -eq 0  ] ; then	# "-" is found in the volume group name.
+	cat <<HEREDOC 1>&2
+***** ERROR : VGNAME is "${VGNAME}" *****
+THe "-" is not allowed in the volume name. 
+Check passphrase and config.txt
+
+Installation terminated.
+HEREDOC
+		return
+fi # "-" is found in the volume group name.
+
+# Sanity check for root volume name
+echo ${LVROOTNAME} | grep "-" -i > /dev/null
+if [ $? -eq 0  ] ; then	# "-" is found in the volume name.
+	cat <<HEREDOC 1>&2
+***** ERROR : LVROOTNAME is "${LVROOTNAME}" *****
+THe "-" is not allowed in the volume name. 
+Check passphrase and config.txt
+
+Installation terminated.
+HEREDOC
+		return
+fi # "-" is found in the volume name.
+
+# Sanity check for swap volume name
+echo ${LVSWAPNAME} | grep "-" -i > /dev/null
+if [ $? -eq 0  ] ; then	# "-" is found in the volume name.
+	cat <<HEREDOC 1>&2
+***** ERROR : LVSWAPNAME is "${LVSWAPNAME}" *****
+THe "-" is not allowed in the volume name. 
+Check passphrase and config.txt
+
+Installation terminated.
+HEREDOC
+		return
+fi # "-" is found in the volume name.
+
 # For surre ask the config.sh is edited
 cat <<HEREDOC
 
