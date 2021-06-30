@@ -228,7 +228,7 @@ The pre-install process is done. We are ready to install the Linux to the
 target storage device. By pressing return key, Ubuntu Ubiquity installer 
 starts.
 
-Please pay attention to the partition/logical vokume mapping configuration. 
+Please pay attention to the partition/logical volume mapping configuration. 
 In this installation, you have to map the previously created partitions/logical
 volumes to the appropriate directories of the target system as followings :
 
