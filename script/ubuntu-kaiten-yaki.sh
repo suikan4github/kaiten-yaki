@@ -43,6 +43,7 @@ fi # "Ubuntu" is not found in the OS name.
 
 # For surre ask the config.sh is edited
 cat <<HEREDOC
+
 The destination logical volume label is "${LVROOTNAME}"
 "${LVROOTNAME}" uses ${LVROOTSIZE} of the LVM volume group.
 Are you ready to install? [Y/N]
