@@ -235,7 +235,7 @@ sed -i "s#loglevel=4#loglevel=4 rd.auto=1 cryptdevice=/dev/sda2:${LUKS_NAME} roo
 cat <<HEREDOC
 ******************************************************************************
 The pre-install process is done. We are ready to install the Linux to the 
-target storage device. By pressing return key, Ubuntu Ubiquity installer 
+target storage device. By pressing return key,  void-installer 
 starts.
 
 Please pay attention to the partition/logical volume mapping configuration. 
@@ -261,9 +261,10 @@ cat <<HEREDOC
 
 ************************ CAUTION! CAUTION! CAUTION! ****************************
  
-Make sure to click "Continue Testing",  at the end of the Ubiquity installer.
+Make sure to click "NO", if the void-installer ask you to reboot.
+Just exit the installer without rebooting.
 
-Type return key to start Ubiquity.
+Type return key to start void-installer.
 HEREDOC
 
 # waitfor a console input

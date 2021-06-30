@@ -252,6 +252,7 @@ cat <<HEREDOC
 ************************ CAUTION! CAUTION! CAUTION! ****************************
  
 Make sure to click "Continue Testing",  at the end of the Ubiquity installer.
+Just exit the installer without rebooting.
 
 Type return key to start Ubiquity.
 HEREDOC
