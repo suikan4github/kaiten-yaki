@@ -302,7 +302,7 @@ echo "GRUB_ENABLE_CRYPTODISK=y" >> /mnt/target/etc/default/grub
 
 
 # And then, wait for the end of void-installer process
-echo "...Waiting the end of void-installer."
+echo "...Waiting for the end of void-installer."
 wait $voidinstaller_pid
 
 # ******************************************************************************* 

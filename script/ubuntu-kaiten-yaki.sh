@@ -292,7 +292,7 @@ echo "GRUB_ENABLE_CRYPTODISK=y" >> /target/etc/default/grub
 
 
 # And then, wait for the end of Ubiquity process
-echo "...Waiting the end of Ubiquity installer."
+echo "...Waiting for the end of Ubiquity installer."
 wait $ubiquity_pid
 
 # ******************************************************************************* 
