@@ -16,14 +16,17 @@ fi # "sourced" validation
 # Load configuration parameter
 source config.sh
 
-# ----- Confirmations -----
+# ******************************************************************************* 
+#                        Confirmation and Passphrase setting 
+# ******************************************************************************* 
+
 # Distribution check
 uname -a | grep ubuntu -i > /dev/null
 if [ $? -eq 1  ] ; then	# "Ubuntu" is not found in the OS name.
-	echo "*********************************************************************************"
+	echo "*******************************************************************************"
 	uname -a
 	cat <<HEREDOC 
-*********************************************************************************
+*******************************************************************************
 This system seems to be not Void Linux, while this script is dediated to the Void Linux.
 Are you sure you want to run this script for installation? [Y/N]
 HEREDOC
@@ -80,6 +83,11 @@ Installation terminated.
 HEREDOC
 	return
 fi	# passphrase validation
+
+
+# ******************************************************************************* 
+#                                Pre-install stage 
+# ******************************************************************************* 
 
 
 # ----- Erase entire disk, create partitions, format them  and encrypt the LUKS partition -----
@@ -167,45 +175,79 @@ else
 	lvcreate -l ${LVROOTSIZE} -n ${LVROOTNAME} ${VGNAME}
 fi	# if the root volun already exist
 
-# ****************************** Para-install stage ****************************** 
+# ******************************************************************************* 
+#                                Para-install stage 
+# ******************************************************************************* 
+cat <<HEREDOC
+******************************************************************************
+
+The pre-install process is done. We are ready to install the Linux to the 
+target storage device. By pressing return key, Ubuntu Ubiquity installer 
+starts.
+
+Please pay attention to the partition mapping configuration. In this 
+installation, you have to map the previously created partitions/logical
+volumes to the appropriate directory of the target system. 
+
+Host Volume            | Target Directory | Comment
+-----------------------|------------------|-----------------------------------
+/dev/sda1              | /boot/efi        | Only EFI system needs.
+/dev/mapper/vg1-ubuntu | /                | Host volume name is up to your 
+                       |                  | configuration parameter.
+/dev/mapper/swap       | swap             | Only the first distribution 
+					   |                  | installation requires this mapping.
+
+
+************************ CAUTION! CAUTION! CAUTION! ****************************
+ 
+Make sure to click "Continue Testing",  at the end of the Ubiquity installer.
+
+
+Type return key to start Ubiquity.
+HEREDOC
+
+# waitfor a console input
+read dummy_var
 
 # Start GUI installer 
 ubiquity &
-# Store the PID of GUI installer
+# Record the PID
 ubiquity_pid=$!
 
-# While the /etc/default/grub in the install target is NOT existing, 
-# Keep sleeping
+# While the /etc/default/grub in the install target is NOT existing, keep sleeping.
+# If ubiquity terminated without installation, this script also terminates.
 while [ ! -e /target/etc/default/grub ]
 do
 	sleep 1 # 1sec.
+
+	ps $ubiquity_pid  > /dev/null # ps return 0 if process exists.
+	if [ $? -ne 0 ] ; then	# If not exists
+	cat <<HEREDOC 1>&2
+The ubiquity installer terminated unexpectedly. 
+
+Installation process terminated.
+HEREDOC
+	return
+
+	fi
 done
 
 # Perhaps, too neuvous. Wait 1 more sectond to avoid the rece condition.
 sleep 1 # 1sec.
 
 # Make target GRUB aware to the crypt partition
+# This must do it after start of the file copy by ubiquity, but before the end of the file copy.
 echo "...Add GRUB_ENABLE_CRYPTODISK entry to /target/etc/default/grub "
 echo "GRUB_ENABLE_CRYPTODISK=y" >> /target/etc/default/grub
 
-# Now, we just wait the end of installation by Ubiquity. 
-echo "...Waiting the for GUI installer finishes"
+
+# And then, wait for the end of Ubiquity process
+echo "...Waiting the end of Ubiquity installer."
 wait $ubiquity_pid
-echo "...The return value of qubiquity is : " $?
 
-
-# For surre ask the config.sh is edited
-echo "Now, final stage. Do you continue? [Y/N]"
-read YESNO
-if [ ${YESNO} != "Y" -a ${YESNO} != "y" ] ; then
-	cat <<HEREDOC 1>&2
-
-Installation terminated.
-HEREDOC
-	return
-fi	# if YES
-
-# ****************************** Post-install stage ****************************** 
+# ******************************************************************************* 
+#                                Post-install stage 
+# ******************************************************************************* 
 
 # Varidate whether script is executed as sourced or not
 (return 0 2>/dev/null) && sourced=1 || sourced=0
