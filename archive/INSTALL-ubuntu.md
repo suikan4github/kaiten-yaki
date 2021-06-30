@@ -88,7 +88,7 @@ Host Volume            | Target Directory | Comment
 
 C A U T I O N : After the Ubiquity installer starts the file copy, execute 2nd step script quickly before the installer finishes. 
 
-![Partitioning](image/ubuntu_partitioning.png)
+![Partitioning](../image/ubuntu_partitioning.png)
 
 ## The second script
 Run the following script on the shell window, during the Ubiquity runs. Otherwise, Ubiquity fails at the end of installation. If you run this script too early, it terminates with error message. This is safe. Run it again later ( but before Ubiquity finish).
@@ -98,12 +98,12 @@ C A U T I O N : Do not reboot at the end of Ubiquity installation. Click "contin
 ```bash
 source 2-para-install.sh
 ```
-![Installing](image/ubuntu_installing.png)
+![Installing](../image/ubuntu_installing.png)
 
 ## Click continue
 As explained above, do not reboot. Click "Continue Testing". If you reboot at here, system will ask you the passphrase twice.
 
-![Installing](image/ubuntu_done.png)
+![Installing](../image/ubuntu_done.png)
 
 ## The third script
 After Ubiquity finish the installation, run the 3rd script. This is fully automatic. There is nothing you have to do.
