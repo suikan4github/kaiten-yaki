@@ -235,27 +235,35 @@ sed -i "s#loglevel=4#loglevel=4 rd.auto=1 cryptdevice=/dev/sda2:${LUKS_NAME} roo
 cat <<HEREDOC
 ******************************************************************************
 The pre-install process is done. We are ready to install the Linux to the 
-target storage device. By pressing return key, void-installer 
+target storage device. By pressing return key, Ubuntu Ubiquity installer 
 starts.
 
-Please pay attention to the partition mapping configuration. In this 
-installation, you have to map the previously created partitions/logical
-volumes to the appropriate directory of the target system. 
+Please pay attention to the partition/logical volume mapping configuration. 
+In this installation, you have to map the previously created partitions/logical
+volumes to the appropriate directories of the target system as followings :
 
-Host Volume            | Target Directory | Comment
------------------------|------------------|-----------------------------------
-/dev/sda1              | /boot/efi        | Only EFI system needs.
-/dev/mapper/vg1-ubuntu | /                | Host volume name is up to your 
-                       |                  | configuration parameter.
-/dev/mapper/swap       | swap             | Only the first distribution 
-                       |                  | requires this mapping.
+HEREDOC
+
+# In the EFI system, add this mapping
+if [  ${ISEFI} -eq 1 ] ; then
+	echo "/boot/efi        : ${DEV}${EFIPARTITION}"
+fi
+
+# Root volume mapping
+echo "/                : /dev/mapper/${VGNAME}-${LVROOTNAME}"
+
+# In case of erased storage, add this mapping
+if [ ${ERASEALL} -eq 1 ] ; then
+	echo "swap             : /dev/mapper/${VGNAME}-${LVSWAPNAME}"
+fi
+
+cat <<HEREDOC
 
 ************************ CAUTION! CAUTION! CAUTION! ****************************
  
-Make sure to click "NO",  when the void-installer ask you to reboot at 
-the end of installation. Just exit the void-installer wihout reboot.
+Make sure to click "Continue Testing",  at the end of the Ubiquity installer.
 
-Type return key to start void-installer.
+Type return key to start Ubiquity.
 HEREDOC
 
 # waitfor a console input
