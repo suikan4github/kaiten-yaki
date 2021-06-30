@@ -342,8 +342,11 @@ echo "...Upadte initramfs."
 update-initramfs -uk all
 
 # Leave chroot
-exit
 HEREDOC
+
+# Unmount all
+echo "...Unmount all."
+umount -R /mnt/target
 
 # Finishing message
 cat <<HEREDOC
