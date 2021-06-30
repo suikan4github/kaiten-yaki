@@ -1,4 +1,4 @@
-# Yet another Full Disk Encryption for GRUB/Linux
+# Kaiten-yaki : Yet another Full Disk Encryption for GRUB/Linux
 Helpful scripts of the full disk encryption for the Linux  distribution
 
 This is a script correction to help the installation of Linux distribution with the full disc encryption. Followings are the list of functionality. 
@@ -26,12 +26,21 @@ These scripts are tested with following environment.
 - VMWare Workstation 15.5.7 ( EFI/BIOS )
 - Ubuntu 20.04.2 amd64 desktop
 - Ubuntu Mate 20.04.2 amd64 desktop
+- void-live-x86_64-20210218-mate.iso
+- void-live-x86_64-musl-20210218-mate.iso
 
 # Preparation
-Stat the PC with the LiveCD/LiveUSB of the distribution to install. Download this repository from github, and expand it. 
+Start the PC with the LiveCD/LiveUSB of the distribution to install. Download this repository from github, and expand it. 
 
 # Installation
-- Ubuntu : Go to the ubuntu sub-directory and follow the procedure in the [INSTALL-ubuntu.md](INSTALL-ubuntu.md)
+Go to script directory and follow the procedure in the [INSTALL.md](INSTALL.md)
+
+# Known issues
+If you install two ore more Void Linux in to the EFI system, only the last one can boot without trouble. This is not the problem of Kaiten-yaki. 
 
 # Acknowledgments
 These scripts are based on the script shared on the [myn's diary](https://myn.hatenablog.jp/entry/install-ubuntu-focal-with-lvm-on-luks). That page contains rich information, hint and techniques around the encrypted volume and Ubiquity installer. 
+
+# Kaiten-yaki
+![](image/i-like-kaiten-yaki.jpg)
+

@@ -17,7 +17,7 @@ export LVROOTNAME="anko"
 export LVROOTSIZE="50%FREE"
 
 # Set the size of EFI partition and swap partition. The unit is Byte. you can use M,G... notation.
-export EFISIZE="100M"
+export EFISIZE="200M"
 export LVSWAPSIZE="8G"
 
 # Usually, these names can be left untouched. 

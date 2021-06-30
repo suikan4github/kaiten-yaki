@@ -21,14 +21,14 @@ source config.sh
 # ******************************************************************************* 
 
 # Distribution check
-uname -a | grep ubuntu -i > /dev/null
-if [ $? -eq 1  ] ; then	# "Ubuntu" is not found in the OS name.
-	echo "*******************************************************************************"
+uname -a | grep void -i > /dev/null
+if [ $? -eq 1  ] ; then	# "Void" is not found in the OS name.
+	echo "*********************************************************************************"
 	uname -a
 	cat <<HEREDOC 
-*******************************************************************************
+*********************************************************************************
 This system seems to be not Void Linux, while this script is dediated to the Void Linux.
-Are you sure you want to run this script? [Y/N]
+Are you sure you want to run this script for installation? [Y/N]
 HEREDOC
 	read YESNO
 	if [ ${YESNO} != "Y" -a ${YESNO} != "y" ] ; then
@@ -39,7 +39,7 @@ HEREDOC
 		return
 	fi	# if YES
 
-fi # "Ubuntu" is not found in the OS name.
+fi # "Void" is not found in the OS name.
 
 # For surre ask the config.sh is edited
 cat <<HEREDOC
@@ -185,7 +185,7 @@ fi	# if the root volun already exist
 cat <<HEREDOC
 ******************************************************************************
 The pre-install process is done. We are ready to install the Linux to the 
-target storage device. By pressing return key, Ubuntu Ubiquity installer 
+target storage device. By pressing return key, void-installer 
 starts.
 
 Please pay attention to the partition mapping configuration. In this 
@@ -202,7 +202,8 @@ Host Volume            | Target Directory | Comment
 
 ************************ CAUTION! CAUTION! CAUTION! ****************************
  
-Make sure to click "Continue Testing",  at the end of the Ubiquity installer.
+Make sure to click "NO",  when the void-installer ask you to reboot at 
+the end of installation. Just exit the void-installer wihout reboot.
 
 Type return key to start Ubiquity.
 HEREDOC
@@ -211,20 +212,20 @@ HEREDOC
 read dummy_var
 
 # Start GUI installer 
-ubiquity &
+xterm -fa monospace -fs ${XTERMFONTSIZE} -e void-installer &
 # Record the PID
 ubiquity_pid=$!
 
 # While the /etc/default/grub in the install target is NOT existing, keep sleeping.
 # If ubiquity terminated without file copy, this script also terminates.
-while [ ! -e /target/etc/default/grub ]
+while [ ! -e /mnt/target/etc/default/grub ]
 do
 	sleep 1 # 1sec.
 
 	ps $ubiquity_pid  > /dev/null # ps return 0 if process exists.
 	if [ $? -ne 0 ] ; then	# If not exists
 	cat <<HEREDOC 1>&2
-The ubiquity installer terminated unexpectedly. 
+The void-installer terminated unexpectedly. 
 
 Installation process terminated.
 HEREDOC
@@ -237,13 +238,13 @@ done
 sleep 1 # 1sec.
 
 # Make target GRUB aware to the crypt partition
-# This must do it after start of the file copy by ubiquity, but before the end of the file copy.
-echo "...Add GRUB_ENABLE_CRYPTODISK entry to /target/etc/default/grub "
-echo "GRUB_ENABLE_CRYPTODISK=y" >> /target/etc/default/grub
+# This must do it after start of the file copy by void-installer, but before the end of the file copy.
+echo "...Add GRUB_ENABLE_CRYPTODISK entry to /mnt/target/etc/default/grub "
+echo "GRUB_ENABLE_CRYPTODISK=y" >> /mnt/target/etc/default/grub
 
 
-# And then, wait for the end of Ubiquity process
-echo "...Waiting the end of Ubiquity installer."
+# And then, wait for the end of void-installer process
+echo "...Waiting the end of void-installer."
 wait $ubiquity_pid
 
 # ******************************************************************************* 

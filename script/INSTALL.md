@@ -1,0 +1,123 @@
+# Ubuntu/Void-Linux installation into the LVM on the LUKS volume
+
+Installation requires mainly 2 steps. 
+ 
+- Configure the parameters in config.sh.
+- Run the kaiten-yaki script
+
+Each script have to be executed as sourced style. For example :
+```shell
+source ubuntu-kaiten-yaki.sh
+```
+If you execute these script as independent command style, it will show an error message and terminate the process immediately. 
+
+The first stage of the script is preparation like : erasing disk, format partition, and encryption. This is most critical stage of the entire installation process. This part is controlled by the configuration parameter. Thus, you have to edit the config.txt carefully. 
+
+In the second stage, the distribution dependent installer is invoked. That is the Ubiquity of Ubuntu and the void-installer of Void linux. 
+
+The third stage is easy. There is nothing user can do. Everything is automatic. 
+# Installation
+Follow the steps below. 
+
+## Configuration parameters
+This is very critical part of the installation. The configuration parameters are in the top of the config.sh. Edit these parameters before the installation. 
+
+Followings are set of the default settings of the parameters : 
+- Install to  **/dev/sda** (DEV).
+- Erase entire disk (ERASEALL).
+- In case of EFI firmware, 200MB is allocated to the EFI partition (EFISIZE).
+- Create a logical volume group named "vg1" in the encrypted volume (VGNAME)
+- Create a swap logical volume named "swap" in the "vg1". The size is 8GB (LVSWAPNAME,LVSWAPSIZE)
+- Create a logical volume named **"anko"** for / in the "vg1". The size of the **50%** of the entire free space (LVROOTNAME, LVROOTSIZE).
+
+```bash
+# Storage device to install the linux.  
+export DEV="/dev/sda"
+
+# Whether you want to erase all contents of the storage device or not.
+# 1 : Yes, I want to erase all.
+# 0 : No, I don't. I want to add to the existing LUKS volume. 
+export ERASEALL=1
+
+# Logical Volume name for your Linux installation. Keep it unique from other distribution.
+export LVROOTNAME="ubuntu"
+
+# Logical volume size of the Linux installation.
+# 30% mean, new logical volume will use 30% of the free space in the LVM volume group.
+# For example, assume the free space is 100GB, and LVROOTSIZE is 30%FREE. Script will create 30GB logical volume.  
+export LVROOTSIZE="50%FREE"
+
+# Set the size of EFI partition and swap partition. The unit is Byte. you can use M,G... notation.
+export EFISIZE="100M"
+export LVSWAPSIZE="8G"
+
+# Usually, these names can be left untouched. 
+# If you change, keep them consistent through all instllation in your system.
+export CRYPTPARTNAME="luks_volume"
+export VGNAME="vg1"
+export LVSWAPNAME="swap"
+
+# Void Linux only. Ignored in Ubuntu.
+# The font size of the void-installer
+export XTERMFONTSIZE=11
+```
+
+There are several restrictions : 
+- For the first distribution installation, you must set ERASEALL to 1, to erase entire screen and create a LUKS partition. Kaiten-yaki script creates a maximum LUKS partition as possible. 
+- The LVROOMNAME must be unique among all installations in a computer. Otherwise, Kaiten-yaki terminate at a middle. 
+- The LVSWAPNAME must be unique among all installations in a computer. Otherwise, Kaiten-yaki creates an unnecessary logical volume. This is waste of storage resource. 
+- The EFISIZE and the LVSWAPSIZE are refereed during the first distribution installation only. 
+- The LVROOTSIZE is the size of a logical volume to create. This is a relative value to the existing free space in the volume group. If you want to install 3 distributions in a computer, you may want to set 33%FREE, 50%FREE, and 100%FREE for the first, second, and third distribution installation, respectively. 
+## Shell preparation
+First of all, promote the shell to root. Almost of the procedure requires root privilege. Note that the scripts requires Bash. 
+
+In case of Ubuntu :
+```bash
+# Promote to the root user
+sudo -i
+```
+In case of Void-Linux : 
+```bash
+sudo -i
+bash
+xbps-install -Su xbps nano
+```
+The nano is editor package to configure the config.txt. The editor choice is up to you. Kaiten-yaki scripts doesn't use editor.
+
+Then, edit the config.txt as explained above. 
+## First stage : Setting up the volumes
+After you set the configuration parameters correctly, execute the following command from the shell. Again, you have to be promoted as root user, and you have to use Bash.  
+
+In case of Ubuntu :
+```bash
+source ubuntu-kaiten-yaki.sh
+```
+
+In case of Void Linux
+```bash
+source void-kaiten-yaki.sh
+```
+After the several interactive confirmations, Kaiten-yaki will ask you to input a passphrase. This passphrase will be applied to the encryption of the LUKS volume. Make sure you use identical passphrase between all installation of the distributions  in a computer. Otherwise, install process terminates with error.  
+
+## Second stage : GUI/TUI installer
+After the first script finishes, the GUI/TUI installer starts automatically. Configure it as usual and run it. Ensure you map the followings correctly.
+Host Volume            | Target Directory | Comment
+-----------------------|------------------|---------------------------------------------------------------
+/dev/sda1              | /boot/efi        | BIOS system doesn't need this mapping
+/dev/mapper/vg1-ubuntu | /                | Host volume name is up to your configuration parameter.
+/dev/mapper/swap       | swap             | Only the first distribution installation requires this mapping.
+
+During the GUI/TUI installer copying files, Kaiten-yaki modifies the /etc/default/grub of target system. This is pretty dirty way. If we don't modify this file, GUI/TUI installer fails at last. 
+
+![Ubuntu Partitioning](../image/ubuntu_partitioning.png)
+![Void Partitioning](../image/void_partitioning.png)
+
+## Do not reboot
+At the end of the GUI/TUI installing, do not reboot the system. Click "Continue" and just exit the GUI/TUI installer without rebooting. Otherwise, we cannot finalize the entire installation process. 
+
+![Ubuntu done](../image/ubuntu_done.png)
+![Void done](../image/void_done.png)
+
+## Third stage : Finalizing
+After GUI/TUI installer window is closed, final part of the install process automatically starts. You can reboot the system, if you see the completion message on the console. 
+
