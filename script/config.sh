@@ -9,7 +9,7 @@ export DEV="/dev/sda"
 export ERASEALL=1
 
 # Logical Volume name for your Linux installation. Keep it unique from other distribution.
-export LVROOTNAME="ubuntu"
+export LVROOTNAME="anko"
 
 # Logical volume size of the Linux installation.
 # 30% mean, new logical volume will use 30% of the free space in the LVM volume group.

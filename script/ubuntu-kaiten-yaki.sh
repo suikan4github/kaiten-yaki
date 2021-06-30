@@ -42,7 +42,7 @@ HEREDOC
 fi # "Ubuntu" is not found in the OS name.
 
 # For surre ask the config.sh is edited
-echo "Did you edit config.sys? Are you ready to install? [Y/N]"
+echo "Are you ready to install? The destination logical volume label is \"${LVROOTNAME}\" [Y/N]"
 read YESNO
 if [ ${YESNO} != "Y" -a ${YESNO} != "y" ] ; then
 	cat <<HEREDOC 1>&2
@@ -195,7 +195,7 @@ Host Volume            | Target Directory | Comment
 /dev/mapper/vg1-ubuntu | /                | Host volume name is up to your 
                        |                  | configuration parameter.
 /dev/mapper/swap       | swap             | Only the first distribution 
-					   |                  | installation requires this mapping.
+                       |                  | installation requires this mapping.
 
 
 ************************ CAUTION! CAUTION! CAUTION! ****************************
