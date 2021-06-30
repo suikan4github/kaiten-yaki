@@ -180,7 +180,6 @@ fi	# if the root volun already exist
 # ******************************************************************************* 
 cat <<HEREDOC
 ******************************************************************************
-
 The pre-install process is done. We are ready to install the Linux to the 
 target storage device. By pressing return key, Ubuntu Ubiquity installer 
 starts.
@@ -197,11 +196,9 @@ Host Volume            | Target Directory | Comment
 /dev/mapper/swap       | swap             | Only the first distribution 
                        |                  | installation requires this mapping.
 
-
 ************************ CAUTION! CAUTION! CAUTION! ****************************
  
 Make sure to click "Continue Testing",  at the end of the Ubiquity installer.
-
 
 Type return key to start Ubiquity.
 HEREDOC
