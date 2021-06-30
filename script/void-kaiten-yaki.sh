@@ -43,8 +43,8 @@ fi # "Void" is not found in the OS name.
 
 # For surre ask the config.sh is edited
 cat <<HEREDOC
-The destination logical volume label is \"${LVROOTNAME}\"
-\"${LVROOTNAME}\" uses ${LVROOTSIZE} of the LVM volume group.
+The destination logical volume label is "${LVROOTNAME}"
+"${LVROOTNAME}" uses ${LVROOTSIZE} of the LVM volume group.
 Are you ready to install? [Y/N]
 HEREDOC
 read YESNO
@@ -87,6 +87,9 @@ Installation terminated.
 HEREDOC
 	return
 fi	# passphrase validation
+
+# Install essential packages.
+xbps-install -y gptfdisk xterm
 
 
 # ******************************************************************************* 
@@ -253,25 +256,22 @@ wait $ubiquity_pid
 
 ## Mount the target file system
 # /target is created by the Ubiquity installer
-echo "...Mount /dev/mapper/${VGNAME}-${LVROOTNAME} on /target."
-mount /dev/mapper/${VGNAME}-${LVROOTNAME} /target
+echo "...Mount /dev/mapper/${VGNAME}-${LVROOTNAME} on /mnt/target."
+mount /dev/mapper/${VGNAME}-${LVROOTNAME} /mnt/target
 
 # And mount other directories
 echo "...Mount all other dirs."
-for n in proc sys dev etc/resolv.conf; do mount --rbind "/$n" "/target/$n"; done
+for n in proc sys dev etc/resolv.conf; do mount --rbind "/$n" "/mnt/target/$n"; done
 
 # Change root and create the keyfile and ramfs image for Linux kernel. 
 echo "...Chroot to /target."
-cat <<HEREDOC | chroot /target /bin/bash
+cat <<HEREDOC | chroot /mnt/target /bin/bash
 # Mount the rest of partitions by target /etc/fstab
 mount -a
 
 # Set up the kernel hook of encryption
 echo "...Install cryptsetup-initramfs package."
-apt -qq install -y cryptsetup-initramfs
-echo "...Register key file to the ramfs"
-echo "KEYFILE_PATTERN=/etc/luks/*.keyfile" >> /etc/cryptsetup-initramfs/conf-hook
-echo "UMASK=0077" >> /etc/initramfs-tools/initramfs.conf
+xbps-install -y lvm2 cryptsetup
 
 # Prepare a key file to embed in to the ramfs.
 echo "...Prepair key file."
@@ -288,13 +288,23 @@ printf %s "${PASSPHRASE}" | cryptsetup luksAddKey -d - "${DEV}${CRYPTPARTITION}"
 echo "...Add LUKS volume info to /etc/crypttab."
 echo "${CRYPTPARTNAME} UUID=$(blkid -s UUID -o value ${DEV}${CRYPTPARTITION}) /etc/luks/boot_os.keyfile luks,discard" >> /etc/crypttab
 
+echo "...Register key file to the ramfs"
+echo 'install_items+=" /etc/luks/boot_os.keyfile /etc/crypttab " ' > /etc/dracut.conf.d/10-crypt.conf
+
 # Finally, update the ramfs initial image with the key file. 
 echo "...Upadte initramfs."
-update-initramfs -uk all
+xbps-reconfigure -fa
+echo "...grub-mkconfig."
+grub-mkconfig -o /boot/grub/grub.cfg
+echo "...update-grub."
+update-grub
 
 # Leave chroot
-exit
 HEREDOC
+
+# Unmount all
+echo "...Unmount all."
+umount -R /mnt/target
 
 # Finishing message
 cat <<HEREDOC

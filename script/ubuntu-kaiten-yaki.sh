@@ -27,7 +27,7 @@ if [ $? -eq 1  ] ; then	# "Ubuntu" is not found in the OS name.
 	uname -a
 	cat <<HEREDOC 
 *******************************************************************************
-This system seems to be not Void Linux, while this script is dediated to the Void Linux.
+This system seems to be not Ubuntu, while this script is dediated to the Ubuntu.
 Are you sure you want to run this script? [Y/N]
 HEREDOC
 	read YESNO
@@ -43,8 +43,8 @@ fi # "Ubuntu" is not found in the OS name.
 
 # For surre ask the config.sh is edited
 cat <<HEREDOC
-The destination logical volume label is \"${LVROOTNAME}\"
-\"${LVROOTNAME}\" uses ${LVROOTSIZE} of the LVM volume group.
+The destination logical volume label is "${LVROOTNAME}"
+"${LVROOTNAME}" uses ${LVROOTSIZE} of the LVM volume group.
 Are you ready to install? [Y/N]
 HEREDOC
 read YESNO
