@@ -13,8 +13,6 @@ function main() {
 
 	# This is the mount point of the install target. 
 	export TARGETMOUNTPOINT="/mnt/target"
-	# 1 : Show message during GUI/TUI installer, 0 : Do not show.
-	export PARAINSTMSG=0
 
 	# Distribution check
 	if ! uname -a | grep void -i > /dev/null ; then	# "Void" is not found in the OS name.
@@ -50,8 +48,7 @@ function main() {
 	# ******************************************************************************* 
 
 	# Install essential packages.
-	xbps-install -y -Su xbps gptfdisk
-
+	xbps-install -y -Su xbps gptfdisk xterm
 
 	# Common part of the pre-install stage
 	if ! pre_install ; then
@@ -85,11 +82,9 @@ function main() {
 	# waitfor a console input
 	read dummy_var
 
-	# Start void-installer 
-	void-installer &
-	# Make it foreground
-	fg
-
+	# Start void-installer in the separate window
+	xterm -fa monospace -fs ${XTERMFONTSIZE} -e void-installer &
+	
 	# Record the PID of the installer. 
 	export INSTALLER_PID=$!
 
