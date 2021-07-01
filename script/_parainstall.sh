@@ -2,9 +2,6 @@
 #                        Common part of para-install 
 # ******************************************************************************* 
 
-# Record the PID of the installer. 
-installer_pid=$!
-
 # While the /etc/default/grub in the install target is NOT existing, keep sleeping.
 # If installer terminated without file copy, this script also terminates.
 while [ ! -e ${TARGETMOUNTPOINT}/etc/default/grub ]

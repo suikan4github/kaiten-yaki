@@ -78,6 +78,9 @@ read dummy_var
 # Start Ubiquity installer 
 ubiquity &
 
+# Record the PID of the installer. 
+installer_pid=$!
+
 # Common part of the para-install. 
 # Record the install PID, modify the /etc/default/grub of the target, 
 # and then, wait for the end of sintaller. 
@@ -88,17 +91,17 @@ source _parainstall.sh
 # ******************************************************************************* 
 
 ## Mount the target file system
-# /target is created by the Ubiquity installer
-echo "...Mount /dev/mapper/${VGNAME}-${LVROOTNAME} on /target."
-mount /dev/mapper/${VGNAME}-${LVROOTNAME} /target
+# ${TARGETMOUNTPOINT} is created by the GUI/TUI installer
+echo "...Mount /dev/mapper/${VGNAME}-${LVROOTNAME} on ${TARGETMOUNTPOINT}."
+mount /dev/mapper/${VGNAME}-${LVROOTNAME} ${TARGETMOUNTPOINT}
 
 # And mount other directories
 echo "...Mount all other dirs."
-for n in proc sys dev etc/resolv.conf; do mount --rbind "/$n" "/target/$n"; done
+for n in proc sys dev etc/resolv.conf; do mount --rbind "/$n" "${TARGETMOUNTPOINT}/$n"; done
 
 # Change root and create the keyfile and ramfs image for Linux kernel. 
-echo "...Chroot to /target."
-cat <<HEREDOC | chroot /target /bin/bash
+echo "...Chroot to ${TARGETMOUNTPOINT}."
+cat <<HEREDOC | chroot ${TARGETMOUNTPOINT} /bin/bash
 # Mount the rest of partitions by target /etc/fstab
 mount -a
 
@@ -133,7 +136,7 @@ HEREDOC
 
 # Unmount all
 echo "...Unmount all."
-umount -R /mnt/target
+umount -R ${TARGETMOUNTPOINT}
 
 # Finishing message
 cat <<HEREDOC
