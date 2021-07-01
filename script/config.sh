@@ -51,7 +51,7 @@ fi  # EFI firmware
 
 # Void Linux only. Ignored in Ubuntu.
 # Detect the GUI environment
-if env | grep XDG_SESSION_TYPE > /dev/null ; then
+if env | grep -w -e XDG_SESSION_TYPE -e DISPLAY -e WAYLAND_DISPLAY > /dev/null ; then
     export GUIENV=1    # set 1 if GUI env.
 else
     export GUIENV=0    # set 0 if not GUI env.
