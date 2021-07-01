@@ -51,6 +51,14 @@ source _confirmation.sh
 #                                Pre-install stage 
 # ******************************************************************************* 
 
+# Install essential packages.
+# If GUI environment, also install xterm to run the void-installer in a window
+if [ ${GUIENV} -eq 1 ] ; then  
+	xbps-install -y -Su xbps gptfdisk xterm
+else
+	xbps-install -y -Su xbps gptfdisk
+fi
+
 # Common part of the pre-install stage
 source _preinstall.sh
 
