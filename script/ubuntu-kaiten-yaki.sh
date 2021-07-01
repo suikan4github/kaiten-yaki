@@ -17,8 +17,9 @@ HEREDOC
 fi # "sourced" validation
 
 # This is the mount point of the install target. 
-# Refered in the para-install stage
 export TARGETMOUNTPOINT="/target"
+# 1 : Show message during GUI/TUI installer, 0 : Do not show.
+export PARAINSTMSG=1
 
 # Distribution check
 if ! uname -a | grep ubuntu -i > /dev/null  ; then	# "Ubuntu" is not found in the OS name.

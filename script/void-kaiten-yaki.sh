@@ -17,8 +17,9 @@ HEREDOC
 fi # "sourced" validation
 
 # This is the mount point of the install target. 
-# Refered in the para-install stage
 export TARGETMOUNTPOINT="/mnt/target"
+# 1 : Show message during GUI/TUI installer, 0 : Do not show.
+export PARAINSTMSG=0
 
 # Distribution check
 if ! uname -a | grep void -i > /dev/null ; then	# "Void" is not found in the OS name.
