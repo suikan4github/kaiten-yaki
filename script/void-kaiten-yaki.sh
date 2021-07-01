@@ -27,7 +27,7 @@ function main() {
 		if [ ${YESNO} != "Y" -a ${YESNO} != "y" ] ; then
 			cat <<- HEREDOC 1>&2
 
-			Installation terminated.
+			...Installation process terminated..
 			HEREDOC
 			return
 		fi	# if YES

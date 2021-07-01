@@ -50,9 +50,9 @@ function pre_install() {
 	if [ ! -e /dev/mapper/${CRYPTPARTNAME} ] ; then 
 		cat <<- HEREDOC 1>&2
 		***** ERROR : Cannot open LUKS volume "${CRYPTPARTNAME}" on ${DEV}${CRYPTPARTITION}. *****
-		Check passphrase and config.txt
+		...Check passphrase and config.txt
 
-		Installation terminated.
+		...Installation process terminated..
 		HEREDOC
 		return 1 # with error status
 	fi	# if crypt volume is unable to open
@@ -82,9 +82,9 @@ function pre_install() {
 	if [ -e /dev/mapper/${VGNAME}-${LVROOTNAME} ] ; then 
 		cat <<- HEREDOC 1>&2
 		***** ERROR : Logical volume "${VGNAME}-${LVROOTNAME}" already exists. *****
-		Check LVROOTNAME environment variable in config.txt.
+		...Check LVROOTNAME environment variable in config.txt.
 
-		Installation terminated.
+		...Installation process terminated..
 		HEREDOC
 		return 1 # with error status
 	else
