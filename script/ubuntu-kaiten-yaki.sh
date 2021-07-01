@@ -21,8 +21,7 @@ source config.sh
 # ******************************************************************************* 
 
 # Distribution check
-uname -a | grep ubuntu -i > /dev/null
-if [ $? -eq 1  ] ; then	# "Ubuntu" is not found in the OS name.
+if ! uname -a | grep ubuntu -i > /dev/null  ; then	# "Ubuntu" is not found in the OS name.
 	echo "*******************************************************************************"
 	uname -a
 	cat <<HEREDOC 
@@ -42,8 +41,8 @@ HEREDOC
 fi # "Ubuntu" is not found in the OS name.
 
 # Sanity check for volume group name
-echo ${VGNAME} | grep "-" -i > /dev/null
-if [ $? -eq 0  ] ; then	# "-" is found in the volume group name.
+
+if echo ${VGNAME} | grep "-" -i > /dev/null ; then	# "-" is found in the volume group name.
 	cat <<HEREDOC 1>&2
 ***** ERROR : VGNAME is "${VGNAME}" *****
 THe "-" is not allowed in the volume name. 
@@ -55,8 +54,8 @@ HEREDOC
 fi # "-" is found in the volume group name.
 
 # Sanity check for root volume name
-echo ${LVROOTNAME} | grep "-" -i > /dev/null
-if [ $? -eq 0  ] ; then	# "-" is found in the volume name.
+
+if echo ${LVROOTNAME} | grep "-" -i > /dev/null ; then	# "-" is found in the volume name.
 	cat <<HEREDOC 1>&2
 ***** ERROR : LVROOTNAME is "${LVROOTNAME}" *****
 THe "-" is not allowed in the volume name. 
@@ -68,8 +67,7 @@ HEREDOC
 fi # "-" is found in the volume name.
 
 # Sanity check for swap volume name
-echo ${LVSWAPNAME} | grep "-" -i > /dev/null
-if [ $? -eq 0  ] ; then	# "-" is found in the volume name.
+if echo ${LVSWAPNAME} | grep "-" -i > /dev/null ; then	# "-" is found in the volume name.
 	cat <<HEREDOC 1>&2
 ***** ERROR : LVSWAPNAME is "${LVSWAPNAME}" *****
 THe "-" is not allowed in the volume name. 
@@ -187,15 +185,14 @@ fi	# if crypt volume is unable to open
 
 # ----- Configure the LVM in LUKS volume -----
 # Check volume group ${VGNAME} exist or not
-vgdisplay -s ${VGNAME} &> /dev/null
-if  [ $? -eq 0 ] ; then		# is return value 0? ( exist ?)
+if  vgdisplay -s ${VGNAME} &> /dev/null ; then		#  exist ?
 	echo "...Volume group ${VGNAME} already exist. Skipped to create. No problem."
 else
 	echo "...Initialize a physical volume on \"${CRYPTPARTNAME}\""
 	pvcreate /dev/mapper/${CRYPTPARTNAME}
 	echo "...And then create Volume group \"${VGNAME}\"."
 	vgcreate ${VGNAME} /dev/mapper/${CRYPTPARTNAME}
-fi # if /dev/volume-groupt not exist
+fi # if /dev/volume-groupt exist
 
 # Create a SWAP Logical Volume on VG, if it doesn't exist
 if [ -e /dev/mapper/${VGNAME}-${LVSWAPNAME} ] ; then 
@@ -271,8 +268,8 @@ while [ ! -e /target/etc/default/grub ]
 do
 	sleep 1 # 1sec.
 
-	ps $ubiquity_pid  > /dev/null # ps return 0 if process exists.
-	if [ $? -ne 0 ] ; then	# If not exists
+	 # Check if installer still exist
+	if ! ps $ubiquity_pid  > /dev/null ; then	# If not exists
 	cat <<HEREDOC 1>&2
 The ubiquity installer terminated unexpectedly. 
 
@@ -281,7 +278,7 @@ HEREDOC
 	return
 
 	fi
-done
+done # while
 
 # Perhaps, too neuvous. Wait 1 more sectond to avoid the rece condition.
 sleep 1 # 1sec.

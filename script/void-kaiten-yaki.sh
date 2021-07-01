@@ -21,8 +21,7 @@ source config.sh
 # ******************************************************************************* 
 
 # Distribution check
-uname -a | grep void -i > /dev/null
-if [ $? -eq 1  ] ; then	# "Void" is not found in the OS name.
+if ! uname -a | grep void -i > /dev/null ; then	# "Void" is not found in the OS name.
 	echo "*********************************************************************************"
 	uname -a
 	cat <<HEREDOC 
@@ -42,8 +41,7 @@ HEREDOC
 fi # "Void" is not found in the OS name.
 
 # Sanity check for volume group name
-echo ${VGNAME} | grep "-" -i > /dev/null
-if [ $? -eq 0  ] ; then	# "-" is found in the volume group name.
+if echo ${VGNAME} | grep "-" -i > /dev/null ; then	# "-" is found in the volume group name.
 	cat <<HEREDOC 1>&2
 ***** ERROR : VGNAME is "${VGNAME}" *****
 THe "-" is not allowed in the volume name. 
@@ -55,8 +53,7 @@ HEREDOC
 fi # "-" is found in the volume group name.
 
 # Sanity check for root volume name
-echo ${LVROOTNAME} | grep "-" -i > /dev/null
-if [ $? -eq 0  ] ; then	# "-" is found in the volume name.
+if echo ${LVROOTNAME} | grep "-" -i > /dev/null ; then	# "-" is found in the volume name.
 	cat <<HEREDOC 1>&2
 ***** ERROR : LVROOTNAME is "${LVROOTNAME}" *****
 THe "-" is not allowed in the volume name. 
@@ -68,8 +65,8 @@ HEREDOC
 fi # "-" is found in the volume name.
 
 # Sanity check for swap volume name
-echo ${LVSWAPNAME} | grep "-" -i > /dev/null
-if [ $? -eq 0  ] ; then	# "-" is found in the volume name.
+
+if echo ${LVSWAPNAME} | grep "-" -i > /dev/null ; then	# "-" is found in the volume name.
 	cat <<HEREDOC 1>&2
 ***** ERROR : LVSWAPNAME is "${LVSWAPNAME}" *****
 THe "-" is not allowed in the volume name. 
@@ -129,8 +126,11 @@ HEREDOC
 fi	# passphrase validation
 
 # Install essential packages.
-xbps-install -y -Su xbps gptfdisk xterm
-
+if [ ${GUIENV} -eq 1 ] ; then  
+	xbps-install -y -Su xbps gptfdisk xterm
+else
+	xbps-install -y -Su xbps gptfdisk
+fi
 
 # ******************************************************************************* 
 #                                Pre-install stage 
@@ -190,15 +190,14 @@ fi	# if crypt volume is unable to open
 
 # ----- Configure the LVM in LUKS volume -----
 # Check volume group ${VGNAME} exist or not
-vgdisplay -s ${VGNAME} &> /dev/null
-if  [ $? -eq 0 ] ; then		# is return value 0? ( exist ?)
+if  vgdisplay -s ${VGNAME} &> /dev/null ; then		# if exist
 	echo "...Volume group ${VGNAME} already exist. Skipped to create. No problem."
 else
 	echo "...Initialize a physical volume on \"${CRYPTPARTNAME}\""
 	pvcreate /dev/mapper/${CRYPTPARTNAME}
 	echo "...And then create Volume group \"${VGNAME}\"."
 	vgcreate ${VGNAME} /dev/mapper/${CRYPTPARTNAME}
-fi # if /dev/volume-groupt not exist
+fi # if /dev/volume-groupt  exist
 
 # Create a SWAP Logical Volume on VG, if it doesn't exist
 if [ -e /dev/mapper/${VGNAME}-${LVSWAPNAME} ] ; then 
@@ -270,8 +269,12 @@ HEREDOC
 # waitfor a console input
 read dummy_var
 
-# Start GUI installer 
-xterm -fa monospace -fs ${XTERMFONTSIZE} -e void-installer &
+# Start TUI installer 
+if [ $GUIENV -eq 1 ]; then
+	xterm -fa monospace -fs ${XTERMFONTSIZE} -e void-installer &
+else
+	void-installer &
+fi
 # Record the PID
 voidinstaller_pid=$!
 
@@ -281,8 +284,8 @@ while [ ! -e /mnt/target/etc/default/grub ]
 do
 	sleep 1 # 1sec.
 
-	ps $voidinstaller_pid  > /dev/null # ps return 0 if process exists.
-	if [ $? -ne 0 ] ; then	# If not exists
+	# Chcheck if installer still exist
+	if ! ps $voidinstaller_pid  > /dev/null   ; then	# If not exists
 	cat <<HEREDOC 1>&2
 The void-installer terminated unexpectedly. 
 
@@ -291,19 +294,25 @@ HEREDOC
 	return
 
 	fi
-done
+done # while
 
 # Perhaps, too neuvous. Wait 1 more sectond to avoid the rece condition.
 sleep 1 # 1sec.
 
 # Make target GRUB aware to the crypt partition
 # This must do it after start of the file copy by void-installer, but before the end of the file copy.
-echo "...Add GRUB_ENABLE_CRYPTODISK entry to /mnt/target/etc/default/grub "
+# If the environment is not GUI, keep quiet not to bother the TUI installer. 
+if [ $GUIENV -eq 1 ]; then
+	echo "...Add GRUB_ENABLE_CRYPTODISK entry to /mnt/target/etc/default/grub "
+fi
 echo "GRUB_ENABLE_CRYPTODISK=y" >> /mnt/target/etc/default/grub
 
 
 # And then, wait for the end of void-installer process
-echo "...Waiting for the end of void-installer."
+# If the environment is not GUI, keep quiet not to bother the TUI installer. 
+if [ $GUIENV -eq 1 ]; then
+	echo "...Waiting for the end of void-installer."
+fi
 wait $voidinstaller_pid
 
 # ******************************************************************************* 

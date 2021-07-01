@@ -48,3 +48,11 @@ else
 # BIOS firmware
 export CRYPTPARTITION=1
 fi  # EFI firmware
+
+# Void Linux only. Ignored in Ubuntu.
+# Detect the GUI environment
+if env | grep XDG_SESSION_TYPE > /dev/null ; then
+    export GUIENV=1    # set 1 if GUI env.
+else
+    export GUIENV=0    # set 0 if not GUI env.
+fi
