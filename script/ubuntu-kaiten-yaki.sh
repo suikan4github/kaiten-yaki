@@ -10,18 +10,6 @@ function main() {
 	source common/parainstall.sh
 	source common/parainstall_msg.sh
 
-	# Varidate whether script is executed as sourced or not
-	(return 0 2>/dev/null) && sourced=1 || sourced=0
-	if [ $sourced -eq 0 ] ; then
-		cat <<- HEREDOC 1>&2
-		***** ERROR : Must execute as "sourced" *****
-		Execute as following : 
-		source ubuntu-kaiten-yaki.sh
-
-		Installation terminated.
-		HEREDOC
-		exit    # use "exit" instead of "return", if not "sourced" execusion
-	fi # "sourced" validation
 
 	# This is the mount point of the install target. 
 	export TARGETMOUNTPOINT="/target"
