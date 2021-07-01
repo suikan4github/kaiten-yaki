@@ -91,7 +91,7 @@ function main() {
 	fg
 
 	# Record the PID of the installer. 
-	installer_pid=$!
+	export INSTALLER_PID=$!
 
 	# Common part of the para-install. 
 	# Record the install PID, modify the /etc/default/grub of the target, 

@@ -12,7 +12,7 @@ function parainstall() {
 		sleep 1 # 1sec.
 
 		# Check if installer still exist
-		if ! ps $installer_pid  > /dev/null ; then	# If not exists
+		if ! ps $INSTALLER_PID  > /dev/null ; then	# If not exists
 			cat <<-HEREDOC 1>&2
 			The installer terminated unexpectedly. 
 
