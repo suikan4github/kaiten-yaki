@@ -61,12 +61,8 @@ fi
 # ******************************************************************************* 
 
 # Install essential packages.
-# If GUI environment, also install xterm to run the void-installer in a window
-if [ ${GUIENV} -eq 1 ] ; then  
-	xbps-install -y -Su xbps gptfdisk xterm
-else
-	xbps-install -y -Su xbps gptfdisk
-fi
+xbps-install -y -Su xbps gptfdisk
+
 
 # Common part of the pre-install stage
 if ! pre_install ; then
@@ -101,11 +97,8 @@ HEREDOC
 read dummy_var
 
 # Start void-installer 
-if [ $GUIENV -eq 1 ]; then
-	xterm -fa monospace -fs ${XTERMFONTSIZE} -e void-installer &
-else
-	void-installer &
-fi
+void-installer &
+
 
 # Record the PID of the installer. 
 installer_pid=$!
