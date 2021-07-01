@@ -13,8 +13,6 @@ function main() {
 
 	# This is the mount point of the install target. 
 	export TARGETMOUNTPOINT="/target"
-	# 1 : Show message during GUI/TUI installer, 0 : Do not show.
-	export PARAINSTMSG=1
 
 	# Distribution check
 	if ! uname -a | grep ubuntu -i > /dev/null  ; then	# "Ubuntu" is not found in the OS name.
@@ -80,7 +78,7 @@ function main() {
 	ubiquity &
 
 	# Record the PID of the installer. 
-	installer_pid=$!
+	export INSTALLER_PID=$!
 
 	# Common part of the para-install. 
 	# Record the install PID, modify the /etc/default/grub of the target, 
