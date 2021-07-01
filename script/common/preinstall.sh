@@ -2,6 +2,8 @@
 #                                Pre-install stage 
 # ******************************************************************************* 
 
+function pre_install() {
+
 
 # ----- Erase entire disk, create partitions, format them  and encrypt the LUKS partition -----
 if [ ${ERASEALL} -eq 1 ] ; then
@@ -51,7 +53,7 @@ Check passphrase and config.txt
 
 Installation terminated.
 HEREDOC
-	return
+	return 1
 fi	# if crypt volume is unable to open
 
 # ----- Configure the LVM in LUKS volume -----
@@ -81,8 +83,12 @@ Check LVROOTNAME environment variable in config.txt.
 
 Installation terminated.
 HEREDOC
-	return
+	return 1
 else
 	echo "...Create logical volume \"${LVROOTNAME}\" on \"${VGNAME}\"."
 	lvcreate -l ${LVROOTSIZE} -n ${LVROOTNAME} ${VGNAME}
 fi	# if the root volun already exist
+
+# successful return
+return 0
+}

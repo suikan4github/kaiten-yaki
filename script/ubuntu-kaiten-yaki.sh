@@ -3,6 +3,12 @@
 # Load configuration parameter
 source config.sh
 
+# Load functions
+source common/confirmation.sh
+source common/preinstall.sh
+source common/parainstall.sh
+source common/parainstall_msg.sh
+
 # Varidate whether script is executed as sourced or not
 (return 0 2>/dev/null) && sourced=1 || sourced=0
 if [ $sourced -eq 0 ] ; then
@@ -46,21 +52,28 @@ fi # "Ubuntu" is not found in the OS name.
 # ******************************************************************************* 
 
 # Common part of the parameter confirmation
-source common/_confirmation.sh
+if ! confirmation ; then
+	return 1
+fi
 
 # ******************************************************************************* 
 #                                Pre-install stage 
 # ******************************************************************************* 
 
 # Common part of the pre-install stage
-source common/_preinstall.sh
+if ! pre_install ; then
+	return 1
+fi
+
 
 # ******************************************************************************* 
 #                                Para-install stage 
 # ******************************************************************************* 
 
 # Show common message to let the operator focus on the critical part
-source common/_parainstall_msg.sh
+if ! parainstall ; then
+	return 1
+fi
 
 # Ubuntu dependent message
 cat <<HEREDOC
@@ -85,7 +98,7 @@ installer_pid=$!
 # Common part of the para-install. 
 # Record the install PID, modify the /etc/default/grub of the target, 
 # and then, wait for the end of sintaller. 
-source common/_parainstall.sh
+parainstall_msg
 
 # ******************************************************************************* 
 #                                Post-install stage 

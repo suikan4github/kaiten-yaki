@@ -1,3 +1,7 @@
+#!/bin/bash
+
+function parainstall_msg() {
+
 cat <<HEREDOC
 ******************************************************************************
 The pre-install process is done. We are ready to install the Linux to the 
@@ -22,3 +26,5 @@ if [ ${ERASEALL} -eq 1 ] ; then
 	echo "swap             : /dev/mapper/${VGNAME}-${LVSWAPNAME}"
 fi
 
+return 0
+}

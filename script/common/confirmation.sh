@@ -1,6 +1,9 @@
+#!/bin/bash
 # ******************************************************************************* 
 #                        Confirmation and Passphrase setting 
 # ******************************************************************************* 
+
+function confirmation(){
 
 # Sanity check for volume group name
 if echo ${VGNAME} | grep "-" -i > /dev/null ; then	# "-" is found in the volume group name.
@@ -11,7 +14,7 @@ Check passphrase and config.txt
 
 Installation terminated.
 HEREDOC
-		return
+		return 1
 fi # "-" is found in the volume group name.
 
 # Sanity check for root volume name
@@ -23,7 +26,7 @@ Check passphrase and config.txt
 
 Installation terminated.
 HEREDOC
-		return
+		return 1
 fi # "-" is found in the volume name.
 
 # Sanity check for swap volume name
@@ -35,7 +38,7 @@ Check passphrase and config.txt
 
 Installation terminated.
 HEREDOC
-		return
+		return 1
 fi # "-" is found in the volume name.
 
 # For surre ask the config.sh is edited
@@ -51,7 +54,7 @@ if [ ${YESNO} != "Y" -a ${YESNO} != "y" ] ; then
 
 Installation terminated.
 HEREDOC
-	return
+	return 1
 fi	# if YES
 
 # For sure ask ready to erase. 
@@ -64,7 +67,7 @@ Check config.sh. The variable ERASEALL is ${ERASEALL}.
 
 Installation terminated.
 HEREDOC
-		return
+		return 1
 	fi	# if YES
 fi	# if erase all
 
@@ -81,7 +84,12 @@ read -sr PASSPHRASE_C
 if [ ${PASSPHRASE} != ${PASSPHRASE_C} ] ; then
 	cat <<HEREDOC 1>&2
 ***** ERROR : Passphrase doesn't match *****
+
 Installation terminated.
 HEREDOC
-	return
+	return 1
 fi	# passphrase validation
+
+# succesfull return
+return 0
+}
