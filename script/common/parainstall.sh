@@ -15,6 +15,10 @@ function parainstall() {
 		if ! ps $INSTALLER_PID  > /dev/null ; then	# If not exists
 			cat <<-HEREDOC 1>&2
 			The installer terminated unexpectedly. 
+			...Delete the new logical volume "${VGNAME}-${LVROOTNAME}".
+			HEREDOC
+			lvremove -f /dev/mapper/${VGNAME}-${LVROOTNAME} 
+			cat <<-HEREDOC 1>&2
 
 			Installation process terminated.
 			HEREDOC
