@@ -9,7 +9,7 @@ function confirmation(){
 	if echo ${VGNAME} | grep "-" -i > /dev/null ; then	# "-" is found in the volume group name.
 		cat <<- HEREDOC 1>&2
 		***** ERROR : VGNAME is "${VGNAME}" *****
-		THe "-" is not allowed in the volume name. 
+		"-" is not allowed in the volume name. 
 		Check passphrase and config.txt
 
 		Installation terminated.
@@ -21,7 +21,7 @@ function confirmation(){
 	if echo ${LVROOTNAME} | grep "-" -i > /dev/null ; then	# "-" is found in the volume name.
 		cat <<- HEREDOC 1>&2
 		***** ERROR : LVROOTNAME is "${LVROOTNAME}" *****
-		THe "-" is not allowed in the volume name. 
+		"-" is not allowed in the volume name. 
 		Check passphrase and config.txt
 
 		Installation terminated.
@@ -33,7 +33,7 @@ function confirmation(){
 	if echo ${LVSWAPNAME} | grep "-" -i > /dev/null ; then	# "-" is found in the volume name.
 		cat <<- HEREDOC 1>&2
 		***** ERROR : LVSWAPNAME is "${LVSWAPNAME}" *****
-		THe "-" is not allowed in the volume name. 
+		"-" is not allowed in the volume name. 
 		Check passphrase and config.txt
 
 		Installation terminated.
