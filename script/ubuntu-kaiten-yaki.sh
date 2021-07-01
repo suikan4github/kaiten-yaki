@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -u
 
 # Load configuration parameter
 source config.sh
@@ -71,9 +71,7 @@ fi
 # ******************************************************************************* 
 
 # Show common message to let the operator focus on the critical part
-if ! parainstall ; then
-	return 1
-fi
+parainstall_msg
 
 # Ubuntu dependent message
 cat <<HEREDOC
@@ -98,7 +96,9 @@ installer_pid=$!
 # Common part of the para-install. 
 # Record the install PID, modify the /etc/default/grub of the target, 
 # and then, wait for the end of sintaller. 
-parainstall_msg
+if ! parainstall ; then
+	return 1
+fi
 
 # ******************************************************************************* 
 #                                Post-install stage 

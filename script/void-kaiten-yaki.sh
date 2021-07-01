@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -u
 
 # Load configuration parameter
 source config.sh
@@ -85,10 +85,7 @@ sed -i "s#loglevel=4#loglevel=4 rd.auto=1 cryptdevice=/dev/sda2:${LUKS_NAME} roo
 # ******************************************************************************* 
 
 # Show common message to let the operator focus on the critical part
-if ! parainstall ; then
-	return 1
-fi
-
+parainstall_msg
 # Ubuntu dependent message
 cat <<HEREDOC
 
@@ -116,7 +113,9 @@ installer_pid=$!
 # Common part of the para-install. 
 # Record the install PID, modify the /etc/default/grub of the target, 
 # and then, wait for the end of sintaller. 
-source common/_parainstall.sh
+if ! parainstall ; then
+	return 1
+fi
 
 # ******************************************************************************* 
 #                                Post-install stage 
