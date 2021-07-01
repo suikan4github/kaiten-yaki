@@ -129,7 +129,7 @@ HEREDOC
 fi	# passphrase validation
 
 # Install essential packages.
-xbps-install -y gptfdisk xterm
+xbps-install -y -Su xbps gptfdisk xterm
 
 
 # ******************************************************************************* 
