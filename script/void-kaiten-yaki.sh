@@ -7,9 +7,9 @@ source config.sh
 (return 0 2>/dev/null) && sourced=1 || sourced=0
 if [ $sourced -eq 0 ] ; then
 	cat <<HEREDOC 1>&2
-***** ERROR : Must execute as source *****
+***** ERROR : Must execute as "sourced" *****
 Execute as following : 
-source ubuntu-kaiten-yaki.sh
+source void-kaiten-yaki.sh
 
 Installation terminated.
 HEREDOC
