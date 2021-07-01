@@ -54,7 +54,7 @@ function pre_install() {
 
 		Installation terminated.
 		HEREDOC
-		return 1
+		return 1 # with error status
 	fi	# if crypt volume is unable to open
 
 	# ----- Configure the LVM in LUKS volume -----
@@ -84,7 +84,7 @@ function pre_install() {
 
 		Installation terminated.
 		HEREDOC
-		return 1
+		return 1 # with error status
 	else
 		echo "...Create logical volume \"${LVROOTNAME}\" on \"${VGNAME}\"."
 		lvcreate -l ${LVROOTSIZE} -n ${LVROOTNAME} ${VGNAME}

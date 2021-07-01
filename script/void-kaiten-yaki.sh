@@ -40,7 +40,7 @@ function main() {
 
 	# Common part of the parameter confirmation
 	if ! confirmation ; then
-		return 1
+		return 1 # with error status
 	fi
 
 	# ******************************************************************************* 
@@ -52,7 +52,7 @@ function main() {
 
 	# Common part of the pre-install stage
 	if ! pre_install ; then
-		return 1
+		return 1 # with error status
 	fi
 
 	# ADD "rd.auto=1 cryptdevice=/dev/sda2:${CRYPTPARTNAME} root=/dev/mapper/${VGNAME}-${ROOTNAME}" to GRUB.
@@ -74,7 +74,8 @@ function main() {
 	************************ CAUTION! CAUTION! CAUTION! ****************************
 	
 	Make sure to click "NO", if the void-installer ask you to reboot.
-	Just exit the installer without rebooting.
+	Just exit the installer without rebooting. Other wise, your system
+	is unable to boot. 
 
 	Type return key to start void-installer.
 	HEREDOC
@@ -92,7 +93,7 @@ function main() {
 	# Record the install PID, modify the /etc/default/grub of the target, 
 	# and then, wait for the end of sintaller. 
 	if ! parainstall ; then
-		return 1
+		return 1 # with error status
 	fi
 
 	# ******************************************************************************* 

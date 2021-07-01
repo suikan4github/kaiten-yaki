@@ -14,7 +14,7 @@ function confirmation(){
 
 		Installation terminated.
 		HEREDOC
-		return 1
+		return 1 # with error status
 	fi # "-" is found in the volume group name.
 
 	# Sanity check for root volume name
@@ -26,7 +26,7 @@ function confirmation(){
 
 		Installation terminated.
 		HEREDOC
-		return 1
+		return 1 # with error status
 	fi # "-" is found in the volume name.
 
 	# Sanity check for swap volume name
@@ -38,7 +38,7 @@ function confirmation(){
 
 		Installation terminated.
 		HEREDOC
-		return 1
+		return 1 # with error status
 	fi # "-" is found in the volume name.
 
 	# For surre ask the config.sh is edited
@@ -54,7 +54,7 @@ function confirmation(){
 
 		Installation terminated.
 		HEREDOC
-		return 1
+		return 1 # with error status
 	fi	# if YES
 
 	# For sure ask ready to erase. 
@@ -67,7 +67,7 @@ function confirmation(){
 
 		Installation terminated.
 		HEREDOC
-		return 1
+		return 1 # with error status
 		fi	# if YES
 	fi	# if erase all
 
@@ -87,7 +87,7 @@ function confirmation(){
 
 		Installation terminated.
 		HEREDOC
-		return 1
+		return 1 # with error status
 	fi	# passphrase validation
 
 	# succesfull return

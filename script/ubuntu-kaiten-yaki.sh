@@ -29,7 +29,7 @@ function main() {
 
 			Installation terminated.
 			HEREDOC
-			return 1
+			return 1 # with error status
 		fi	# if YES
 
 	fi # "Ubuntu" is not found in the OS name.
@@ -40,7 +40,7 @@ function main() {
 
 	# Common part of the parameter confirmation
 	if ! confirmation ; then
-		return 1
+		return 1 # with error status
 	fi
 
 	# ******************************************************************************* 
@@ -49,7 +49,7 @@ function main() {
 
 	# Common part of the pre-install stage
 	if ! pre_install ; then
-		return 1
+		return 1 # with error status
 	fi
 
 
@@ -66,7 +66,8 @@ function main() {
 	************************ CAUTION! CAUTION! CAUTION! ****************************
 	
 	Make sure to click "Continue Testing",  at the end of the Ubiquity installer.
-	Just exit the installer without rebooting.
+	Just exit the installer without rebooting. Other wise, your system
+	is unable to boot. 
 
 	Type return key to start Ubiquity.
 	HEREDOC
@@ -84,7 +85,7 @@ function main() {
 	# Record the install PID, modify the /etc/default/grub of the target, 
 	# and then, wait for the end of sintaller. 
 	if ! parainstall ; then
-		return 1
+		return 1 # with error status
 	fi
 
 	# ******************************************************************************* 

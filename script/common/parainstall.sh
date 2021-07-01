@@ -18,7 +18,7 @@ function parainstall() {
 
 			Installation process terminated.
 			HEREDOC
-			return 1
+			return 1 # with error status
 		fi
 	done # while
 
@@ -32,6 +32,7 @@ function parainstall() {
 
 	# And then, wait for the end of installer process
 	echo "...Waiting for the end of GUI/TUI installer."
+	echo "...Again, DO NOT reboot here. Just exit the GUI/TUI installer."
 	wait $INSTALLER_PID
 
 	# succesfull return
