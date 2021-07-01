@@ -19,7 +19,7 @@ Following is the HDD/SSD partitioning plan of these scripts ( In case of BIOS, t
 
 The logical volume size of each Linux distribution (LVROOTSIZE) can be customized from a configuration parameter. Also, the swap volume size is customizable. 
 
-As depicted the LVM volume group has only one physical volume. 
+As depicted above, the LVM volume group has only one physical volume. 
 
 # Tested environment
 These scripts are tested with following environment. 
@@ -35,7 +35,7 @@ Start the PC with the LiveCD/LiveUSB of the distribution to install. Download th
 Then, go to script directory and follow the procedure in the [INSTALL.md](INSTALL.md)
 
 # Known issues
-If you install two ore more Void Linux in to the EFI system, only the last one can boot without trouble. This is not the problem of Kaiten-yaki. 
+If you install two or more Void Linux in to the EFI system, only the last one can boot without trouble. This is not the problem of Kaiten-yaki. 
 
 # Variants considerations
 Ubuntu has several variants ( flavors ). While I have tested only MATE flavor, other flavor may work correctly as far as it uses Ubiquity installer.
