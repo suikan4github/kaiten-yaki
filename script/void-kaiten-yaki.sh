@@ -58,12 +58,12 @@ function main() {
 		return 1
 	fi
 
-	# ADD "rd.auto=1 cryptdevice=/dev/sda2:${LUKS_NAME} root=/dev/mapper/${VGNAME}-${ROOTNAME}" to GRUB.
+	# ADD "rd.auto=1 cryptdevice=/dev/sda2:${CRYPTPARTNAME} root=/dev/mapper/${VGNAME}-${ROOTNAME}" to GRUB.
 	# This is magical part. I have not understood why this is required. 
 	# Anyway, without this modification, Void Linux doesn't boot. 
 	# Refer https://wiki.voidlinux.org/Install_LVM_LUKS#Installation_using_void-installer
 	echo "...Modify /etc/default/grub."
-	sed -i "s#loglevel=4#loglevel=4 rd.auto=1 cryptdevice=/dev/sda2:${LUKS_NAME} root=/dev/mapper/${VGNAME}-${LVROOTNAME}#" /etc/default/grub
+	sed -i "s#loglevel=4#loglevel=4 rd.auto=1 cryptdevice=${DEV}${CRYPTPARTITION}:${CRYPTPARTNAME} root=/dev/mapper/${VGNAME}-${LVROOTNAME}#" /etc/default/grub
 
 	# ******************************************************************************* 
 	#                                Para-install stage 
@@ -87,7 +87,8 @@ function main() {
 
 	# Start void-installer 
 	void-installer &
-
+	# Make it foreground
+	fg
 
 	# Record the PID of the installer. 
 	installer_pid=$!
