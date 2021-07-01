@@ -5,91 +5,91 @@
 
 function confirmation(){
 
-# Sanity check for volume group name
-if echo ${VGNAME} | grep "-" -i > /dev/null ; then	# "-" is found in the volume group name.
-	cat <<HEREDOC 1>&2
-***** ERROR : VGNAME is "${VGNAME}" *****
-THe "-" is not allowed in the volume name. 
-Check passphrase and config.txt
+	# Sanity check for volume group name
+	if echo ${VGNAME} | grep "-" -i > /dev/null ; then	# "-" is found in the volume group name.
+		cat <<- HEREDOC 1>&2
+		***** ERROR : VGNAME is "${VGNAME}" *****
+		THe "-" is not allowed in the volume name. 
+		Check passphrase and config.txt
 
-Installation terminated.
-HEREDOC
+		Installation terminated.
+		HEREDOC
 		return 1
-fi # "-" is found in the volume group name.
+	fi # "-" is found in the volume group name.
 
-# Sanity check for root volume name
-if echo ${LVROOTNAME} | grep "-" -i > /dev/null ; then	# "-" is found in the volume name.
-	cat <<HEREDOC 1>&2
-***** ERROR : LVROOTNAME is "${LVROOTNAME}" *****
-THe "-" is not allowed in the volume name. 
-Check passphrase and config.txt
+	# Sanity check for root volume name
+	if echo ${LVROOTNAME} | grep "-" -i > /dev/null ; then	# "-" is found in the volume name.
+		cat <<- HEREDOC 1>&2
+		***** ERROR : LVROOTNAME is "${LVROOTNAME}" *****
+		THe "-" is not allowed in the volume name. 
+		Check passphrase and config.txt
 
-Installation terminated.
-HEREDOC
+		Installation terminated.
+		HEREDOC
 		return 1
-fi # "-" is found in the volume name.
+	fi # "-" is found in the volume name.
 
-# Sanity check for swap volume name
-if echo ${LVSWAPNAME} | grep "-" -i > /dev/null ; then	# "-" is found in the volume name.
-	cat <<HEREDOC 1>&2
-***** ERROR : LVSWAPNAME is "${LVSWAPNAME}" *****
-THe "-" is not allowed in the volume name. 
-Check passphrase and config.txt
+	# Sanity check for swap volume name
+	if echo ${LVSWAPNAME} | grep "-" -i > /dev/null ; then	# "-" is found in the volume name.
+		cat <<- HEREDOC 1>&2
+		***** ERROR : LVSWAPNAME is "${LVSWAPNAME}" *****
+		THe "-" is not allowed in the volume name. 
+		Check passphrase and config.txt
 
-Installation terminated.
-HEREDOC
+		Installation terminated.
+		HEREDOC
 		return 1
-fi # "-" is found in the volume name.
+	fi # "-" is found in the volume name.
 
-# For surre ask the config.sh is edited
-cat <<HEREDOC
+	# For surre ask the config.sh is edited
+	cat <<- HEREDOC
 
-The destination logical volume label is "${LVROOTNAME}"
-"${LVROOTNAME}" uses ${LVROOTSIZE} of the LVM volume group.
-Are you ready to install? [Y/N]
-HEREDOC
-read YESNO
-if [ ${YESNO} != "Y" -a ${YESNO} != "y" ] ; then
-	cat <<HEREDOC 1>&2
-
-Installation terminated.
-HEREDOC
-	return 1
-fi	# if YES
-
-# For sure ask ready to erase. 
-if [ ${ERASEALL} -eq 1 ] ; then
-	echo "Are you sure you want to erase entire ${DEV}? [Y/N]"
+	The destination logical volume label is "${LVROOTNAME}"
+	"${LVROOTNAME}" uses ${LVROOTSIZE} of the LVM volume group.
+	Are you ready to install? [Y/N]
+	HEREDOC
 	read YESNO
 	if [ ${YESNO} != "Y" -a ${YESNO} != "y" ] ; then
-		cat <<HEREDOC 1>&2
-Check config.sh. The variable ERASEALL is ${ERASEALL}.
+		cat <<- HEREDOC 1>&2
 
-Installation terminated.
-HEREDOC
+		Installation terminated.
+		HEREDOC
 		return 1
 	fi	# if YES
-fi	# if erase all
 
-# ----- Set Passphrase -----
-# Input passphrase
-echo "Type passphrase for the disk encryption."
-read -sr PASSPHRASE
-export PASSPHRASE
+	# For sure ask ready to erase. 
+	if [ ${ERASEALL} -eq 1 ] ; then
+		echo "Are you sure you want to erase entire ${DEV}? [Y/N]"
+		read YESNO
+		if [ ${YESNO} != "Y" -a ${YESNO} != "y" ] ; then
+			cat <<-HEREDOC 1>&2
+		Check config.sh. The variable ERASEALL is ${ERASEALL}.
 
-echo "Type passphrase again, to confirm."
-read -sr PASSPHRASE_C
+		Installation terminated.
+		HEREDOC
+		return 1
+		fi	# if YES
+	fi	# if erase all
 
-# Validate whether both are indentical or not
-if [ ${PASSPHRASE} != ${PASSPHRASE_C} ] ; then
-	cat <<HEREDOC 1>&2
-***** ERROR : Passphrase doesn't match *****
+	# ----- Set Passphrase -----
+	# Input passphrase
+	echo "Type passphrase for the disk encryption."
+	read -sr PASSPHRASE
+	export PASSPHRASE
 
-Installation terminated.
-HEREDOC
-	return 1
-fi	# passphrase validation
+	echo "Type passphrase again, to confirm."
+	read -sr PASSPHRASE_C
 
-# succesfull return
-return 0
+	# Validate whether both are indentical or not
+	if [ ${PASSPHRASE} != ${PASSPHRASE_C} ] ; then
+		cat <<-HEREDOC 1>&2
+		***** ERROR : Passphrase doesn't match *****
+
+		Installation terminated.
+		HEREDOC
+		return 1
+	fi	# passphrase validation
+
+	# succesfull return
+	return 0
 }
