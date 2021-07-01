@@ -45,21 +45,21 @@ fi # "Ubuntu" is not found in the OS name.
 # ******************************************************************************* 
 
 # Common part of the parameter confirmation
-source _confirmation.sh
+source common/_confirmation.sh
 
 # ******************************************************************************* 
 #                                Pre-install stage 
 # ******************************************************************************* 
 
 # Common part of the pre-install stage
-source _preinstall.sh
+source common/_preinstall.sh
 
 # ******************************************************************************* 
 #                                Para-install stage 
 # ******************************************************************************* 
 
 # Show common message to let the operator focus on the critical part
-source _parainstall_msg.sh
+source common/_parainstall_msg.sh
 
 # Ubuntu dependent message
 cat <<HEREDOC
@@ -84,7 +84,7 @@ installer_pid=$!
 # Common part of the para-install. 
 # Record the install PID, modify the /etc/default/grub of the target, 
 # and then, wait for the end of sintaller. 
-source _parainstall.sh
+source common/_parainstall.sh
 
 # ******************************************************************************* 
 #                                Post-install stage 
@@ -108,9 +108,6 @@ mount -a
 # Set up the kernel hook of encryption
 echo "...Install cryptsetup-initramfs package."
 apt -qq install -y cryptsetup-initramfs
-echo "...Register key file to the ramfs"
-echo "KEYFILE_PATTERN=/etc/luks/*.keyfile" >> /etc/cryptsetup-initramfs/conf-hook
-echo "UMASK=0077" >> /etc/initramfs-tools/initramfs.conf
 
 # Prepare a key file to embed in to the ramfs.
 echo "...Prepair key file."
@@ -126,6 +123,11 @@ printf %s "${PASSPHRASE}" | cryptsetup luksAddKey -d - "${DEV}${CRYPTPARTITION}"
 # Add the LUKS volume information to /etc/crypttab to decrypt by kernel.  
 echo "...Add LUKS volume info to /etc/crypttab."
 echo "${CRYPTPARTNAME} UUID=$(blkid -s UUID -o value ${DEV}${CRYPTPARTITION}) /etc/luks/boot_os.keyfile luks,discard" >> /etc/crypttab
+
+# Putting key file into the ramfs initial image
+echo "...Register key file to the ramfs"
+echo "KEYFILE_PATTERN=/etc/luks/*.keyfile" >> /etc/cryptsetup-initramfs/conf-hook
+echo "UMASK=0077" >> /etc/initramfs-tools/initramfs.conf
 
 # Finally, update the ramfs initial image with the key file. 
 echo "...Upadte initramfs."

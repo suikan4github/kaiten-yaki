@@ -45,7 +45,7 @@ fi # "Void" is not found in the OS name.
 # ******************************************************************************* 
 
 # Common part of the parameter confirmation
-source _confirmation.sh
+source common/_confirmation.sh
 
 # ******************************************************************************* 
 #                                Pre-install stage 
@@ -60,7 +60,7 @@ else
 fi
 
 # Common part of the pre-install stage
-source _preinstall.sh
+source common/_preinstall.sh
 
 # ADD "rd.auto=1 cryptdevice=/dev/sda2:${LUKS_NAME} root=/dev/mapper/${VGNAME}-${ROOTNAME}" to GRUB.
 # This is magical part. I have not understood why this is required. 
@@ -74,7 +74,7 @@ sed -i "s#loglevel=4#loglevel=4 rd.auto=1 cryptdevice=/dev/sda2:${LUKS_NAME} roo
 # ******************************************************************************* 
 
 # Show common message to let the operator focus on the critical part
-source _parainstall_msg.sh
+source common/_parainstall_msg.sh
 
 # Ubuntu dependent message
 cat <<HEREDOC
@@ -103,7 +103,7 @@ installer_pid=$!
 # Common part of the para-install. 
 # Record the install PID, modify the /etc/default/grub of the target, 
 # and then, wait for the end of sintaller. 
-source _parainstall.sh
+source common/_parainstall.sh
 
 # ******************************************************************************* 
 #                                Post-install stage 
@@ -143,6 +143,7 @@ printf %s "${PASSPHRASE}" | cryptsetup luksAddKey -d - "${DEV}${CRYPTPARTITION}"
 echo "...Add LUKS volume info to /etc/crypttab."
 echo "${CRYPTPARTNAME} UUID=$(blkid -s UUID -o value ${DEV}${CRYPTPARTITION}) /etc/luks/boot_os.keyfile luks,discard" >> /etc/crypttab
 
+# Putting key file into the ramfs initial image
 echo "...Register key file to the ramfs"
 echo 'install_items+=" /etc/luks/boot_os.keyfile /etc/crypttab " ' > /etc/dracut.conf.d/10-crypt.conf
 
