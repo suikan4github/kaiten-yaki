@@ -32,7 +32,7 @@ function parainstall() {
 
 	# And then, wait for the end of installer process
 	echo "...Waiting for the end of GUI/TUI installer."
-	echo "...Again, DO NOT reboot here. Just exit the GUI/TUI installer."
+	echo "...Again, DO NOT reboot/restart here. Just exit the GUI/TUI installer."
 	wait $INSTALLER_PID
 
 	# succesfull return
