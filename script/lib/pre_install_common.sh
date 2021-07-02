@@ -48,7 +48,7 @@ function pre_install_common() {
 
 	# Check whether successful open. If mapped, it is successful. 
 	if [ ! -e /dev/mapper/${CRYPTPARTNAME} ] ; then 
-		cat <<- HEREDOC 1>&2
+		cat <<- HEREDOC 
 		***** ERROR : Cannot open LUKS volume "${CRYPTPARTNAME}" on ${DEV}${CRYPTPARTITION}. *****
 		...Check passphrase and your config.txt
 
@@ -83,7 +83,7 @@ function pre_install_common() {
 		if [ ${OVERWRITEINSTALL} -eq 1 ] ; then # exist and overwrite install
 			echo "...Logical volume "${VGNAME}-${LVROOTNAME}" already exists. OK."
 		else	# exist and not overwriteinstall
-			cat <<- HEREDOC 1>&2
+			cat <<- HEREDOC 
 			***** ERROR : Logical volume "${VGNAME}-${LVROOTNAME}" already exists. *****
 			...Check LVROOTNAME environment variable in your config.txt.
 			HEREDOC
@@ -91,7 +91,7 @@ function pre_install_common() {
 			vgchange -a n ${VGNAME}
 			echo "...Closing LUKS volume \"${CRYPTPARTNAME}\"."
 			cryptsetup close  ${CRYPTPARTNAME}
-			cat <<- HEREDOC 1>&2
+			cat <<- HEREDOC 
 
 			...Installation process terminated..
 			HEREDOC
@@ -99,7 +99,7 @@ function pre_install_common() {
 		fi
 	else	# not exsit
 		if [ ${OVERWRITEINSTALL} -eq 1 ] ; then
-			cat <<- HEREDOC 1>&2
+			cat <<- HEREDOC 
 			***** ERROR : Logical volume "${VGNAME}-${LVROOTNAME}" doesn't exist while overwrite install. *****
 			...Check consistency of your config.txt.
 			HEREDOC
@@ -107,7 +107,7 @@ function pre_install_common() {
 			vgchange -a n ${VGNAME}
 			echo "...Closing LUKS volume \"${CRYPTPARTNAME}\"."
 			cryptsetup close  ${CRYPTPARTNAME}
-			cat <<- HEREDOC 1>&2
+			cat <<- HEREDOC 
 
 			...Installation process terminated..
 			HEREDOC

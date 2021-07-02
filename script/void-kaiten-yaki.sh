@@ -24,7 +24,7 @@ function main() {
 		HEREDOC
 		read YESNO
 		if [ ${YESNO} != "Y" -a ${YESNO} != "y" ] ; then
-			cat <<- HEREDOC 1>&2
+			cat <<- HEREDOC 
 
 			...Installation process terminated..
 			HEREDOC
@@ -67,7 +67,7 @@ function main() {
 
 	# Show common message to let the operator focus on the critical part
 	para_install_msg_common
-	
+
 	# Void-Linux dependent message
 	cat <<- HEREDOC
 
@@ -96,16 +96,17 @@ function main() {
 	# Check if background checker still exist
 	if ps $grub_check_and_modify_id  > /dev/null ; then	# If exists
 	# If exist, the grub was not modifyed -> void-installer termianted unexpectedly
-		cat <<-HEREDOC 1>&2
-		***** ERROR : The GUI/TUI installer terminated unexpectedly. ***** 
-		...Deleting the new logical volume "${VGNAME}-${LVROOTNAME}".
-		HEREDOC
-		lvremove -f /dev/mapper/${VGNAME}-${LVROOTNAME} 
+
+		echo "***** ERROR : The GUI/TUI installer terminated unexpectedly. *****" 
+		if [ ${OVERWRITEINSTALL} -eq 0 ] ; then	# If not over install, volume is new. So delete it
+			echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}\"."
+			lvremove -f /dev/mapper/${VGNAME}-${LVROOTNAME} 
+		fi
 		echo "...Deactivating all logical volumes in volume group \"${VGNAME}\"."
 		vgchange -a n ${VGNAME}
 		echo "...Closing LUKS volume \"${CRYPTPARTNAME}\"."
 		cryptsetup close  ${CRYPTPARTNAME}
-		cat <<-HEREDOC 1>&2
+		cat <<-HEREDOC 
 
 		...The new logical volume has been deleted. You can retry Kaiten-yaki again. 
 		...Installation process terminated.
