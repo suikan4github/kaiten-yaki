@@ -119,12 +119,12 @@ function main() {
 	# ******************************************************************************* 
 
 	# Finalizing. Embedd encryption key into the ramfs image. 
-	post_install_ubuntu()
+	post_install_void
 
 	# Normal end
 	return 0
 
-}	# End of ())
+}	# End of main()
 
 
 # ******************************************************************************* 
