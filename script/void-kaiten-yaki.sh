@@ -48,7 +48,7 @@ function main() {
 	# ******************************************************************************* 
 
 	# Install essential packages.
-	xbps-install -y -Su xbps gptfdisk xterm
+	xbps-install -y -Su xbps gptfdisk
 
 	# Common part of the pre-install stage
 	if ! pre_install ; then
