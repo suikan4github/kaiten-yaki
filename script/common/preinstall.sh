@@ -61,7 +61,7 @@ function pre_install() {
 	# Check volume group ${VGNAME} exist or not
 	if  vgdisplay -s ${VGNAME} &> /dev/null ; then		# if exist
 		echo "...Volume group ${VGNAME} already exist. Skipped to create. No problem."
-		echo "...Activate all logical volume in volume group ${VGNAME}."
+		echo "...Activate all logical volumes in volume group ${VGNAME}."
 		vgchange -ay
 	else
 		echo "...Initialize a physical volume on \"${CRYPTPARTNAME}\""
@@ -83,6 +83,12 @@ function pre_install() {
 		cat <<- HEREDOC 1>&2
 		***** ERROR : Logical volume "${VGNAME}-${LVROOTNAME}" already exists. *****
 		...Check LVROOTNAME environment variable in config.txt.
+		HEREDOC
+		echo "...Deactivate all logical volumes in volume group \"${VGNAME}\"."
+		vgchange -a n ${VGNAME}
+		echo "...Close LUKS volume \"${CRYPTPARTNAME}\"."
+		cryptsetup close  ${CRYPTPARTNAME}
+		cat <<- HEREDOC 1>&2
 
 		...Installation process terminated..
 		HEREDOC
