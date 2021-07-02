@@ -7,10 +7,10 @@ function pre_install_common() {
 
 
 	# ----- Erase entire disk, create partitions, format them  and encrypt the LUKS partition -----
-	if [ "${ERASEALL}" -eq 1 ] ; then
+	if [ "${ERASEALL}" -ne 0 ] ; then
 
 		# Assign specified space and rest of disk to the EFI and LUKS partition, respectively.
-		if [  "${ISEFI}" -eq 1 ] ; then
+		if [  "${ISEFI}" -ne 0 ] ; then # EFI
 			# Zap existing partition table and create new GPT
 			echo "...Initializing \"${DEV}\" with GPT."
 			sgdisk --zap-all "${DEV}"
@@ -24,7 +24,7 @@ function pre_install_common() {
 			sgdisk --new="${CRYPTPARTITION}":0:0    --change-name="${CRYPTPARTITION}":"Linux LUKS" --typecode="${CRYPTPARTITION}":8309 "${DEV}"
 			# Then print them
 			sgdisk --print "${DEV}"
-		else
+		else # BIOS
 			# Zap existing partition table
 			echo "...Erasing partition table of \"${DEV}\"."
 			dd if=/dev/zero of="${DEV}" bs=512 count=1
@@ -80,7 +80,7 @@ function pre_install_common() {
 
 	# Create a ROOT Logical Volume on VG. 
 	if [ -e /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" ] ; then # exist
-		if [ "${OVERWRITEINSTALL}" -eq 1 ] ; then # exist and overwrite install
+		if [ "${OVERWRITEINSTALL}" -ne 0 ] ; then # exist and overwrite install
 			echo "...Logical volume \"${VGNAME}-${LVROOTNAME}\" already exists. OK."
 		else	# exist and not overwriteinstall
 			cat <<- HEREDOC 
@@ -98,7 +98,7 @@ function pre_install_common() {
 			return 1 # with error status
 		fi
 	else	# not exsit
-		if [ "${OVERWRITEINSTALL}" -eq 1 ] ; then
+		if [ "${OVERWRITEINSTALL}" -ne 0 ] ; then
 			cat <<- HEREDOC 
 			***** ERROR : Logical volume "${VGNAME}-${LVROOTNAME}" doesn't exist while overwrite install. *****
 			...Check consistency of your config.txt.

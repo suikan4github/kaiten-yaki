@@ -14,7 +14,7 @@ function para_install_msg_common() {
 	HEREDOC
 
 	# In the EFI system, add this mapping
-	if [  "${ISEFI}" -eq 1 ] ; then
+	if [  "${ISEFI}" -ne 0 ] ; then
 		echo "/boot/efi        : ${DEV}${EFIPARTITION}"
 	fi
 
@@ -22,7 +22,7 @@ function para_install_msg_common() {
 	echo "/                : /dev/mapper/${VGNAME}-${LVROOTNAME}"
 
 	# In case of erased storage, add this mapping
-	if [ "${ERASEALL}" -eq 1 ] ; then
+	if [ "${ERASEALL}" -ne 0 ] ; then
 		echo "swap             : /dev/mapper/${VGNAME}-${LVSWAPNAME}"
 	fi
 

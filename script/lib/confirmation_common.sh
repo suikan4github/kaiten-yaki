@@ -6,7 +6,7 @@
 function confirmation_common(){
 
 	# Consistency check for the OVERWRITEINSTALL and ERASEALL
-	if [ "${ERASEALL}" -eq 1 ] && [ "${OVERWRITEINSTALL}" -eq 1 ] ; then 
+	if [ "${ERASEALL}" -ne 0 ] && [ "${OVERWRITEINSTALL}" -ne 0 ] ; then 
 		cat <<- HEREDOC 
 		***** ERROR : Confliction between ERASEALL and OVERWRITEINSTALL *****
 		...ERASEALL = ${ERASEALL}
@@ -71,7 +71,7 @@ function confirmation_common(){
 	fi	# if YES
 
 	# For sure ask to be sure to erase. 
-	if [ "${ERASEALL}" -eq 1 ] ; then
+	if [ "${ERASEALL}" -ne 0 ] ; then
 		echo "Are you sure you want to erase entire ${DEV}? [Y/N]"
 		read -r YESNO
 		if [ "${YESNO}" != "Y" ] && [ "${YESNO}" != "y" ] ; then
