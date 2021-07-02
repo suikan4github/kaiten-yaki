@@ -61,7 +61,7 @@ function pre_install() {
 	# Check volume group ${VGNAME} exist or not
 	if  vgdisplay -s ${VGNAME} &> /dev/null ; then		# if exist
 		echo "...Volume group ${VGNAME} already exist. Skipped to create. No problem."
-		echo "...Activating all logical volumes in volume group ${VGNAME}."
+		echo "...Activating all logical volumes in volume group \"${VGNAME}\"."
 		vgchange -ay
 	else
 		echo "...Initializing a physical volume on \"${CRYPTPARTNAME}\""
