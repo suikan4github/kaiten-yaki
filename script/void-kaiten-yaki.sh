@@ -88,7 +88,7 @@ function main() {
 	grub_check_and_modify &
 
 	# Record the PID of the background checker. 
-	grub_check_and_modify_id = $!
+	grub_check_and_modify_id=$!
 
 	# Start void-installer 
 	void-installer 
