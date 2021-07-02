@@ -15,7 +15,7 @@ function confirmation(){
 
 		...Installation process terminated..
 		HEREDOC
-
+		return 1 # with error status
 	fi
 
 	# Sanity check for volume group name
