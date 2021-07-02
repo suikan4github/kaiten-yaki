@@ -1,6 +1,6 @@
 #!/bin/bash -u
 
-function main() {
+	# shellcheck disable=SC1091
 	# Load configuration parameter
 	source config.sh
 
@@ -9,6 +9,7 @@ function main() {
 	source lib/pre_install_common.sh
 	source lib/para_install_msg_common.sh
 
+function main() {
 
 	# This is the mount point of the install target. 
 	export TARGETMOUNTPOINT="/mnt/target"
@@ -22,8 +23,8 @@ function main() {
 		This system seems to be not Void Linux, while this script is dediated to the Void Linux.
 		Are you sure you want to run this script for installation? [Y/N]
 		HEREDOC
-		read YESNO
-		if [ ${YESNO} != "Y" -a ${YESNO} != "y" ] ; then
+		read -r YESNO
+		if [ "${YESNO}" != "Y" ] && [ "${YESNO}" != "y" ] ; then
 			cat <<- HEREDOC 
 
 			...Installation process terminated..
@@ -81,7 +82,7 @@ function main() {
 	HEREDOC
 
 	# waitfor a console input
-	read dummy_var
+	read -r
 
 	# Start the background target/etc/default/grub cheker.
 	# The definition of this function is down below.
@@ -98,14 +99,14 @@ function main() {
 	# If exist, the grub was not modifyed -> void-installer termianted unexpectedly
 
 		echo "***** ERROR : The GUI/TUI installer terminated unexpectedly. *****" 
-		if [ ${OVERWRITEINSTALL} -eq 0 ] ; then	# If not over install, volume is new. So delete it
+		if [ "${OVERWRITEINSTALL}" -eq 0 ] ; then	# If not over install, volume is new. So delete it
 			echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}\"."
-			lvremove -f /dev/mapper/${VGNAME}-${LVROOTNAME} 
+			lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" 
 		fi
 		echo "...Deactivating all logical volumes in volume group \"${VGNAME}\"."
-		vgchange -a n ${VGNAME}
+		vgchange -a n "${VGNAME}"
 		echo "...Closing LUKS volume \"${CRYPTPARTNAME}\"."
-		cryptsetup close  ${CRYPTPARTNAME}
+		cryptsetup close  "${CRYPTPARTNAME}"
 		cat <<-HEREDOC 
 
 		...The new logical volume has been deleted. You can retry Kaiten-yaki again. 
@@ -133,7 +134,7 @@ function post_install() {
 	## Mount the target file system
 	# ${TARGETMOUNTPOINT} is created by the GUI/TUI installer
 	echo "...Mounting /dev/mapper/${VGNAME}-${LVROOTNAME} on ${TARGETMOUNTPOINT}."
-	mount /dev/mapper/${VGNAME}-${LVROOTNAME} ${TARGETMOUNTPOINT}
+	mount /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" ${TARGETMOUNTPOINT}
 
 	# And mount other directories
 	echo "...Mounting all other dirs."
@@ -162,7 +163,7 @@ function post_install() {
 
 	# Add the LUKS volume information to /etc/crypttab to decrypt by kernel.  
 	echo "...Adding LUKS volume info to /etc/crypttab."
-	echo "${CRYPTPARTNAME} UUID=$(blkid -s UUID -o value ${DEV}${CRYPTPARTITION}) /etc/luks/boot_os.keyfile luks,discard" >> /etc/crypttab
+	echo "${CRYPTPARTNAME} UUID=$(blkid -s UUID -o value "${DEV}""${CRYPTPARTITION}") /etc/luks/boot_os.keyfile luks,discard" >> /etc/crypttab
 
 	# Putting key file into the ramfs initial image
 	echo "...Registering key file to the ramfs"

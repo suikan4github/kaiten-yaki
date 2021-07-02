@@ -6,7 +6,7 @@
 function confirmation_common(){
 
 	# Consistency check for the OVERWRITEINSTALL and ERASEALL
-	if [ ${ERASEALL} -eq 1 -a ${OVERWRITEINSTALL} -eq 1 ] ; then 
+	if [ "${ERASEALL}" -eq 1 ] && [ "${OVERWRITEINSTALL}" -eq 1 ] ; then 
 		cat <<- HEREDOC 
 		***** ERROR : Confliction between ERASEALL and OVERWRITEINSTALL *****
 		...ERASEALL = ${ERASEALL}
@@ -19,7 +19,7 @@ function confirmation_common(){
 	fi
 
 	# Sanity check for volume group name
-	if echo ${VGNAME} | grep "-" -i > /dev/null ; then	# "-" is found in the volume group name.
+	if echo "${VGNAME}" | grep "-" -i > /dev/null ; then	# "-" is found in the volume group name.
 		cat <<- HEREDOC 
 		***** ERROR : VGNAME is "${VGNAME}" *****
 		..."-" is not allowed in the volume name. 
@@ -31,7 +31,7 @@ function confirmation_common(){
 	fi # "-" is found in the volume group name.
 
 	# Sanity check for root volume name
-	if echo ${LVROOTNAME} | grep "-" -i > /dev/null ; then	# "-" is found in the volume name.
+	if echo "${LVROOTNAME}" | grep "-" -i > /dev/null ; then	# "-" is found in the volume name.
 		cat <<- HEREDOC 
 		***** ERROR : LVROOTNAME is "${LVROOTNAME}" *****
 		..."-" is not allowed in the volume name. 
@@ -43,7 +43,7 @@ function confirmation_common(){
 	fi # "-" is found in the volume name.
 
 	# Sanity check for swap volume name
-	if echo ${LVSWAPNAME} | grep "-" -i > /dev/null ; then	# "-" is found in the volume name.
+	if echo "${LVSWAPNAME}" | grep "-" -i > /dev/null ; then	# "-" is found in the volume name.
 		cat <<- HEREDOC 
 		***** ERROR : LVSWAPNAME is "${LVSWAPNAME}" *****
 		..."-" is not allowed in the volume name. 
@@ -61,8 +61,8 @@ function confirmation_common(){
 	"${LVROOTNAME}" uses ${LVROOTSIZE} of the LVM volume group.
 	Are you sure to install? [Y/N]
 	HEREDOC
-	read YESNO
-	if [ ${YESNO} != "Y" -a ${YESNO} != "y" ] ; then
+	read -r YESNO
+	if [ "${YESNO}" != "Y" ] && [ "${YESNO}" != "y" ] ; then
 		cat <<- HEREDOC 
 
 		...Installation process terminated..
@@ -71,10 +71,10 @@ function confirmation_common(){
 	fi	# if YES
 
 	# For sure ask to be sure to erase. 
-	if [ ${ERASEALL} -eq 1 ] ; then
+	if [ "${ERASEALL}" -eq 1 ] ; then
 		echo "Are you sure you want to erase entire ${DEV}? [Y/N]"
-		read YESNO
-		if [ ${YESNO} != "Y" -a ${YESNO} != "y" ] ; then
+		read -r YESNO
+		if [ "${YESNO}" != "Y" ] && [ "${YESNO}" != "y" ] ; then
 			cat <<-HEREDOC 
 		...Check your config.sh. The variable ERASEALL is ${ERASEALL}.
 
@@ -95,7 +95,7 @@ function confirmation_common(){
 	read -sr PASSPHRASE_C
 
 	# Validate whether both are indentical or not
-	if [ ${PASSPHRASE} != ${PASSPHRASE_C} ] ; then
+	if [ "${PASSPHRASE}" != "${PASSPHRASE_C}" ] ; then
 		cat <<-HEREDOC 
 		***** ERROR : Passphrase doesn't match *****
 
