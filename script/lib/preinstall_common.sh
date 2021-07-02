@@ -3,7 +3,7 @@
 #                                Pre-install stage 
 # ******************************************************************************* 
 
-function pre_install() {
+function pre_install_common() {
 
 
 	# ----- Erase entire disk, create partitions, format them  and encrypt the LUKS partition -----

@@ -5,9 +5,9 @@ function main() {
 	source config.sh
 
 	# Load functions
-	source lib/confirmation.sh
-	source lib/preinstall.sh
-	source lib/parainstall_msg.sh
+	source lib/confirmation_common.sh
+	source lib/pre_install_common.sh
+	source lib/para_install_msg_common.sh
 
 
 	# This is the mount point of the install target. 
@@ -38,7 +38,7 @@ function main() {
 	# ******************************************************************************* 
 
 	# Common part of the parameter confirmation
-	if ! confirmation ; then
+	if ! confirmation_common ; then
 		return 1 # with error status
 	fi
 
@@ -50,7 +50,7 @@ function main() {
 	xbps-install -y -Su xbps gptfdisk
 
 	# Common part of the pre-install stage
-	if ! pre_install ; then
+	if ! pre_install_common ; then
 		return 1 # with error status
 	fi
 
@@ -66,7 +66,8 @@ function main() {
 	# ******************************************************************************* 
 
 	# Show common message to let the operator focus on the critical part
-	parainstall_msg
+	para_install_msg_common
+	
 	# Void-Linux dependent message
 	cat <<- HEREDOC
 
@@ -112,14 +113,12 @@ function main() {
 		return 1 # with error status
 	fi
 
-	# At here, the installation was successful. 
-
 	# ******************************************************************************* 
 	#                                Post-install stage 
 	# ******************************************************************************* 
 
 	# Finalizing. Embedd encryption key into the ramfs image. 
-	post_install_void
+	post_install
 
 	# Normal end
 	return 0
@@ -129,7 +128,7 @@ function main() {
 
 # ******************************************************************************* 
 # Void Linux dependent post-installation process
-function post_install_void() {
+function post_install() {
 	## Mount the target file system
 	# ${TARGETMOUNTPOINT} is created by the GUI/TUI installer
 	echo "...Mounting /dev/mapper/${VGNAME}-${LVROOTNAME} on ${TARGETMOUNTPOINT}."
@@ -192,7 +191,7 @@ function post_install_void() {
 
 	retrun 0
 	
-} # End of post_install_void()
+} # End of post_install()
 
 
 # ******************************************************************************* 
@@ -217,7 +216,7 @@ function grub_check_and_modify_void() {
 	# succesfull return
 	return 0
 
-} # gurb_check_and_modify_void()
+} # grub_check_and_modify()
 
 # ******************************************************************************* 
 # Execute

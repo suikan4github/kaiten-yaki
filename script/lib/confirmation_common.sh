@@ -3,7 +3,7 @@
 #                        Confirmation and Passphrase setting 
 # ******************************************************************************* 
 
-function confirmation(){
+function confirmation_common(){
 
 	# Consistency check for the OVERWRITEINSTALL and ERASEALL
 	if [ ${ERASEALL} -eq 1 -a ${OVERWRITEINSTALL} -eq 1 ] ; then 

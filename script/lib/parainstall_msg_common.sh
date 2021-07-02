@@ -1,6 +1,6 @@
 #!/bin/bash -u
 
-function parainstall_msg() {
+function para_install_msg_common() {
 
 	cat <<- HEREDOC
 	******************************************************************************

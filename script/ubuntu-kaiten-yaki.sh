@@ -5,9 +5,9 @@ function main() {
 	source config.sh
 
 	# Load functions
-	source lib/confirmation.sh
-	source lib/preinstall.sh
-	source lib/parainstall_msg.sh
+	source lib/confirmation_common.sh
+	source lib/pre_install_common.sh
+	source lib/para_install_msg_common.sh
 
 
 	# This is the mount point of the install target. 
@@ -38,7 +38,7 @@ function main() {
 	# ******************************************************************************* 
 
 	# Common part of the parameter confirmation
-	if ! confirmation ; then
+	if ! confirmation_common ; then
 		return 1 # with error status
 	fi
 
@@ -47,7 +47,7 @@ function main() {
 	# ******************************************************************************* 
 
 	# Common part of the pre-install stage
-	if ! pre_install ; then
+	if ! pre_install_common ; then
 		return 1 # with error status
 	fi
 
@@ -57,7 +57,7 @@ function main() {
 	# ******************************************************************************* 
 
 	# Show common message to let the operator focus on the critical part
-	parainstall_msg
+	para_install_msg_common
 
 	# Ubuntu dependent message
 	cat <<- HEREDOC
@@ -80,10 +80,10 @@ function main() {
 	# Record the PID of the installer. 
 	export INSTALLER_PID=$!
 
-	# Common part of the para-install. 
+
 	# Record the install PID, modify the /etc/default/grub of the target, 
-	# and then, wait for the end of sintaller. 
-	if ! grub_check_and_modify_ubuntu ; then
+	# and then, wait for the end of the intaller. 
+	if ! grub_check_and_modify ; then
 		return 1 # with error status
 	fi
 
@@ -92,7 +92,7 @@ function main() {
 	# ******************************************************************************* 
 
 	# Finalizing. Embedd encryption key into the ramfs image. 
-	post_install_ubuntu
+	post_install
 
 	# Normal end
 	return 0
@@ -102,7 +102,7 @@ function main() {
 
 # ******************************************************************************* 
 # Ubuntu dependent post-installation process
-function post_install_ubuntu() {
+function post_install() {
 	## Mount the target file system
 	# ${TARGETMOUNTPOINT} is created by the GUI/TUI installer
 	echo "...Mounting /dev/mapper/${VGNAME}-${LVROOTNAME} on ${TARGETMOUNTPOINT}."
@@ -162,12 +162,12 @@ function post_install_ubuntu() {
 
 	retrun 0
 
-} # End of post_install_ubuntu()
+} # End of post_install()
 
 
 # ******************************************************************************* 
 # This function will be executed in the foreguround context, to watch the GUI installer. 
-function grub_check_and_modify_ubuntu() {
+function grub_check_and_modify() {
 
 	# While the /etc/default/grub in the install target is NOT existing, keep sleeping.
 	# If installer terminated without file copy, this script also terminates.
@@ -211,7 +211,7 @@ function grub_check_and_modify_ubuntu() {
 	# succesfull return
 	return 0
 
-} # grub_check_and_modify_ubuntu()
+} # grub_check_and_modify()
 
 # ******************************************************************************* 
 # Execute
