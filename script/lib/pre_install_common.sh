@@ -16,11 +16,13 @@ function pre_install_common() {
 			sgdisk --zap-all "${DEV}"
 			# Create EFI partition and format it
 			echo "...Creating an EFI partition on \"${DEV}\"."
+			# shellcheck disable=SC2140
 			sgdisk --new="${EFIPARTITION}":0:+"${EFISIZE}" --change-name="${EFIPARTITION}":"EFI System"  --typecode="${EFIPARTITION}":ef00 "${DEV}"  
 			echo "...Formatting the EFI parttion."
 			mkfs.vfat -F 32 -n EFI-SP "${DEV}${EFIPARTITION}"
 			# Create Linux partition
 			echo "...Creating a Linux partition on ${DEV}."
+			# shellcheck disable=SC2140
 			sgdisk --new="${CRYPTPARTITION}":0:0    --change-name="${CRYPTPARTITION}":"Linux LUKS" --typecode="${CRYPTPARTITION}":8309 "${DEV}"
 			# Then print them
 			sgdisk --print "${DEV}"
