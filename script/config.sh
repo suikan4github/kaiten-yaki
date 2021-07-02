@@ -26,6 +26,10 @@ export CRYPTPARTNAME="luks_volume"
 export VGNAME="vg1"
 export LVSWAPNAME="swap"
 
+# Do not touch this parameter, unless you understand precisely what you are doing.
+# 1 : Overwrite the existing logical volume as root vlume. 0 : Create new logical volume as root volume. 
+export OVERWRITEINSTALL=0
+
 # Void Linux only. Ignored in Ubuntu.
 # The font size of the void-installer
 export XTERMFONTSIZE=11

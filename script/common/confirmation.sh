@@ -5,12 +5,25 @@
 
 function confirmation(){
 
+	# Consistency check for the OVERWRITEINSTALL and ERASEALL
+	if [ ${ERASEALL} -eq 1 -a ${OVERWRITEINSTALL} -eq 1 ] ; then 
+		cat <<- HEREDOC 1>&2
+		***** ERROR : Confliction between ERASEALL and OVERWRITEINATALL *****
+		...ERASEALL = ${ERASEALL}
+		...OVERWRITEINSTALL = ${OVERWRITEINSTALL}
+		...Check configuration in config.txt
+
+		...Installation process terminated..
+		HEREDOC
+
+	fi
+
 	# Sanity check for volume group name
 	if echo ${VGNAME} | grep "-" -i > /dev/null ; then	# "-" is found in the volume group name.
 		cat <<- HEREDOC 1>&2
 		***** ERROR : VGNAME is "${VGNAME}" *****
 		..."-" is not allowed in the volume name. 
-		...Check passphrase and config.txt
+		...Check configuration in config.txt
 
 		...Installation process terminated..
 		HEREDOC
@@ -22,7 +35,7 @@ function confirmation(){
 		cat <<- HEREDOC 1>&2
 		***** ERROR : LVROOTNAME is "${LVROOTNAME}" *****
 		..."-" is not allowed in the volume name. 
-		...Check passphrase and config.txt
+		...Check configuration in config.txt
 
 		...Installation process terminated..
 		HEREDOC
@@ -34,7 +47,7 @@ function confirmation(){
 		cat <<- HEREDOC 1>&2
 		***** ERROR : LVSWAPNAME is "${LVSWAPNAME}" *****
 		..."-" is not allowed in the volume name. 
-		...Check passphrase and config.txt
+		...Check configuration in config.txt
 
 		...Installation process terminated..
 		HEREDOC

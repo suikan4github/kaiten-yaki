@@ -79,24 +79,45 @@ function pre_install() {
 	fi	# if /dev/mapper/swap volume already exit. 
 
 	# Create a ROOT Logical Volume on VG. 
-	if [ -e /dev/mapper/${VGNAME}-${LVROOTNAME} ] ; then 
-		cat <<- HEREDOC 1>&2
-		***** ERROR : Logical volume "${VGNAME}-${LVROOTNAME}" already exists. *****
-		...Check LVROOTNAME environment variable in config.txt.
-		HEREDOC
-		echo "...Deactivate all logical volumes in volume group \"${VGNAME}\"."
-		vgchange -a n ${VGNAME}
-		echo "...Close LUKS volume \"${CRYPTPARTNAME}\"."
-		cryptsetup close  ${CRYPTPARTNAME}
-		cat <<- HEREDOC 1>&2
+	if [ -e /dev/mapper/${VGNAME}-${LVROOTNAME} ] ; then # exist
+		if [ ${OVERWRITEINATALL} -eq 1 ] ; then # exist and overwrite install
+			echo "...Logical volume "${VGNAME}-${LVROOTNAME}" already exists. OK."
+		else	# exist and not overwriteinstall
+			cat <<- HEREDOC 1>&2
+			***** ERROR : Logical volume "${VGNAME}-${LVROOTNAME}" already exists. *****
+			...Check LVROOTNAME environment variable in config.txt.
+			HEREDOC
+			echo "...Deactivate all logical volumes in volume group \"${VGNAME}\"."
+			vgchange -a n ${VGNAME}
+			echo "...Close LUKS volume \"${CRYPTPARTNAME}\"."
+			cryptsetup close  ${CRYPTPARTNAME}
+			cat <<- HEREDOC 1>&2
 
-		...Installation process terminated..
-		HEREDOC
-		return 1 # with error status
-	else
-		echo "...Create logical volume \"${LVROOTNAME}\" on \"${VGNAME}\"."
-		lvcreate -l ${LVROOTSIZE} -n ${LVROOTNAME} ${VGNAME}
-	fi	# if the root volun already exist
+			...Installation process terminated..
+			HEREDOC
+			return 1 # with error status
+		fi
+	else	# not exsit
+		if [ ${OVERWRITEINATALL} -eq 1 ] ; then
+			cat <<- HEREDOC 1>&2
+			***** ERROR : Logical volume "${VGNAME}-${LVROOTNAME}" doesn't exist while overwrite install. *****
+			...Check consistency of config.txt.
+			HEREDOC
+			echo "...Deactivate all logical volumes in volume group \"${VGNAME}\"."
+			vgchange -a n ${VGNAME}
+			echo "...Close LUKS volume \"${CRYPTPARTNAME}\"."
+			cryptsetup close  ${CRYPTPARTNAME}
+			cat <<- HEREDOC 1>&2
+
+			...Installation process terminated..
+			HEREDOC
+			return 1 # with error status
+		else # not exist and not overwrite install
+			echo "...Create logical volume \"${LVROOTNAME}\" on \"${VGNAME}\"."
+			lvcreate -l ${LVROOTSIZE} -n ${LVROOTNAME} ${VGNAME}
+		fi
+	fi
+
 
 	# successful return
 	return 0
