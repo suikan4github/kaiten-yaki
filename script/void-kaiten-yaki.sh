@@ -68,7 +68,7 @@ function main() {
 
 	# Show common message to let the operator focus on the critical part
 	parainstall_msg
-	# Ubuntu dependent message
+	# Void-Linux dependent message
 	cat <<- HEREDOC
 
 	************************ CAUTION! CAUTION! CAUTION! ****************************
