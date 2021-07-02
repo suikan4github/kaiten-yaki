@@ -7,7 +7,7 @@ function main() {
 	# Load functions
 	source lib/confirmation.sh
 	source lib/preinstall.sh
-	source lib/parainstall.sh
+	# source lib/parainstall.sh # we have customized parainstall
 	source lib/parainstall_msg.sh
 
 
@@ -83,18 +83,37 @@ function main() {
 	# waitfor a console input
 	read dummy_var
 
-	# Start void-installer in the separate window
-	xterm -fa monospace -fs ${XTERMFONTSIZE} -e void-installer &
-	
-	# Record the PID of the installer. 
-	export INSTALLER_PID=$!
+	# Start the background target/etc/default/grub cheker.
+	# The definition of this function is down below.
+	grub_check_and_modify &
 
-	# Common part of the para-install. 
-	# Record the install PID, modify the /etc/default/grub of the target, 
-	# and then, wait for the end of sintaller. 
-	if ! parainstall ; then
+	# Record the PID of the background checker. 
+	grub_check_and_modify_id = $!
+
+	# Start void-installer 
+	void-installer 
+	
+	# Check if background checker still exist
+	if ps $grub_check_and_modify_id  > /dev/null ; then	# If exists
+	# If exist, the grub was not modifyed -> void-installer termianted unexpectedly
+		cat <<-HEREDOC 1>&2
+		***** ERROR : The GUI/TUI installer terminated unexpectedly. ***** 
+		...Deleting the new logical volume "${VGNAME}-${LVROOTNAME}".
+		HEREDOC
+		lvremove -f /dev/mapper/${VGNAME}-${LVROOTNAME} 
+		echo "...Deactivating all logical volumes in volume group \"${VGNAME}\"."
+		vgchange -a n ${VGNAME}
+		echo "...Closing LUKS volume \"${CRYPTPARTNAME}\"."
+		cryptsetup close  ${CRYPTPARTNAME}
+		cat <<-HEREDOC 1>&2
+
+		...The new logical volume has been deleted. You can retry Kaiten-yaki again. 
+		...Installation process terminated.
+		HEREDOC
 		return 1 # with error status
 	fi
+
+	# At here, the installation was successful. 
 
 	# ******************************************************************************* 
 	#                                Post-install stage 
@@ -163,6 +182,30 @@ function main() {
 	# Normal end
 	return 0
 }
+
+
+# This function will be executed in the background context, to watch the TUI installer. 
+function grub_check_and_modify() {
+
+	# While the /etc/default/grub in the install target is NOT existing, keep sleeping.
+	# If installer terminated without file copy, this script also terminates.
+	while [ ! -e ${TARGETMOUNTPOINT}/etc/default/grub ]
+	do
+		sleep 1 # 1sec.
+	done # while
+
+	# Perhaps, too neuvous. Wait 1 more sectond to avoid the rece condition.
+	sleep 1 # 1sec.
+
+	# Make target GRUB aware to the crypt partition
+	# This must do it after start of the file copy by installer, but before the end of the file copy.
+	echo "...Adding GRUB_ENABLE_CRYPTODISK entry to ${TARGETMOUNTPOINT}/etc/default/grub "
+	echo "GRUB_ENABLE_CRYPTODISK=y" >> ${TARGETMOUNTPOINT}/etc/default/grub
+
+	# succesfull return
+	return 0
+
+} # para install
 
 # Execute
 main
