@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Configuration parameters for Kaiten-Yaki 
 
 # Storage device to install the linux.  
