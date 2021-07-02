@@ -1,4 +1,4 @@
-# Kaiten-yaki : Yet another Full Disk Encryption for GRUB/Linux
+# Kaiten-yaki : Yet another full disk encryption for GRUB/Linux
 Kaiten-yaki is a script set to help you to make a full disk encryption install to your desktop system.
 
 Followings are the list of functionality. 
