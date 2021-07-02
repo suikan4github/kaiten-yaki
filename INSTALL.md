@@ -49,6 +49,8 @@ Followings are set of the default settings of the parameters :
 - Create a logical volume named **"anko"** for / in the "vg1". The size of the **50%** of the entire free space (LVROOTNAME, LVROOTSIZE).
 
 ```bash
+# Configuration parameters for Kaiten-Yaki 
+
 # Storage device to install the linux.  
 export DEV="/dev/sda"
 
@@ -75,6 +77,10 @@ export CRYPTPARTNAME="luks_volume"
 export VGNAME="vg1"
 export LVSWAPNAME="swap"
 
+# Do not touch this parameter, unless you understand precisely what you are doing.
+# 1 : Overwrite the existing logical volume as root vlume. 0 : Create new logical volume as root volume. 
+export OVERWRITEINSTALL=0
+
 # Void Linux only. Ignored in Ubuntu.
 # The font size of the void-installer
 export XTERMFONTSIZE=11
@@ -87,6 +93,24 @@ There are several restrictions :
 - The EFISIZE and the LVSWAPSIZE are refereed during the first distribution installation only. 
 - The LVROOTSIZE is the size of a logical volume to create. This is a relative value to the existing free space in the volume group. If you want to install 3 distributions in a computer, you may want to set 33%FREE, 50%FREE, and 100%FREE for the first, second, and third distribution installation, respectively. 
 - The name with "-" is not allowed for the VGNAME, LVROOTNAME, and LVSWAPNAME. I saw some installed doesn't work if "-" in in the name. 
+## About overwrite install
+The OVERWRITEINSTALL parameter allow you to use an existing logical volume as root volume of the new installation.
+This is very danger because of the several aspect like, destroying wrong volume and security. But sometimes it is
+very useful. 
+
+For example, if you reboot the system at the end of GUI/TUI installer by mistake, your system will never boot again. 
+In this case, the overwrite install recycle this "bad" logical volume and let your system boot again. 
+
+To use the overwrite install, you have to set the as following : 
+- ERASEALL : 0
+- OVERWRITEINSTALL : 1
+
+And set following parameters as same as previous installation. 
+- LVROOTNAME
+- VGNAME
+- CRYPTPARTNAME
+
+So, Kaitenyaki will leave the "bad" logical volume and allow you to overwrite it by GUI/TUI installer. 
 ## First stage : Setting up the volumes
 After you set the configuration parameters correctly, execute the following command from the shell. Again, you have to be promoted as root user, and you have to use Bash.  
 

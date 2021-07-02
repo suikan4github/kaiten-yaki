@@ -1,4 +1,4 @@
-# Configuration parameters for YaFDE 
+# Configuration parameters for Kaiten-Yaki 
 
 # Storage device to install the linux.  
 export DEV="/dev/sda"
