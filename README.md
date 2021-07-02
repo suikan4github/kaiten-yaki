@@ -28,6 +28,7 @@ These scripts are tested with following environment.
 - Ubuntu Mate 20.04.2 amd64 desktop
 - void-live-x86_64-20210218-mate.iso
 - void-live-x86_64-musl-20210218-mate.iso
+- void-live-x86_64-20210218.iso
 
 # Installation
 Start the PC with the LiveCD/LiveUSB of the distribution to install. Download this repository from github, and expand it. 
@@ -39,8 +40,6 @@ If you install two or more Void Linux in to the EFI system, only the last one ca
 
 # Variants considerations
 Ubuntu has several variants ( flavors ). While I have tested only MATE flavor, other flavor may work correctly as far as it uses Ubiquity installer.
-
-Void Linux has "base" variant which doesn't have GUI. Kaiten-yaki can't run correctly without GUI. 
 
 # Acknowledgments
 These scripts are based on the script shared on the [myn's diary](https://myn.hatenablog.jp/entry/install-ubuntu-focal-with-lvm-on-luks). That page contains rich information, hint and techniques around the encrypted volume and Ubiquity installer. 
