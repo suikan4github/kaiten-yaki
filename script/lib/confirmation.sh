@@ -11,7 +11,7 @@ function confirmation(){
 		***** ERROR : Confliction between ERASEALL and OVERWRITEINSTALL *****
 		...ERASEALL = ${ERASEALL}
 		...OVERWRITEINSTALL = ${OVERWRITEINSTALL}
-		...Check configuration in config.txt
+		...Check configuration in your config.sh
 
 		...Installation process terminated..
 		HEREDOC
@@ -23,7 +23,7 @@ function confirmation(){
 		cat <<- HEREDOC 1>&2
 		***** ERROR : VGNAME is "${VGNAME}" *****
 		..."-" is not allowed in the volume name. 
-		...Check configuration in config.txt
+		...Check configuration in your config.sh
 
 		...Installation process terminated..
 		HEREDOC
@@ -35,7 +35,7 @@ function confirmation(){
 		cat <<- HEREDOC 1>&2
 		***** ERROR : LVROOTNAME is "${LVROOTNAME}" *****
 		..."-" is not allowed in the volume name. 
-		...Check configuration in config.txt
+		...Check configuration in your config.sh
 
 		...Installation process terminated..
 		HEREDOC
@@ -47,19 +47,19 @@ function confirmation(){
 		cat <<- HEREDOC 1>&2
 		***** ERROR : LVSWAPNAME is "${LVSWAPNAME}" *****
 		..."-" is not allowed in the volume name. 
-		...Check configuration in config.txt
+		...Check configuration in your config.sh
 
 		...Installation process terminated..
 		HEREDOC
 		return 1 # with error status
 	fi # "-" is found in the volume name.
 
-	# For surre ask the config.sh is edited
+	# For surre ask the your config.sh is edited
 	cat <<- HEREDOC
 
 	The destination logical volume label is "${LVROOTNAME}"
 	"${LVROOTNAME}" uses ${LVROOTSIZE} of the LVM volume group.
-	Are you ready to install? [Y/N]
+	Are you sure to install? [Y/N]
 	HEREDOC
 	read YESNO
 	if [ ${YESNO} != "Y" -a ${YESNO} != "y" ] ; then
@@ -70,13 +70,13 @@ function confirmation(){
 		return 1 # with error status
 	fi	# if YES
 
-	# For sure ask ready to erase. 
+	# For sure ask to be sure to erase. 
 	if [ ${ERASEALL} -eq 1 ] ; then
 		echo "Are you sure you want to erase entire ${DEV}? [Y/N]"
 		read YESNO
 		if [ ${YESNO} != "Y" -a ${YESNO} != "y" ] ; then
 			cat <<-HEREDOC 1>&2
-		...Check config.sh. The variable ERASEALL is ${ERASEALL}.
+		...Check your config.sh. The variable ERASEALL is ${ERASEALL}.
 
 		...Installation process terminated..
 		HEREDOC

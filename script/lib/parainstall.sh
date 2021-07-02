@@ -15,16 +15,16 @@ function parainstall() {
 		if ! ps $INSTALLER_PID  > /dev/null ; then	# If not exists
 			cat <<-HEREDOC 1>&2
 			***** ERROR : The GUI/TUI installer terminated unexpectedly. ***** 
-			...Delete the new logical volume "${VGNAME}-${LVROOTNAME}".
+			...Deleting the new logical volume "${VGNAME}-${LVROOTNAME}".
 			HEREDOC
 			lvremove -f /dev/mapper/${VGNAME}-${LVROOTNAME} 
-			echo "...Deactivate all logical volumes in volume group \"${VGNAME}\"."
+			echo "...Deactivating all logical volumes in volume group \"${VGNAME}\"."
 			vgchange -a n ${VGNAME}
-			echo "...Close LUKS volume \"${CRYPTPARTNAME}\"."
+			echo "...Closing LUKS volume \"${CRYPTPARTNAME}\"."
 			cryptsetup close  ${CRYPTPARTNAME}
 			cat <<-HEREDOC 1>&2
 
-			...The new logical volume is deleted. You can start Kaiten-yaki again. 
+			...The new logical volume has been deleted. You can retry Kaiten-yaki again. 
 			...Installation process terminated.
 			HEREDOC
 			return 1 # with error status
@@ -36,7 +36,7 @@ function parainstall() {
 
 	# Make target GRUB aware to the crypt partition
 	# This must do it after start of the file copy by installer, but before the end of the file copy.
-	echo "...Add GRUB_ENABLE_CRYPTODISK entry to ${TARGETMOUNTPOINT}/etc/default/grub "
+	echo "...Adding GRUB_ENABLE_CRYPTODISK entry to ${TARGETMOUNTPOINT}/etc/default/grub "
 	echo "GRUB_ENABLE_CRYPTODISK=y" >> ${TARGETMOUNTPOINT}/etc/default/grub
 
 	# And then, wait for the end of installer process

@@ -94,11 +94,11 @@ function main() {
 
 	## Mount the target file system
 	# ${TARGETMOUNTPOINT} is created by the GUI/TUI installer
-	echo "...Mount /dev/mapper/${VGNAME}-${LVROOTNAME} on ${TARGETMOUNTPOINT}."
+	echo "...Mounting /dev/mapper/${VGNAME}-${LVROOTNAME} on ${TARGETMOUNTPOINT}."
 	mount /dev/mapper/${VGNAME}-${LVROOTNAME} ${TARGETMOUNTPOINT}
 
 	# And mount other directories
-	echo "...Mount all other dirs."
+	echo "...Mounting all other dirs."
 	for n in proc sys dev etc/resolv.conf; do mount --rbind "/$n" "${TARGETMOUNTPOINT}/$n"; done
 
 	# Change root and create the keyfile and ramfs image for Linux kernel. 
@@ -108,38 +108,38 @@ function main() {
 	mount -a
 
 	# Set up the kernel hook of encryption
-	echo "...Install cryptsetup-initramfs package."
+	echo "...Installing cryptsetup-initramfs package."
 	apt -qq install -y cryptsetup-initramfs
 
 	# Prepare a key file to embed in to the ramfs.
-	echo "...Prepair key file."
+	echo "...Prepairing key file."
 	mkdir /etc/luks
 	dd if=/dev/urandom of=/etc/luks/boot_os.keyfile bs=4096 count=1 status=none
 	chmod u=rx,go-rwx /etc/luks
 	chmod u=r,go-rwx /etc/luks/boot_os.keyfile
 
 	# Add a key to the key file. Use the passphrase in the environment variable. 
-	echo "...Add a key to the key file."
+	echo "...Adding a key to the key file."
 	printf %s "${PASSPHRASE}" | cryptsetup luksAddKey -d - "${DEV}${CRYPTPARTITION}" /etc/luks/boot_os.keyfile
 
 	# Add the LUKS volume information to /etc/crypttab to decrypt by kernel.  
-	echo "...Add LUKS volume info to /etc/crypttab."
+	echo "...Adding LUKS volume info to /etc/crypttab."
 	echo "${CRYPTPARTNAME} UUID=$(blkid -s UUID -o value ${DEV}${CRYPTPARTITION}) /etc/luks/boot_os.keyfile luks,discard" >> /etc/crypttab
 
 	# Putting key file into the ramfs initial image
-	echo "...Register key file to the ramfs"
+	echo "...Registering key file to the ramfs"
 	echo "KEYFILE_PATTERN=/etc/luks/*.keyfile" >> /etc/cryptsetup-initramfs/conf-hook
 	echo "UMASK=0077" >> /etc/initramfs-tools/initramfs.conf
 
 	# Finally, update the ramfs initial image with the key file. 
-	echo "...Upadte initramfs."
+	echo "...Upadting initramfs."
 	update-initramfs -uk all
 
 	# Leave chroot
 	HEREDOC
 
 	# Unmount all
-	echo "...Unmount all."
+	echo "...Unmounting all."
 	umount -R ${TARGETMOUNTPOINT}
 
 	# Finishing message
