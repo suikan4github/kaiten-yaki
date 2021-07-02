@@ -14,12 +14,17 @@ function parainstall() {
 		# Check if installer still exist
 		if ! ps $INSTALLER_PID  > /dev/null ; then	# If not exists
 			cat <<-HEREDOC 1>&2
-			...The installer terminated unexpectedly. 
+			***** ERROR : The GUI/TUI installer terminated unexpectedly. ***** 
 			...Delete the new logical volume "${VGNAME}-${LVROOTNAME}".
 			HEREDOC
 			lvremove -f /dev/mapper/${VGNAME}-${LVROOTNAME} 
+			echo "...Deactivate all logical volumes in volume group \"${VGNAME}\"."
+			vgchange -a n ${VGNAME}
+			echo "...Close LUKS volume \"${CRYPTPARTNAME}\"."
+			cryptsetup close  ${CRYPTPARTNAME}
 			cat <<-HEREDOC 1>&2
 
+			...The new logical volume is deleted. You can start Kaiten-yaki again. 
 			...Installation process terminated.
 			HEREDOC
 			return 1 # with error status
