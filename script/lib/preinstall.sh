@@ -80,7 +80,7 @@ function pre_install() {
 
 	# Create a ROOT Logical Volume on VG. 
 	if [ -e /dev/mapper/${VGNAME}-${LVROOTNAME} ] ; then # exist
-		if [ ${OVERWRITEINATALL} -eq 1 ] ; then # exist and overwrite install
+		if [ ${OVERWRITEINSTALL} -eq 1 ] ; then # exist and overwrite install
 			echo "...Logical volume "${VGNAME}-${LVROOTNAME}" already exists. OK."
 		else	# exist and not overwriteinstall
 			cat <<- HEREDOC 1>&2
@@ -98,7 +98,7 @@ function pre_install() {
 			return 1 # with error status
 		fi
 	else	# not exsit
-		if [ ${OVERWRITEINATALL} -eq 1 ] ; then
+		if [ ${OVERWRITEINSTALL} -eq 1 ] ; then
 			cat <<- HEREDOC 1>&2
 			***** ERROR : Logical volume "${VGNAME}-${LVROOTNAME}" doesn't exist while overwrite install. *****
 			...Check consistency of config.txt.

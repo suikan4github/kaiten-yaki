@@ -8,7 +8,7 @@ function confirmation(){
 	# Consistency check for the OVERWRITEINSTALL and ERASEALL
 	if [ ${ERASEALL} -eq 1 -a ${OVERWRITEINSTALL} -eq 1 ] ; then 
 		cat <<- HEREDOC 1>&2
-		***** ERROR : Confliction between ERASEALL and OVERWRITEINATALL *****
+		***** ERROR : Confliction between ERASEALL and OVERWRITEINSTALL *****
 		...ERASEALL = ${ERASEALL}
 		...OVERWRITEINSTALL = ${OVERWRITEINSTALL}
 		...Check configuration in config.txt
