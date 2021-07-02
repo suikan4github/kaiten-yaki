@@ -5,10 +5,10 @@ function main() {
 	source config.sh
 
 	# Load functions
-	source common/confirmation.sh
-	source common/preinstall.sh
-	source common/parainstall.sh
-	source common/parainstall_msg.sh
+	source lib/confirmation.sh
+	source lib/preinstall.sh
+	source lib/parainstall.sh
+	source lib/parainstall_msg.sh
 
 
 	# This is the mount point of the install target. 
