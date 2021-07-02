@@ -7,7 +7,6 @@ function main() {
 	# Load functions
 	source lib/confirmation.sh
 	source lib/preinstall.sh
-	source lib/parainstall.sh
 	source lib/parainstall_msg.sh
 
 
@@ -84,7 +83,7 @@ function main() {
 	# Common part of the para-install. 
 	# Record the install PID, modify the /etc/default/grub of the target, 
 	# and then, wait for the end of sintaller. 
-	if ! parainstall ; then
+	if ! grub_check_and_modify_ubuntu ; then
 		return 1 # with error status
 	fi
 
@@ -92,6 +91,18 @@ function main() {
 	#                                Post-install stage 
 	# ******************************************************************************* 
 
+	# Finalizing. Embedd encryption key into the ramfs image. 
+	post_install_void()
+
+	# Normal end
+	return 0
+
+}	# End of main()
+
+
+# ******************************************************************************* 
+# Ubuntu dependent post-installation process
+function post_install_ubuntu() {
 	## Mount the target file system
 	# ${TARGETMOUNTPOINT} is created by the GUI/TUI installer
 	echo "...Mounting /dev/mapper/${VGNAME}-${LVROOTNAME} on ${TARGETMOUNTPOINT}."
@@ -149,9 +160,59 @@ function main() {
 	...Ready to reboot.
 	HEREDOC
 
-	# Normal end
-	return 0
-}
+	retrun 0
 
+} # End of post_install_ubuntu()
+
+
+# ******************************************************************************* 
+# This function will be executed in the foreguround context, to watch the GUI installer. 
+function grub_check_and_modify_ubuntu() {
+
+	# While the /etc/default/grub in the install target is NOT existing, keep sleeping.
+	# If installer terminated without file copy, this script also terminates.
+	while [ ! -e ${TARGETMOUNTPOINT}/etc/default/grub ]
+	do
+		sleep 1 # 1sec.
+
+		# Check if installer still exist
+		if ! ps $INSTALLER_PID  > /dev/null ; then	# If not exists
+			cat <<-HEREDOC 1>&2
+			***** ERROR : The GUI/TUI installer terminated unexpectedly. ***** 
+			...Deleting the new logical volume "${VGNAME}-${LVROOTNAME}".
+			HEREDOC
+			lvremove -f /dev/mapper/${VGNAME}-${LVROOTNAME} 
+			echo "...Deactivating all logical volumes in volume group \"${VGNAME}\"."
+			vgchange -a n ${VGNAME}
+			echo "...Closing LUKS volume \"${CRYPTPARTNAME}\"."
+			cryptsetup close  ${CRYPTPARTNAME}
+			cat <<-HEREDOC 1>&2
+
+			...The new logical volume has been deleted. You can retry Kaiten-yaki again. 
+			...Installation process terminated.
+			HEREDOC
+			return 1 # with error status
+		fi
+	done # while
+
+	# Perhaps, too neuvous. Wait 1 more sectond to avoid the rece condition.
+	sleep 1 # 1sec.
+
+	# Make target GRUB aware to the crypt partition
+	# This must do it after start of the file copy by installer, but before the end of the file copy.
+	echo "...Adding GRUB_ENABLE_CRYPTODISK entry to ${TARGETMOUNTPOINT}/etc/default/grub "
+	echo "GRUB_ENABLE_CRYPTODISK=y" >> ${TARGETMOUNTPOINT}/etc/default/grub
+
+	# And then, wait for the end of installer process
+	echo "...Waiting for the end of GUI/TUI installer."
+	echo "...Again, DO NOT reboot/restart here. Just exit the GUI/TUI installer."
+	wait $INSTALLER_PID
+
+	# succesfull return
+	return 0
+
+} # grub_check_and_modify_ubuntu()
+
+# ******************************************************************************* 
 # Execute
 main

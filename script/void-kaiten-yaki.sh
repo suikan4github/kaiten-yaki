@@ -7,7 +7,6 @@ function main() {
 	# Load functions
 	source lib/confirmation.sh
 	source lib/preinstall.sh
-	# source lib/parainstall.sh # we have customized parainstall
 	source lib/parainstall_msg.sh
 
 
@@ -85,7 +84,7 @@ function main() {
 
 	# Start the background target/etc/default/grub cheker.
 	# The definition of this function is down below.
-	grub_check_and_modify &
+	grub_check_and_modify_void &
 
 	# Record the PID of the background checker. 
 	grub_check_and_modify_id=$!
@@ -119,6 +118,18 @@ function main() {
 	#                                Post-install stage 
 	# ******************************************************************************* 
 
+	# Finalizing. Embedd encryption key into the ramfs image. 
+	post_install_ubuntu()
+
+	# Normal end
+	return 0
+
+}	# End of ())
+
+
+# ******************************************************************************* 
+# Void Linux dependent post-installation process
+function post_install_void() {
 	## Mount the target file system
 	# ${TARGETMOUNTPOINT} is created by the GUI/TUI installer
 	echo "...Mounting /dev/mapper/${VGNAME}-${LVROOTNAME} on ${TARGETMOUNTPOINT}."
@@ -179,13 +190,14 @@ function main() {
 	...Ready to reboot.
 	HEREDOC
 
-	# Normal end
-	return 0
-}
+	retrun 0
+	
+} # End of post_install_void()
 
 
+# ******************************************************************************* 
 # This function will be executed in the background context, to watch the TUI installer. 
-function grub_check_and_modify() {
+function grub_check_and_modify_void() {
 
 	# While the /etc/default/grub in the install target is NOT existing, keep sleeping.
 	# If installer terminated without file copy, this script also terminates.
@@ -205,7 +217,8 @@ function grub_check_and_modify() {
 	# succesfull return
 	return 0
 
-} # para install
+} # gurb_check_and_modify_void()
 
+# ******************************************************************************* 
 # Execute
 main
