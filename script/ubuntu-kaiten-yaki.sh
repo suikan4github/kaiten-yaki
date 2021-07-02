@@ -115,6 +115,7 @@ function post_install() {
 
 	# Change root and create the keyfile and ramfs image for Linux kernel. 
 	echo "...Chroot to ${TARGETMOUNTPOINT}."
+	# shellcheck disable=SC2086
 	cat <<- HEREDOC | chroot ${TARGETMOUNTPOINT} /bin/bash
 	# Mount the rest of partitions by target /etc/fstab
 	mount -a
@@ -136,7 +137,7 @@ function post_install() {
 
 	# Add the LUKS volume information to /etc/crypttab to decrypt by kernel.  
 	echo "...Adding LUKS volume info to /etc/crypttab."
-	echo "${CRYPTPARTNAME} UUID=$(blkid -s UUID -o value "${DEV}${CRYPTPARTITION}") /etc/luks/boot_os.keyfile luks,discard" >> /etc/crypttab
+	echo "${CRYPTPARTNAME} UUID=$(blkid -s UUID -o value ${DEV}${CRYPTPARTITION}) /etc/luks/boot_os.keyfile luks,discard" >> /etc/crypttab
 
 	# Putting key file into the ramfs initial image
 	echo "...Registering key file to the ramfs"
