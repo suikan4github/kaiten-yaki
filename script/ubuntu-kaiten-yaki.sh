@@ -2,12 +2,10 @@
 
 	# shellcheck disable=SC1091
 	# Load configuration parameter
-	source config.sh
+	source ./config.sh
 
 	# Load functions
-	source lib/confirmation_common.sh
-	source lib/pre_install_common.sh
-	source lib/para_install_msg_common.sh
+	source ./lib.sh
 
 function main() {
 
@@ -39,7 +37,7 @@ function main() {
 	# ******************************************************************************* 
 
 	# Common part of the parameter confirmation
-	if ! confirmation_common ; then
+	if ! confirmation ; then
 		return 1 # with error status
 	fi
 
@@ -48,7 +46,7 @@ function main() {
 	# ******************************************************************************* 
 
 	# Common part of the pre-install stage
-	if ! pre_install_common ; then
+	if ! pre_install ; then
 		return 1 # with error status
 	fi
 
@@ -58,7 +56,7 @@ function main() {
 	# ******************************************************************************* 
 
 	# Show common message to let the operator focus on the critical part
-	para_install_msg_common
+	para_install_msg
 
 	# Ubuntu dependent message
 	cat <<- HEREDOC
@@ -177,22 +175,10 @@ function grub_check_and_modify() {
 	do
 		sleep 1 # 1sec.
 
-		# Check if installer still exist
+		# Check if installer quit unexpectedly
 		if ! ps $INSTALLER_PID  > /dev/null ; then	# If not exists
-			echo "***** ERROR : The GUI/TUI installer terminated unexpectedly. *****" 
-			if [ "${OVERWRITEINSTALL}" -eq 0 ] ; then	# If not over install, volume is new. So delete it
-				echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}\"."
-				lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" 
-			fi
-			echo "...Deactivating all logical volumes in volume group \"${VGNAME}\"."
-			vgchange -a n "${VGNAME}"
-			echo "...Closing LUKS volume \"${CRYPTPARTNAME}\"."
-			cryptsetup close  "${CRYPTPARTNAME}"
-			cat <<-HEREDOC 
-
-			...The new logical volume has been deleted. You can retry Kaiten-yaki again. 
-			...Installation process terminated.
-			HEREDOC
+			# Delete the nwe volume if overwrite install, and close all
+			on_unexpected_installer_quit
 			return 1 # with error status
 		fi
 	done # while
