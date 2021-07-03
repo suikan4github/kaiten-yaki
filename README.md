@@ -44,7 +44,7 @@ If you install two or more Void Linux into the EFI system, only the last one can
 Ubuntu has several variants ( flavors ). While I have tested only MATE flavor, other flavors may work correctly as far as it uses Ubiquity installer.
 
 # Acknowledgments
-These scripts are based on the script shared on [myn's diary](https://myn.hatenablog.jp/entry/install-ubuntu-focal-with-lvm-on-luks). That page contains rich information, hint, and techniques around the encrypted volume and Ubiquity installer. 
+These scripts are based on the script by [myn's diary](https://myn.hatenablog.jp/entry/install-ubuntu-focal-with-lvm-on-luks). That page contains rich information, hint, and techniques around the encrypted volume and Ubiquity installer. 
 
 Also, the following documents were very important to study how Void Linux installation works. 
 - [Full Disk Encryption](https://docs.voidlinux.org/installation/guides/fde.html) in the Void Handbook. 
