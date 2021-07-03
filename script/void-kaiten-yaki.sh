@@ -175,8 +175,6 @@ function post_install_local() {
 		xbps-reconfigure -fa
 		echo "...grub-mkconfig."
 		grub-mkconfig -o /boot/grub/grub.cfg
-		echo "...update-grub."
-		update-grub
 
 		# Leave chroot
 	HEREDOC
