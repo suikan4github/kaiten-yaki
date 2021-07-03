@@ -23,12 +23,11 @@ First of all, promote the shell to root. Almost of the procedure requires root p
 In case of Ubuntu :
 ```bash
 # Promote to the root user
-sudo -i
+sudo -i /bin/bash
 ```
 In case of Void-Linux : 
 ```bash
-sudo -i
-bash
+sudo -i /bin/bash
 xbps-install -Su xbps nano
 ```
 The nano is editor package to configure the config.txt. The editor choice is up to you. Kaiten-yaki script doesn't have dependency to nano editor.
