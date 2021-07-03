@@ -176,7 +176,7 @@ function pre_install() {
 		echo "...Activating all logical volumes in volume group \"${VGNAME}\"."
 		vgchange -ay
 		echo "...Scanning all logical volumes."
-		vgcscan
+		lvscan
 	else
 		echo "...Initializing a physical volume on \"${CRYPTPARTNAME}\""
 		pvcreate /dev/mapper/"${CRYPTPARTNAME}"
