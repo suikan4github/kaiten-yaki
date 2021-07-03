@@ -1,5 +1,5 @@
 # Kaiten-yaki: Full disk encryption install script for Linux
-Kaiten-yaki is a script set helping to install Linux as full disk encryption to your desktop system. With these scripts, you can install Ubuntu/Void Linux to an encrypted partition easily. 
+Kaiten-yaki is a script set to install to your desktop system. With these scripts, you can install Ubuntu/Void Linux to an encrypted partition easily. 
 
 The followings are the list of functionalities: 
 - Ubuntu and Void Linux.
