@@ -276,7 +276,6 @@ function deactivate_and_close(){
 # ******************************************************************************* 
 #              Delete the nwe volume if overwrite install, and close all
 # ******************************************************************************* 
-
 function on_unexpected_installer_quit(){
 	echo "***** ERROR : The GUI/TUI installer terminated unexpectedly. *****" 
 	if [ "${OVERWRITEINSTALL}" -eq 0 ] ; then	# If not over install, volume is new. So delete it
@@ -286,4 +285,32 @@ function on_unexpected_installer_quit(){
 	# Deactivate all lg and close the LUKS volume
 	deactivate_and_close
 	echo "...The new logical volume has been deleted. You can retry Kaiten-yaki again." 
+}
+
+
+# ******************************************************************************* 
+#              Check whether given signaure is in the system information
+# ******************************************************************************* 
+function distribution_check(){
+	if ! uname -a | grep "${DISTRIBUTIONSIGNATURE}" -i > /dev/null  ; then	#  Signature is not found in the OS name.
+		echo "*******************************************************************************"
+		uname -a
+		cat <<- HEREDOC 
+		*******************************************************************************
+		This system seems to be not $DISTRIBUTIONNAME, while this script is dediated to the $DISTRIBUTIONNAME.
+		Are you sure you want to run this script? [Y/N]
+		HEREDOC
+		read -r YESNO
+		if [ "${YESNO}" != "Y" ] && [ "${YESNO}" != "y" ] ; then
+			cat <<- HEREDOC 
+
+			...Installation process terminated..
+			HEREDOC
+			return 1 # with error status
+		fi	# if YES
+
+	fi # Distribution check
+
+	# no error
+	return 0
 }

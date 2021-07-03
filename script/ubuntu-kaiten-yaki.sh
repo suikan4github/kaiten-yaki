@@ -4,7 +4,7 @@
 	# Load configuration parameter
 	source ./config.sh
 
-	# Load functions
+	# Load common functions
 	source ./lib.sh
 
 function main() {
@@ -12,29 +12,19 @@ function main() {
 	# This is the mount point of the install target. 
 	export TARGETMOUNTPOINT="/target"
 
-	# Distribution check
-	if ! uname -a | grep ubuntu -i > /dev/null  ; then	# "Ubuntu" is not found in the OS name.
-		echo "*******************************************************************************"
-		uname -a
-		cat <<- HEREDOC 
-		*******************************************************************************
-		This system seems to be not Ubuntu, while this script is dediated to the Ubuntu.
-		Are you sure you want to run this script? [Y/N]
-		HEREDOC
-		read -r YESNO
-		if [ "${YESNO}" != "Y" ] && [ "${YESNO}" != "y" ] ; then
-			cat <<- HEREDOC 
-
-			...Installation process terminated..
-			HEREDOC
-			return 1 # with error status
-		fi	# if YES
-
-	fi # Distribution check
 
 	# ******************************************************************************* 
 	#                                Confirmation before installation 
 	# ******************************************************************************* 
+
+	# parameters for distribution check
+	export DISTRIBUTIONSIGNATURE="ubuntu"
+	export DISTRIBUTIONNAME="Ubuntu"
+
+	# Check whetehr given signature exist or not
+	if ! distribution_check ; then
+		return 1 # with error status
+	fi
 
 	# Common part of the parameter confirmation
 	if ! confirmation ; then
