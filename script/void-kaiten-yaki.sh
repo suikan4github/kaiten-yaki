@@ -45,8 +45,8 @@ function main() {
 	# This modification is guaratnteed once only. To allow  re-trying the installation after unexpected GUI/TUI installer quit. 
 	grub_additional_parameters="rd.auto=1 cryptdevice=${DEV}${CRYPTPARTITION}:${CRYPTPARTNAME} root=/dev/mapper/${VGNAME}-${LVROOTNAME}"
 	if grep "$grub_additional_parameters" /etc/default/grub ; then	# Is additonal parameter already added? 
-		# Yes ".../etc/default/grub already modified. OK, skipping to modiy."
-		echo 
+		# Yes 
+		echo ".../etc/default/grub already modified. OK, skipping to modiy."
 	else
 		# Not yet. Let's add.
 		echo "...Modify /etc/default/grub."
