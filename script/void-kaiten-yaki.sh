@@ -59,6 +59,7 @@ function main() {
 		return 1 # with error status
 	fi
 
+
 	# ******************************************************************************* 
 	#                                Para-install stage 
 	# ******************************************************************************* 
@@ -99,7 +100,7 @@ function para_install_local() {
 	Type return key to start void-installer.
 	HEREDOC
 
-	# waitfor a console input
+	# waiting for a console input
 	read -r
 
 	# Start the background target/etc/default/grub cheker.

@@ -81,7 +81,7 @@ function para_install_local() {
 	Type return key to start Ubiquity.
 	HEREDOC
 
-	# waitfor a console input
+	# waiting for a console input
 	read -r
 
 	# Start Ubiquity installer 
