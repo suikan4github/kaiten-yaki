@@ -43,19 +43,21 @@ function main() {
 	# Anyway, without this modification, Void Linux doesn't boot. 
 	# Refer https://wiki.voidlinux.org/Install_LVM_LUKS#Installation_using_void-installer
 	# This modification is guaratnteed once only. To allow  re-trying the installation after unexpected GUI/TUI installer quit. 
-	grub_additional_parameters="rd.auto=1 cryptdevice=${DEV}${CRYPTPARTITION}:${CRYPTPARTNAME} root=/dev/mapper/${VGNAME}-${LVROOTNAME}"
-	if grep "$grub_additional_parameters" /etc/default/grub ; then	# Is additonal parameter already added? 
+	export GRUB_ADDITIONAL_PARAMETERS="rd.auto=1 cryptdevice=${DEV}${CRYPTPARTITION}:${CRYPTPARTNAME} root=/dev/mapper/${VGNAME}-${LVROOTNAME}"
+	if grep "$GRUB_ADDITIONAL_PARAMETERS" /etc/default/grub ; then	# Is additonal parameter already added? 
 		# Yes 
 		echo ".../etc/default/grub already modified. OK, skipping to modiy."
 	else
 		# Not yet. Let's add.
 		echo "...Modify /etc/default/grub."
-		sed -i "s#loglevel=4#loglevel=4 ${grub_additional_parameters}#" /etc/default/grub
+		sed -i "s#loglevel=4#loglevel=4 ${GRUB_ADDITIONAL_PARAMETERS}#" /etc/default/grub
 
 	fi
 
 	# Common part of the pre-install stage
 	if ! pre_install ; then
+		echo "...restoring modified /etc/default/grub."
+		sed -i "s#loglevel=4 ${GRUB_ADDITIONAL_PARAMETERS}#loglevel=4#" /etc/default/grub
 		return 1 # with error status
 	fi
 
@@ -118,6 +120,8 @@ function para_install_local() {
 		# If exist, the grub was not modifyed -> void-installer termianted unexpectedly
 		# Delete the nwe volume if overwrite install, and close all
 		on_unexpected_installer_quit
+		echo "...restoring modified /etc/default/grub."
+		sed -i "s#loglevel=4 ${GRUB_ADDITIONAL_PARAMETERS}#loglevel=4#" /etc/default/grub
 		return 1 # with error status
 	fi
 
