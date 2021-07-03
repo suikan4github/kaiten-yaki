@@ -161,7 +161,7 @@ function post_install_local() {
 	...Ready to reboot.
 	HEREDOC
 
-	retrun 0
+	return 0
 
 } # End of post_install_local()
 
