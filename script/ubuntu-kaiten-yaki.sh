@@ -30,7 +30,7 @@ function main() {
 			return 1 # with error status
 		fi	# if YES
 
-	fi # "Ubuntu" is not found in the OS name.
+	fi # Distribution check
 
 	# ******************************************************************************* 
 	#                                Confirmation before installation 
@@ -58,7 +58,7 @@ function main() {
 	# Show common message to let the operator focus on the critical part
 	para_install_msg
 
-	# Ubuntu dependent message
+	# Distrobution dependent message
 	cat <<- HEREDOC
 
 	************************ CAUTION! CAUTION! CAUTION! ****************************
@@ -82,7 +82,7 @@ function main() {
 
 	# Record the install PID, modify the /etc/default/grub of the target, 
 	# and then, wait for the end of the intaller. 
-	if ! grub_check_and_modify ; then
+	if ! grub_check_and_modify_local ; then
 		return 1 # with error status
 	fi
 
@@ -91,7 +91,7 @@ function main() {
 	# ******************************************************************************* 
 
 	# Finalizing. Embedd encryption key into the ramfs image. 
-	post_install
+	post_install_local
 
 	# Normal end
 	return 0
@@ -101,7 +101,7 @@ function main() {
 
 # ******************************************************************************* 
 # Ubuntu dependent post-installation process
-function post_install() {
+function post_install_local() {
 	## Mount the target file system
 	# ${TARGETMOUNTPOINT} is created by the GUI/TUI installer
 	echo "...Mounting /dev/mapper/${VGNAME}-${LVROOTNAME} on ${TARGETMOUNTPOINT}."
@@ -162,12 +162,12 @@ function post_install() {
 
 	retrun 0
 
-} # End of post_install()
+} # End of post_install_local()
 
 
 # ******************************************************************************* 
 # This function will be executed in the foreguround context, to watch the GUI installer. 
-function grub_check_and_modify() {
+function grub_check_and_modify_local() {
 
 	# While the /etc/default/grub in the install target is NOT existing, keep sleeping.
 	# If installer terminated without file copy, this script also terminates.
@@ -199,7 +199,7 @@ function grub_check_and_modify() {
 	# succesfull return
 	return 0
 
-} # grub_check_and_modify()
+} # grub_check_and_modify_local()
 
 # ******************************************************************************* 
 # Execute

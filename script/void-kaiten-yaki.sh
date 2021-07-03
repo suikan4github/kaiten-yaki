@@ -2,12 +2,10 @@
 
 	# shellcheck disable=SC1091
 	# Load configuration parameter
-	source config.sh
+	source ./config.sh
 
 	# Load functions
-	source lib/confirmation_common.sh
-	source lib/pre_install_common.sh
-	source lib/para_install_msg_common.sh
+	source ./lib.sh
 
 function main() {
 
@@ -16,12 +14,12 @@ function main() {
 
 	# Distribution check
 	if ! uname -a | grep void -i > /dev/null ; then	# "Void" is not found in the OS name.
-		echo "*********************************************************************************"
+		echo "*******************************************************************************"
 		uname -a
 		cat <<- HEREDOC 
-		*********************************************************************************
+		*******************************************************************************
 		This system seems to be not Void Linux, while this script is dediated to the Void Linux.
-		Are you sure you want to run this script for installation? [Y/N]
+		Are you sure you want to run this script? [Y/N]
 		HEREDOC
 		read -r YESNO
 		if [ "${YESNO}" != "Y" ] && [ "${YESNO}" != "y" ] ; then
@@ -29,17 +27,17 @@ function main() {
 
 			...Installation process terminated..
 			HEREDOC
-			return
+			return 1 # with error status
 		fi	# if YES
 
-	fi # "Void" is not found in the OS name.
+	fi # Distribution check
 
 	# ******************************************************************************* 
 	#                                Confirmation before installation 
 	# ******************************************************************************* 
 
 	# Common part of the parameter confirmation
-	if ! confirmation_common ; then
+	if ! confirmation ; then
 		return 1 # with error status
 	fi
 
@@ -50,26 +48,35 @@ function main() {
 	# Install essential packages.
 	xbps-install -y -Su xbps gptfdisk
 
-	# Common part of the pre-install stage
-	if ! pre_install_common ; then
-		return 1 # with error status
-	fi
-
 	# ADD "rd.auto=1 cryptdevice=/dev/sda2:${CRYPTPARTNAME} root=/dev/mapper/${VGNAME}-${ROOTNAME}" to GRUB.
 	# This is magical part. I have not understood why this is required. 
 	# Anyway, without this modification, Void Linux doesn't boot. 
 	# Refer https://wiki.voidlinux.org/Install_LVM_LUKS#Installation_using_void-installer
-	echo "...Modify /etc/default/grub."
-	sed -i "s#loglevel=4#loglevel=4 rd.auto=1 cryptdevice=${DEV}${CRYPTPARTITION}:${CRYPTPARTNAME} root=/dev/mapper/${VGNAME}-${LVROOTNAME}#" /etc/default/grub
+	# This modification is guaratnteed once only. To allow  re-trying the installation after unexpected GUI/TUI installer quit. 
+	grub_additional_parameters="rd.auto=1 cryptdevice=${DEV}${CRYPTPARTITION}:${CRYPTPARTNAME} root=/dev/mapper/${VGNAME}-${LVROOTNAME}"
+	if grep "$grub_additional_parameters" /etc/default/grub ; then	# Is additonal parameter already added? 
+		# Yes ".../etc/default/grub already modified. OK, skipping to modiy."
+		echo 
+	else
+		# Not yet. Let's add.
+		echo "...Modify /etc/default/grub."
+		sed -i "s#loglevel=4#loglevel=4 ${grub_additional_parameters}#" /etc/default/grub
+
+	fi
+
+	# Common part of the pre-install stage
+	if ! pre_install ; then
+		return 1 # with error status
+	fi
 
 	# ******************************************************************************* 
 	#                                Para-install stage 
 	# ******************************************************************************* 
 
 	# Show common message to let the operator focus on the critical part
-	para_install_msg_common
+	para_install_msg
 
-	# Void-Linux dependent message
+	# Distrobution dependent message
 	cat <<- HEREDOC
 
 	************************ CAUTION! CAUTION! CAUTION! ****************************
@@ -86,7 +93,7 @@ function main() {
 
 	# Start the background target/etc/default/grub cheker.
 	# The definition of this function is down below.
-	grub_check_and_modify_void &
+	grub_check_and_modify_local &
 
 	# Record the PID of the background checker. 
 	grub_check_and_modify_id=$!
@@ -96,22 +103,9 @@ function main() {
 	
 	# Check if background checker still exist
 	if ps $grub_check_and_modify_id  > /dev/null ; then	# If exists
-	# If exist, the grub was not modifyed -> void-installer termianted unexpectedly
-
-		echo "***** ERROR : The GUI/TUI installer terminated unexpectedly. *****" 
-		if [ "${OVERWRITEINSTALL}" -eq 0 ] ; then	# If not over install, volume is new. So delete it
-			echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}\"."
-			lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" 
-		fi
-		echo "...Deactivating all logical volumes in volume group \"${VGNAME}\"."
-		vgchange -a n "${VGNAME}"
-		echo "...Closing LUKS volume \"${CRYPTPARTNAME}\"."
-		cryptsetup close  "${CRYPTPARTNAME}"
-		cat <<-HEREDOC 
-
-		...The new logical volume has been deleted. You can retry Kaiten-yaki again. 
-		...Installation process terminated.
-		HEREDOC
+		# If exist, the grub was not modifyed -> void-installer termianted unexpectedly
+		# Delete the nwe volume if overwrite install, and close all
+		on_unexpected_installer_quit
 		return 1 # with error status
 	fi
 
@@ -120,7 +114,7 @@ function main() {
 	# ******************************************************************************* 
 
 	# Finalizing. Embedd encryption key into the ramfs image. 
-	post_install
+	post_install_local
 
 	# Normal end
 	return 0
@@ -130,7 +124,7 @@ function main() {
 
 # ******************************************************************************* 
 # Void Linux dependent post-installation process
-function post_install() {
+function post_install_local() {
 	## Mount the target file system
 	# ${TARGETMOUNTPOINT} is created by the GUI/TUI installer
 	echo "...Mounting /dev/mapper/${VGNAME}-${LVROOTNAME} on ${TARGETMOUNTPOINT}."
@@ -194,12 +188,12 @@ function post_install() {
 
 	retrun 0
 	
-} # End of post_install()
+} # End of post_install_local()
 
 
 # ******************************************************************************* 
 # This function will be executed in the background context, to watch the TUI installer. 
-function grub_check_and_modify_void() {
+function grub_check_and_modify_local() {
 
 	# While the /etc/default/grub in the install target is NOT existing, keep sleeping.
 	# If installer terminated without file copy, this script also terminates.
@@ -219,7 +213,7 @@ function grub_check_and_modify_void() {
 	# succesfull return
 	return 0
 
-} # grub_check_and_modify()
+} # grub_check_and_modify_local()
 
 # ******************************************************************************* 
 # Execute
