@@ -45,6 +45,27 @@ function main() {
 	#                                Para-install stage 
 	# ******************************************************************************* 
 
+	# Start the GUI installer and modify the target /etc/default/grub in parallel
+	if ! para_install_local ; then
+		return 1 # with error status
+	fi
+
+	# ******************************************************************************* 
+	#                                Post-install stage 
+	# ******************************************************************************* 
+
+	# Distribution dependent finalizing. Embedd encryption key into the ramfs image. 
+	post_install_local
+
+	# Normal end
+	return 0
+
+}	# End of main()
+
+
+# ******************************************************************************* 
+# Ubuntu dependent para-installation process
+function para_install_local() {
 	# Show common message to let the operator focus on the critical part
 	para_install_msg
 
@@ -76,18 +97,8 @@ function main() {
 		return 1 # with error status
 	fi
 
-	# ******************************************************************************* 
-	#                                Post-install stage 
-	# ******************************************************************************* 
-
-	# Finalizing. Embedd encryption key into the ramfs image. 
-	post_install_local
-
-	# Normal end
 	return 0
-
-}	# End of main()
-
+}
 
 # ******************************************************************************* 
 # Ubuntu dependent post-installation process

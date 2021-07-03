@@ -11,7 +11,7 @@ function main() {
 
 	# This is the mount point of the install target. 
 	export TARGETMOUNTPOINT="/mnt/target"
-	
+
 
 	# ******************************************************************************* 
 	#                                Confirmation before installation 
@@ -63,6 +63,27 @@ function main() {
 	#                                Para-install stage 
 	# ******************************************************************************* 
 
+	# Start the TUI installer and modify the target /etc/default/grub in background
+	if ! para_install_local ; then
+		return 1 # with error status
+	fi
+
+	# ******************************************************************************* 
+	#                                Post-install stage 
+	# ******************************************************************************* 
+
+	# Distribution dependent finalizing. Embedd encryption key into the ramfs image. 
+	post_install_local
+
+	# Normal end
+	return 0
+
+}	# End of main()
+
+
+# ******************************************************************************* 
+# Void Linux dependent post-installation process
+function para_install_local() {
 	# Show common message to let the operator focus on the critical part
 	para_install_msg
 
@@ -99,18 +120,8 @@ function main() {
 		return 1 # with error status
 	fi
 
-	# ******************************************************************************* 
-	#                                Post-install stage 
-	# ******************************************************************************* 
-
-	# Finalizing. Embedd encryption key into the ramfs image. 
-	post_install_local
-
-	# Normal end
 	return 0
-
-}	# End of main()
-
+}
 
 # ******************************************************************************* 
 # Void Linux dependent post-installation process
