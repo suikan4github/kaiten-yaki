@@ -175,6 +175,8 @@ function pre_install() {
 		echo "...Volume group \"${VGNAME}\" already exist. Skipped to create. No problem."
 		echo "...Activating all logical volumes in volume group \"${VGNAME}\"."
 		vgchange -ay
+		echo "...Scanning all logical volumes."
+		vgcscan
 	else
 		echo "...Initializing a physical volume on \"${CRYPTPARTNAME}\""
 		pvcreate /dev/mapper/"${CRYPTPARTNAME}"
@@ -262,7 +264,7 @@ function para_install_msg() {
 # ******************************************************************************* 
 
 function deactivate_and_close(){
-	echo "...Deactivate all logical volumes in volume group \"${VGNAME}\"."
+	echo "...Deactivating all logical volumes in volume group \"${VGNAME}\"."
 	vgchange -a n "${VGNAME}"
 	echo "...Closing LUKS volume \"${CRYPTPARTNAME}\"."
 	cryptsetup close  "${CRYPTPARTNAME}"
