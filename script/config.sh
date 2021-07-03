@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Configuration parameters for Kaiten-Yaki 
 
 # Storage device to install the linux.  
@@ -44,7 +46,7 @@ export ISEFI=0  # No, BIOS
 fi # is EFI firmaare? 
 
 # Set partition number based on the firmware type
-if [  ${ISEFI} -eq 1  ] ; then 
+if [  ${ISEFI} -ne 0  ] ; then 
 # EFI firmware
 export EFIPARTITION=1
 export CRYPTPARTITION=2
