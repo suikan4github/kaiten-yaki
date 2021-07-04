@@ -70,9 +70,9 @@ function confirmation(){
 		return 1 # with error status
 	fi	# if YES
 
-	# For sure ask to be sure to erase. 
+	# For sure ask to erase. 
 	if [ "${ERASEALL}" -ne 0 ] ; then
-		echo "Are you sure you want to erase entire ${DEV}? [Y/N]"
+		echo "Are you sure you want to erase entire \"${DEV}\"? [Y/N]"
 		read -r YESNO
 		if [ "${YESNO}" != "Y" ] && [ "${YESNO}" != "y" ] ; then
 			cat <<-HEREDOC 
@@ -83,6 +83,20 @@ function confirmation(){
 		return 1 # with error status
 		fi	# if YES
 	fi	# if erase all
+
+	# For sure ask to overwrite. 
+	if [ "${OVERWRITEINSTALL}" -ne 0 ] ; then
+		echo "Are you sure you want to overwrite \"${LVROOTNAME}\" in \"${VGNAME}\"? [Y/N]"
+		read -r YESNO
+		if [ "${YESNO}" != "Y" ] && [ "${YESNO}" != "y" ] ; then
+			cat <<-HEREDOC 
+		...Check your config.sh. The variable OVERWRITEINSTALL is ${OVERWRITEINSTALL}.
+
+		...Installation process terminated..
+		HEREDOC
+		return 1 # with error status
+		fi	# if YES
+	fi	# if overwrite
 
 	# ----- Set Passphrase -----
 	# Input passphrase

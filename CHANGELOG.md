@@ -5,6 +5,8 @@ Record of the modification in project development.
 
 ### Added
 ### Changed
+- [Issue 5 : OVERWRITEINSTALL confirmation is missing](https://github.com/suikan4github/kaiten-yaki/issues/5)
+
 ### Deprecated
 ### Removed
 ### Fixed
