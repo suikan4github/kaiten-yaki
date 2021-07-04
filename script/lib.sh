@@ -294,13 +294,15 @@ function deactivate_and_close(){
 # ******************************************************************************* 
 function on_unexpected_installer_quit(){
 	echo "***** ERROR : The GUI/TUI installer terminated unexpectedly. *****" 
-	if [ "${OVERWRITEINSTALL}" -eq 0 ] ; then	# If not over install, volume is new. So delete it
+	if [ "${OVERWRITEINSTALL}" -ne 0 ] ; then	# If overwrite install, keep the volume
+		echo "...Keep logical volume \"${VGNAME}-${LVROOTNAME}\" untouched."
+	else # if not overwrite istall, delete the new volume
 		echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}\"."
 		lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" 
 	fi
 	# Deactivate all lg and close the LUKS volume
 	deactivate_and_close
-	echo "...The new logical volume has been deleted. You can retry Kaiten-yaki again." 
+	echo "...You can retry Kaiten-yaki again." 
 }
 
 

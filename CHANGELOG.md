@@ -11,6 +11,7 @@ Record of the modification in project development.
 ### Deprecated
 ### Removed
 ### Fixed
+- [Issue 8 : Wrong message after cancellation ](https://github.com/suikan4github/kaiten-yaki/8)
 
 ### Known Issue
 
