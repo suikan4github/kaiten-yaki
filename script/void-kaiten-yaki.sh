@@ -50,14 +50,14 @@ function main() {
 	else
 		# Not yet. Let's add.
 		echo "...Modify /etc/default/grub."
-		sed -i "s#loglevel=4#loglevel=4 ${GRUB_ADDITIONAL_PARAMETERS}#" /etc/default/grub
-
+		sed -i -e  "/GRUB_CMDLINE_LINUX_DEFAULT/{s#\"#  ${GRUB_ADDITIONAL_PARAMETERS}\"#2}"  /etc/default/grub
 	fi
 
 	# Common part of the pre-install stage
 	if ! pre_install ; then
+		# If error, restore the modification.
 		echo "...restoring modified /etc/default/grub."
-		sed -i "s#loglevel=4 ${GRUB_ADDITIONAL_PARAMETERS}#loglevel=4#" /etc/default/grub
+		sed -i -e "s#loglevel=4 ${GRUB_ADDITIONAL_PARAMETERS}#loglevel=4#" /etc/default/grub
 		return 1 # with error status
 	fi
 
