@@ -158,6 +158,7 @@ function pre_install() {
 			# Zap existing partition table
 			echo "...Erasing partition table of \"${DEV}\"."
 			dd if=/dev/zero of="${DEV}" bs=512 count=1
+			if is_error ; then return 1 ; fi; 	# If error, terminate
 			# Create MBR and allocate max storage for Linux partition
 			echo "...Creating a Linux partition on ${DEV} with MBR."
 			sfdisk "${DEV}" <<- HEREDOC

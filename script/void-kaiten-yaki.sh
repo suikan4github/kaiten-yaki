@@ -56,8 +56,8 @@ function main() {
 	# Common part of the pre-install stage
 	if ! pre_install ; then
 		# If error, restore the modification.
-		echo "...restoring modified /etc/default/grub."
-		sed -i -e "s#loglevel=4 ${GRUB_ADDITIONAL_PARAMETERS}#loglevel=4#" /etc/default/grub
+		echo "...restoring /etc/default/grub, if needed"
+		sed -i -e "s#${GRUB_ADDITIONAL_PARAMETERS}##" /etc/default/grub
 		return 1 # with error status
 	fi
 
