@@ -6,11 +6,12 @@ Record of the modification in project development.
 ### Added
 ### Changed
 - [Issue 5 : OVERWRITEINSTALL confirmation is missing](https://github.com/suikan4github/kaiten-yaki/issues/5)
+- [Issue 6 : Remove loglevel dependency from the void-kaiten-yaki.sh ](https://github.com/suikan4github/kaiten-yaki/6)
 
 ### Deprecated
 ### Removed
 ### Fixed
-### Security
+
 ### Known Issue
 
 ## [1.0.0] - 2021-07-03
