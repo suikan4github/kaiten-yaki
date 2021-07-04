@@ -240,6 +240,7 @@ function pre_install() {
 		else # not exist and not overwrite install
 			echo "...Creating logical volume \"${LVROOTNAME}\" on \"${VGNAME}\"."
 			lvcreate -l "${LVROOTSIZE}" -n "${LVROOTNAME}" "${VGNAME}"
+			if [ $? -ne 0 ] ; then deactivate_and_close; return 1 ; fi;
 		fi
 	fi
 
