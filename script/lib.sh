@@ -82,6 +82,7 @@ function confirmation(){
 		HEREDOC
 		return 1 # with error status
 		fi	# if YES
+	fi	# if erase all
 
 	# For sure ask to overwrite. 
 	if [ "${OVERWRITEINSTALL}" -ne 0 ] ; then
@@ -95,7 +96,7 @@ function confirmation(){
 		HEREDOC
 		return 1 # with error status
 		fi	# if YES
-	fi	# if erase all
+	fi	# if overwrite
 
 	# ----- Set Passphrase -----
 	# Input passphrase
