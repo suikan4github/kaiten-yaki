@@ -138,16 +138,20 @@ function pre_install() {
 			# Zap existing partition table and create new GPT
 			echo "...Initializing \"${DEV}\" with GPT."
 			sgdisk --zap-all "${DEV}"
+			if is_error ; then return 1 ; fi; 	# If error, terminate
 			# Create EFI partition and format it
 			echo "...Creating an EFI partition on \"${DEV}\"."
 			# shellcheck disable=SC2140
 			sgdisk --new="${EFIPARTITION}":0:+"${EFISIZE}" --change-name="${EFIPARTITION}":"EFI System"  --typecode="${EFIPARTITION}":ef00 "${DEV}"  
+			if is_error ; then return 1 ; fi; 	# If error, terminate
 			echo "...Formatting the EFI parttion."
 			mkfs.vfat -F 32 -n EFI-SP "${DEV}${EFIPARTITION}"
+			if is_error ; then return 1 ; fi; 	# If error, terminate
 			# Create Linux partition
 			echo "...Creating a Linux partition on ${DEV}."
 			# shellcheck disable=SC2140
 			sgdisk --new="${CRYPTPARTITION}":0:0    --change-name="${CRYPTPARTITION}":"Linux LUKS" --typecode="${CRYPTPARTITION}":8309 "${DEV}"
+			if is_error ; then return 1 ; fi; 	# If error, terminate
 			# Then print them
 			sgdisk --print "${DEV}"
 		else # BIOS
@@ -159,6 +163,7 @@ function pre_install() {
 			sfdisk "${DEV}" <<- HEREDOC
 			2M,,L
 			HEREDOC
+			if is_error ; then return 1 ; fi; 	# If error, terminate
 		fi	# if EFI firmware
 
 		# Encrypt the partition to install Linux
@@ -194,8 +199,10 @@ function pre_install() {
 	else
 		echo "...Initializing a physical volume on \"${CRYPTPARTNAME}\""
 		pvcreate /dev/mapper/"${CRYPTPARTNAME}"
+		if [ $? -ne 0 ] ; then deactivate_and_close; return 1 ; fi;
 		echo "...And then creating Volume group \"${VGNAME}\"."
 		vgcreate "${VGNAME}" /dev/mapper/"${CRYPTPARTNAME}"
+		if [ $? -ne 0 ] ; then deactivate_and_close; return 1 ; fi;
 	fi # if /dev/volume-groupt exist
 
 	# Create a SWAP Logical Volume on VG, if it doesn't exist
@@ -204,6 +211,7 @@ function pre_install() {
 	else
 		echo "...Creating logical volume \"${LVSWAPNAME}\" on \"${VGNAME}\"."
 		lvcreate -L "${LVSWAPSIZE}" -n "${LVSWAPNAME}" "${VGNAME}" 
+		if [ $? -ne 0 ] ; then deactivate_and_close; return 1 ; fi;
 	fi	# if /dev/mapper/swap volume already exit. 
 
 	# Create a ROOT Logical Volume on VG. 
@@ -331,4 +339,21 @@ function distribution_check(){
 
 	# no error
 	return 0
+}
+
+
+# ******************************************************************************* 
+#              Error report and return revsers status.  
+# ******************************************************************************* 
+function is_error() {
+	if [ $? -eq 0 ] ; then # Is previous job OK? 
+		return 1	# If OK, return error ( because it was not error )
+	else
+		cat <<- HEREDOC
+		**** ERROR ! ****
+
+		Installation process terminated. 
+		HEREDOC
+		return 0	# If error, return OK ( because it was error )
+	fi;
 }
