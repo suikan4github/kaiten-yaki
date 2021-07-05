@@ -5,13 +5,12 @@
 	source ./config.sh
 
 	# Load common functions
-	source ./lib.sh
+	source ./lib/common.sh
 
 function main() {
 
 	# This is the mount point of the install target. 
 	export TARGETMOUNTPOINT="/target"
-
 
 	# ******************************************************************************* 
 	#                                Confirmation before installation 
@@ -54,8 +53,9 @@ function main() {
 	#                                Post-install stage 
 	# ******************************************************************************* 
 
-	# Distribution dependent finalizing. Embedd encryption key into the ramfs image. 
-	post_install_local
+	# Distribution dependent finalizing. Embedd encryption key into the ramfs image.
+	# The script is parameterized by env-variable to fit to the distribution 
+	post_install
 
 	# Normal end
 	return 0
@@ -100,70 +100,6 @@ function para_install_local() {
 	return 0
 }
 
-# ******************************************************************************* 
-# Ubuntu dependent post-installation process
-function post_install_local() {
-	## Mount the target file system
-	# ${TARGETMOUNTPOINT} is created by the GUI/TUI installer
-	echo "...Mounting /dev/mapper/${VGNAME}-${LVROOTNAME} on ${TARGETMOUNTPOINT}."
-	mount /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" ${TARGETMOUNTPOINT}
-
-	# And mount other directories
-	echo "...Mounting all other dirs."
-	for n in proc sys dev etc/resolv.conf; do mount --rbind "/$n" "${TARGETMOUNTPOINT}/$n"; done
-
-	# Change root and create the keyfile and ramfs image for Linux kernel. 
-	echo "...Chroot to ${TARGETMOUNTPOINT}."
-	# shellcheck disable=SC2086
-	cat <<- HEREDOC | chroot ${TARGETMOUNTPOINT} /bin/bash
-		# Mount the rest of partitions by target /etc/fstab
-		mount -a
-
-		# Set up the kernel hook of encryption
-		echo "...Installing cryptsetup-initramfs package."
-		apt -qq install -y cryptsetup-initramfs
-
-		# Prepare a key file to embed in to the ramfs.
-		echo "...Prepairing key file."
-		mkdir /etc/luks
-		dd if=/dev/urandom of=/etc/luks/boot_os.keyfile bs=4096 count=1 status=none
-		chmod u=rx,go-rwx /etc/luks
-		chmod u=r,go-rwx /etc/luks/boot_os.keyfile
-
-		# Add a key to the key file. Use the passphrase in the environment variable. 
-		echo "...Adding a key to the key file."
-		printf %s "${PASSPHRASE}" | cryptsetup luksAddKey -d - "${DEV}${CRYPTPARTITION}" /etc/luks/boot_os.keyfile
-
-		# Add the LUKS volume information to /etc/crypttab to decrypt by kernel.  
-		echo "...Adding LUKS volume info to /etc/crypttab."
-		echo "${CRYPTPARTNAME} UUID=$(blkid -s UUID -o value ${DEV}${CRYPTPARTITION}) /etc/luks/boot_os.keyfile luks,discard" >> /etc/crypttab
-
-		# Putting key file into the ramfs initial image
-		echo "...Registering key file to the ramfs"
-		echo "KEYFILE_PATTERN=/etc/luks/*.keyfile" >> /etc/cryptsetup-initramfs/conf-hook
-		echo "UMASK=0077" >> /etc/initramfs-tools/initramfs.conf
-
-		# Finally, update the ramfs initial image with the key file. 
-		echo "...Upadting initramfs."
-		update-initramfs -uk all
-
-		# Leave chroot
-	HEREDOC
-
-	# Unmount all
-	echo "...Unmounting all."
-	umount -R ${TARGETMOUNTPOINT}
-
-	# Finishing message
-	cat <<- HEREDOC
-	****************** Post-install process finished ******************
-
-	...Ready to reboot.
-	HEREDOC
-
-	return 0
-
-} # End of post_install_local()
 
 
 # ******************************************************************************* 
