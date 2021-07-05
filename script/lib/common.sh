@@ -288,7 +288,7 @@ function para_install_msg() {
 #                  Common post-install stage
 # ******************************************************************************* 
 # In side this script, the chrooted job is parameterrized as by evn variable TARGETCHROOTEDJOB
-function post_install_local() {
+function post_install() {
 	## Mount the target file system
 	# ${TARGETMOUNTPOINT} is created by the GUI/TUI installer
 	echo "...Mounting /dev/mapper/${VGNAME}-${LVROOTNAME} on ${TARGETMOUNTPOINT}."
