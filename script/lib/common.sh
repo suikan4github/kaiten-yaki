@@ -301,7 +301,7 @@ function post_install() {
 	# Copy all scripts to the target /tmp
 	echo "...Copy files in current dir to ${TARGETMOUNTPOINT}/tmp."
 	mkdir "${TARGETMOUNTPOINT}/tmp/kaiten-yaki"
-	cp -R ./*.sh "${TARGETMOUNTPOINT}/tmp/kaiten-yaki"
+	cp -r ./* -t "${TARGETMOUNTPOINT}/tmp/kaiten-yaki"
 
 	# Change root and create the keyfile and ramfs image for Linux kernel. 
 	# The here document is script executed under chroot. And here we call 
