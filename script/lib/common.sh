@@ -298,7 +298,7 @@ function post_install() {
 	echo "...Mounting all other dirs."
 	for n in proc sys dev tmp etc/resolv.conf; do mount --rbind "/$n" "${TARGETMOUNTPOINT}/$n"; done
 
-	# Copy all scripts to the target /tmp
+	# Copy all scripts to the target /tmp to in chroot session. 
 	echo "...Copy files in current dir to ${TARGETMOUNTPOINT}/tmp."
 	mkdir "${TARGETMOUNTPOINT}/tmp/kaiten-yaki"
 	cp -r ./* -t "${TARGETMOUNTPOINT}/tmp/kaiten-yaki"
@@ -306,7 +306,7 @@ function post_install() {
 	# Change root and create the keyfile and ramfs image for Linux kernel. 
 	# The here document is script executed under chroot. And here we call 
 	# the distribution dependent script "lib/chrooted_job_${DISTRIBUTIONSIGNATURE}.sh".
-	echo "...Chroot to ${TARGETMOUNTPOINT}."
+	echo "...Chroot to ${TARGETMOUNTPOINT}. and execute chrooted_job_${DISTRIBUTIONSIGNATURE}.sh"
 	# shellcheck disable=SC2086
 	cat <<- HEREDOC | chroot "${TARGETMOUNTPOINT}" /bin/bash
 		cd /tmp/kaiten-yaki
