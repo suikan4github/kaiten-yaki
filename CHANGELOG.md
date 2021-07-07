@@ -9,6 +9,7 @@ Record of the modification in project development.
 - [Issue 6 : Remove loglevel dependency from the void-kaiten-yaki.sh ](https://github.com/suikan4github/kaiten-yaki/6)
 - [Issue 7 : Add the return status validation ](https://github.com/suikan4github/kaiten-yaki/7)
 - [Issue 11 : Make chroot'ed job independent script file ](https://github.com/suikan4github/kaiten-yaki/11)
+- [Issue 12 : change ERASEALL=0 as default ](https://github.com/suikan4github/kaiten-yaki/12)
 
 ### Deprecated
 ### Removed

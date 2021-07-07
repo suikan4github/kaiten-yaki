@@ -8,7 +8,7 @@ export DEV="/dev/sda"
 # Whether you want to erase all contents of the storage device or not.
 # 1 : Yes, I want to erase all.
 # 0 : No, I don't. I want to add to the existing LUKS volume. 
-export ERASEALL=1
+export ERASEALL=0
 
 # Logical Volume name for your Linux installation. Keep it unique from other distribution.
 export LVROOTNAME="anko"
