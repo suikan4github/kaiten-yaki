@@ -124,7 +124,7 @@ function confirmation(){
 
 
 # ******************************************************************************* 
-#                                Pre-install stage 
+#                           Common Pre-install stage 
 # ******************************************************************************* 
 
 function pre_install() {
@@ -282,6 +282,53 @@ function para_install_msg() {
 
 	return 0
 }
+
+
+# ******************************************************************************* 
+#                  Common post-install stage
+# ******************************************************************************* 
+# In side this script, the chrooted job is parameterrized as by evn variable TARGETCHROOTEDJOB
+function post_install() {
+	## Mount the target file system
+	# ${TARGETMOUNTPOINT} is created by the GUI/TUI installer
+	echo "...Mounting /dev/mapper/${VGNAME}-${LVROOTNAME} on ${TARGETMOUNTPOINT}."
+	mount /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" "${TARGETMOUNTPOINT}"
+
+	# And mount other directories
+	echo "...Mounting all other dirs."
+	for n in proc sys dev tmp etc/resolv.conf; do mount --rbind "/$n" "${TARGETMOUNTPOINT}/$n"; done
+
+	# Copy all scripts to the target /tmp
+	echo "...Copy files in current dir to ${TARGETMOUNTPOINT}/tmp."
+	mkdir "${TARGETMOUNTPOINT}/tmp/kaiten-yaki"
+	cp -r ./* -t "${TARGETMOUNTPOINT}/tmp/kaiten-yaki"
+
+	# Change root and create the keyfile and ramfs image for Linux kernel. 
+	# The here document is script executed under chroot. And here we call 
+	# the distribution dependent script "lib/chrooted_job_${DISTRIBUTIONSIGNATURE}.sh".
+	echo "...Chroot to ${TARGETMOUNTPOINT}."
+	# shellcheck disable=SC2086
+	cat <<- HEREDOC | chroot "${TARGETMOUNTPOINT}" /bin/bash
+		cd /tmp/kaiten-yaki
+		# Execute copied script
+		source "lib/chrooted_job_${DISTRIBUTIONSIGNATURE}.sh"
+	HEREDOC
+
+	# Unmount all
+	echo "...Unmounting all."
+	umount -R "${TARGETMOUNTPOINT}"
+
+	# Finishing message
+	cat <<- HEREDOC
+	****************** Post-install process finished ******************
+
+	...Ready to reboot.
+	HEREDOC
+
+	return 0
+	
+} # End of post_install_local()
+
 
 # ******************************************************************************* 
 #              Deactivate all LV in the VG and close LUKS volume

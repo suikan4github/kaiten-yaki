@@ -32,8 +32,11 @@ xbps-install -Su xbps nano
 ```
 The nano is an editor package to configure the config.txt. The choice of editor is up to you. Kaiten-yaki script doesn't have a dependency on nano editor.
 
-Then, edit the config.txt. 
-
+And then, go to the kaiten-yaki/script directory. 
+```bash
+cd /the/downloaded/directory/kaiten-yaki/script
+```
+Now, ready to configure. 
 ## Configuration parameters
 This is a very critical part of the installation. The configuration parameters are in the config.sh. Edit these parameters before the installation. 
 
