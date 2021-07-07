@@ -22,7 +22,7 @@ function chrooted_job() {
 
 	# Add a key to the key file. Use the passphrase in the environment variable. 
 	echo "...Adding a key to the key file."
-	printf %s "${PASSPHRASE}" | cryptsetup luksAddKey -d - "${DEV}${CRYPTPARTITION}" /etc/luks/boot_os.keyfile
+	printf %s "${PASSPHRASE}" | cryptsetup luksAddKey --iter-time "${ITERTIME}" -d - "${DEV}${CRYPTPARTITION}" /etc/luks/boot_os.keyfile
 
 	# Add the LUKS volume information to /etc/crypttab to decrypt by kernel.  
 	echo "...Adding LUKS volume info to /etc/crypttab."
