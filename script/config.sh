@@ -32,6 +32,11 @@ export LVSWAPNAME="swap"
 # 1 : Overwrite the existing logical volume as root vlume. 0 : Create new logical volume as root volume. 
 export OVERWRITEINSTALL=0
 
+# Do not touch this parameter, unless you understand precisely what you are doing.
+# This is a paameter value of the --iter-time option for cyrptsetup command. 
+# If you specify 1000, that means 1000mSec. 0 means compile default.  
+export ITERTIME=0
+
 # Void Linux only. Ignored in Ubuntu.
 # The font size of the void-installer
 export XTERMFONTSIZE=11

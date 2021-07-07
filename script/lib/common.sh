@@ -169,7 +169,7 @@ function pre_install() {
 
 		# Encrypt the partition to install Linux
 		echo "...Initializing \"${DEV}${CRYPTPARTITION}\" as crypt partition"
-		printf %s "${PASSPHRASE}" | cryptsetup luksFormat --type=luks1 --key-file - --batch-mode "${DEV}${CRYPTPARTITION}"
+		printf %s "${PASSPHRASE}" | cryptsetup luksFormat --iter-time "${ITERTIME}" --type=luks1 --key-file - --batch-mode "${DEV}${CRYPTPARTITION}"
 
 	fi	# if erase all
 
