@@ -42,7 +42,7 @@ This is a very critical part of the installation. The configuration parameters a
 
 Followings are the set of the default settings of the parameters : 
 - Install to  **/dev/sda** (DEV).
-- Erase the entire disk (ERASEALL).
+- Do not erase the entire disk (ERASEALL).
 - Overwrite install is disabled.
 - In the case of EFI firmware, 200MB is allocated to the EFI partition (EFISIZE).
 - Create a logical volume group named "vg1" in the encrypted volume (VGNAME)
@@ -56,31 +56,40 @@ Followings are the set of the default settings of the parameters :
 export DEV="/dev/sda"
 
 # Whether you want to erase all contents of the storage device or not.
-# 1: Yes, I want to erase all.
-# 0: No, I don't. I want to add to the existing LUKS volume. 
-export ERASEALL=1
+# 1 : Yes, I want to erase all.
+# 0 : No, I don't. I want to add to the existing LUKS volume. 
+export ERASEALL=0
 
-# Logical Volume name for your Linux installation. Keep it unique from other distributions.
+# Logical Volume name for your Linux installation. 
+# Keep it unique from other distribution.
 export LVROOTNAME="anko"
 
 # Logical volume size of the Linux installation.
-# 30% means the new logical volume will use 30% of the free space in the LVM volume group.
-# For example, assume the free space is 100GB, and LVROOTSIZE is 30%FREE. The script will create a 30GB logical volume.  
+# 30% mean, new logical volume will use 30% of the free space 
+# in the LVM volume group. For example, assume the free space is 100GB, 
+# and LVROOTSIZE is 30%FREE. Script will create 30GB logical volume.  
 export LVROOTSIZE="50%FREE"
 
-# Set the size of the EFI partition and swap partition. The unit is Byte. you can use M, G... notation.
+# Set the size of EFI partition and swap partition. 
+# The unit is Byte. You can use M,G... notation.
 export EFISIZE="200M"
 export LVSWAPSIZE="8G"
 
 # Usually, these names can be left untouched. 
-# If you change, keep them consistent through all installations in your system.
+# If you change, keep them consistent through all instllation in your system.
 export CRYPTPARTNAME="luks_volume"
 export VGNAME="vg1"
 export LVSWAPNAME="swap"
 
-# Do not touch this parameter unless you understand precisely what you are doing.
-# 1: Overwrite the existing logical volume as root volume. 0: Create new logical volume as root volume. 
+# Do not touch this parameter, unless you understand what you are doing.
+# 1 : Overwrite the existing logical volume as root vlume. 
+# 0 : Create new logical volume as root volume. 
 export OVERWRITEINSTALL=0
+
+# Do not touch this parameter, unless you understand what you are doing.
+# This is a paameter value of the --iter-time option for cyrptsetup command. 
+# If you specify 1000, that means 1000mSec. 0 means compile default.  
+export ITERTIME=0
 
 # Void Linux only. Ignored in Ubuntu.
 # The font size of the void-installer
@@ -94,7 +103,7 @@ There are several restrictions :
 - The EFISIZE and the LVSWAPSIZE are refereed during the first distribution installation only. 
 - The LVROOTSIZE is the size of a logical volume to create. This is a relative value to the existing free space in the volume group. If you want to install 3 distributions in a computer, you may want to set 33%FREE, 50%FREE, and 100%FREE for the first, second, and third distribution installation, respectively. 
 - The name with "-" is not allowed for the VGNAME, LVROOTNAME, and LVSWAPNAME. I saw some installer doesn't work if "-" in in the name. 
-## About the overwrite-install
+### About the overwrite-install
 The OVERWRITEINSTALL parameter allows you to use an existing logical volume as the root volume of the new installation.
 This is very dangerous because of several aspects like destroying the wrong volume and the risk of security. But sometimes it is
 very useful. 
@@ -112,6 +121,15 @@ And set the following parameters as same as the previous installation.
 - CRYPTPARTNAME
 
 So, Kaiten-yaki will leave the "bad" logical volume and allow you to overwrite it by GUI/TUI installer. 
+### About ITERTIME parameter
+This parameter is recommended to left as default value (=0), unless you understand what it mean well. 
+
+The ITERTIME parameter is passed as --iter-time parameter to the [cryptosetup command](https://man7.org/linux/man-pages/man8/cryptsetup.8.html), when script setup the LUKS crypto volume. 
+
+The unit of value is milliseconds. The target linux kernel may take this duration, to calculate a hash value from the given passphrase. You can change this duration through this parameter. 
+
+The smaller value gives the weaker security. 
+
 ## First stage: Setting up the volumes
 After you set the configuration parameters correctly, execute the following command from the shell. Again, you have to be promoted as the root user, and you have to use Bash.  
 
