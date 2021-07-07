@@ -12,11 +12,13 @@ Record of the modification in project development.
 - [Issue 7 : Add the return status validation ](https://github.com/suikan4github/kaiten-yaki/7)
 - [Issue 11 : Make chroot'ed job independent script file ](https://github.com/suikan4github/kaiten-yaki/11)
 - [Issue 12 : change ERASEALL=0 as default ](https://github.com/suikan4github/kaiten-yaki/12)
+- [Issue 14 : Change config.sh description ](https://github.com/suikan4github/kaiten-yaki/14)
 
 ### Deprecated
 ### Removed
 ### Fixed
 - [Issue 8 : Wrong message after cancellation ](https://github.com/suikan4github/kaiten-yaki/8)
+- [Issue 15 : CITERTIME parameter is not passed to the chrooted_job ](https://github.com/suikan4github/kaiten-yaki/15)
 
 ### Known Issue
 
