@@ -4,6 +4,8 @@ Record of the modification in project development.
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- [Issue 13 : Add ITERTIME configuration parameter to config.txt #13](https://github.com/suikan4github/kaiten-yaki/issues/13)
+
 ### Changed
 - [Issue 5 : OVERWRITEINSTALL confirmation is missing](https://github.com/suikan4github/kaiten-yaki/issues/5)
 - [Issue 6 : Remove loglevel dependency from the void-kaiten-yaki.sh ](https://github.com/suikan4github/kaiten-yaki/6)
