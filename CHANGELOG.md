@@ -19,6 +19,7 @@ Record of the modification in project development.
 ### Fixed
 - [Issue 8 : Wrong message after cancellation ](https://github.com/suikan4github/kaiten-yaki/8)
 - [Issue 15 : CITERTIME parameter is not passed to the chrooted_job ](https://github.com/suikan4github/kaiten-yaki/15)
+- [Issue 17 : Unmount fails ](https://github.com/suikan4github/kaiten-yaki/17)
 
 ### Known Issue
 
