@@ -296,9 +296,7 @@ function post_install() {
 
 	# And mount other directories
 	echo "...Mounting all other dirs."
-	mount --make-slave "${TARGETMOUNTPOINT}"
-	mount --rbind /etc/resolv.conf "${TARGETMOUNTPOINT}"/resolv.conf
-#	for n in proc sys dev tmp etc/resolv.conf; do mount --rbind "/$n" "${TARGETMOUNTPOINT}/$n"; done
+	for n in proc sys dev tmp etc/resolv.conf; do mount --rbind "/$n" "${TARGETMOUNTPOINT}/$n"; done
 
 	# Copy all scripts to the target /tmp for using in chroot session. 
 	echo "...Copy files in current dir to ${TARGETMOUNTPOINT}/tmp."
