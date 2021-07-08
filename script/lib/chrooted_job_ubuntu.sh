@@ -9,26 +9,30 @@ function chrooted_job() {
 	# Mount the rest of partitions by target /etc/fstab
 	mount -a
 
-	# Set up the kernel hook of encryption
+	# Prepare the crypto tool in the install target
 	echo "...Installing cryptsetup-initramfs package."
 	apt -qq install -y cryptsetup-initramfs
 
-	# Prepare a key file to embed in to the ramfs.
+	# Prepare a new key file to embed in to the ramfs.
+	# This new file contains a new key to open the LUKS volume. 
+	# The new key is 4096byte length binary value. 
+	# Because this key is sotred as "cleartext", in the target file sysmte,
+	# only root is allowed to access this key file. 
 	echo "...Prepairing key file."
 	mkdir /etc/luks
 	dd if=/dev/urandom of=/etc/luks/boot_os.keyfile bs=4096 count=1 status=none
 	chmod u=rx,go-rwx /etc/luks
 	chmod u=r,go-rwx /etc/luks/boot_os.keyfile
 
-	# Add a key to the key file. Use the passphrase in the environment variable. 
+	# Add the new key to the LUKS 2nd key slot. The passphrase is required to modify the LUKS keyslot.  
 	echo "...Adding a key to the key file."
 	printf %s "${PASSPHRASE}" | cryptsetup luksAddKey --iter-time "${ITERTIME}" -d - "${DEV}${CRYPTPARTITION}" /etc/luks/boot_os.keyfile
 
-	# Add the LUKS volume information to /etc/crypttab to decrypt by kernel.  
+	# Register the LUKS voluem to /etc/crypttab to tell "This volume is encrypted" 
 	echo "...Adding LUKS volume info to /etc/crypttab."
 	echo "${CRYPTPARTNAME} UUID=$(blkid -s UUID -o value ${DEV}${CRYPTPARTITION}) /etc/luks/boot_os.keyfile luks,discard" >> /etc/crypttab
 
-	# Putting key file into the ramfs initial image
+	# Add key file to the list of the intems in initfsram. 
 	echo "...Registering key file to the ramfs"
 	echo "KEYFILE_PATTERN=/etc/luks/*.keyfile" >> /etc/cryptsetup-initramfs/conf-hook
 	echo "UMASK=0077" >> /etc/initramfs-tools/initramfs.conf
