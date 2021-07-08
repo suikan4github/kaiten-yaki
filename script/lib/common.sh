@@ -315,9 +315,9 @@ function post_install() {
 		source "lib/chrooted_job_${DISTRIBUTIONSIGNATURE}.sh"
 	HEREDOC
 
-	# Unmount all
+	# Unmount all. -l ( lazy ) option is added to supress the busy error. 
 	echo "...Unmounting all."
-	umount -R "${TARGETMOUNTPOINT}"
+	umount -R -l "${TARGETMOUNTPOINT}"
 
 	# Finishing message
 	cat <<- HEREDOC
