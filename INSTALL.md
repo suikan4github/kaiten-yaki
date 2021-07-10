@@ -13,19 +13,19 @@ The first stage of the script is preparation like: erasing a disk, format partit
 
 In the second stage, the distribution-dependent GUI/TUI installer is invoked from the running script. That is the Ubiquity/void-installer of Ubuntu/Void Linux, respectively. 
 
-The third stage is easy. There is nothing the user can do. Everything is automatic. 
+The third configure the target Linux system to decrypt the encrypted volume automatically, without prompting user to type passphrase. In this stage, Everything is automatic. 
 # Installation
 Follow the steps below. 
 
 ## Shell preparation
-First of all, promote the shell to root. Almost of the procedure requires root privilege. Note that the scripts require Bash. 
+First of all, promote the shell to root. Almost of the procedure in the installation requires root privilege. Note that the scripts require Bash. 
 
-In the case of Ubuntu :
+In the case of Ubuntu installation:
 ```bash
 # Promote to the root user
 sudo -i /bin/bash
 ```
-In the case of Void-Linux : 
+In the case of Void Linux installation: 
 ```bash
 sudo -i /bin/bash
 xbps-install -Su xbps nano
@@ -47,7 +47,7 @@ Followings are the set of the default settings of the parameters :
 - In the case of EFI firmware, 200MB is allocated to the EFI partition (EFISIZE).
 - Create a logical volume group named "vg1" in the encrypted volume (VGNAME)
 - Create a swap logical volume named "swap" in the "vg1". The size is 8GB (LVSWAPNAME,LVSWAPSIZE)
-- Create a logical volume named **"anko"** for / in the "vg1". The size of the **50%** of the entire free space (LVROOTNAME, LVROOTSIZE).
+- Create a logical volume named **"anko"** as root volume,  in the "vg1". The size of the new volume is the **50%** of the free space (LVROOTNAME, LVROOTSIZE).
 
 ```bash
 # Configuration parameters for Kaiten-Yaki 
@@ -97,9 +97,9 @@ export XTERMFONTSIZE=11
 ```
 
 There are several restrictions : 
-- For the first distribution installation, you must set ERASEALL to 1, to erase the entire screen and create a LUKS partition. Kaiten-yaki script creates a maximum LUKS partition as possible. 
-- The LVROOMNAME must be unique among all installations in a computer. Otherwise, Kaiten-yaki terminates in a middle. 
-- The LVSWAPNAME must be unique among all installations in a computer. Otherwise, Kaiten-yaki creates an unnecessary logical volume. This is a waste of storage resources. 
+- For the first distribution installation, you must set ERASEALL to 1, to erase the entire storage device and create a LUKS partition. Kaiten-yaki script creates a maximum LUKS partition as possible. 
+- The LVROOTNAME must be unique among all installations in a computer. Otherwise, Kaiten-yaki terminates in a middle. 
+- The LVSWAPNAME must be identical among all installations in a computer. Otherwise, Kaiten-yaki creates an unnecessary logical volume. This is a waste of storage resources. 
 - The EFISIZE and the LVSWAPSIZE are refereed during the first distribution installation only. 
 - The LVROOTSIZE is the size of a logical volume to create. This is a relative value to the existing free space in the volume group. If you want to install 3 distributions in a computer, you may want to set 33%FREE, 50%FREE, and 100%FREE for the first, second, and third distribution installation, respectively. 
 - The name with "-" is not allowed for the VGNAME, LVROOTNAME, and LVSWAPNAME. I saw some installer doesn't work if "-" in in the name. 
@@ -108,7 +108,7 @@ The OVERWRITEINSTALL parameter allows you to use an existing logical volume as t
 This is very dangerous because of several aspects like destroying the wrong volume and the risk of security. But sometimes it is
 very useful. 
 
-For example, assume you are installing a distribution by Kaiten-yaki. If you reboot the system at the end of GUI/TUI installer by mistake, your system will never boot again. 
+For example, assume you are installing a distribution by Kaiten-yaki. If you reboot the system at the end of GUI/TUI installer by mistake, your system may never boot again. 
 In this case, the overwrite-install can recycle this "bad" logical volume and let your system boot again. 
 
 To use the overwrite-install, you have to set some parameters as follows: 
@@ -120,7 +120,7 @@ And set the following parameters as same as the previous installation.
 - VGNAME
 - CRYPTPARTNAME
 
-So, Kaiten-yaki will leave the "bad" logical volume and allow you to overwrite it by GUI/TUI installer. 
+Kaiten-yaki will leave the "bad" logical volume and allow you to overwrite it by GUI/TUI installer. 
 ### About ITERTIME parameter
 This parameter is recommended to left as default value (=0), unless you understand what it mean well. 
 
@@ -142,7 +142,7 @@ In the case of Void Linux
 ```bash
 source void-kaiten-yaki.sh
 ```
-After several interactive confirmations, Kaiten-yaki will ask you to input a passphrase. This passphrase will be applied to the encryption of the LUKS volume. Make sure you use identical passphrases between all installations of the distributions in a computer. Otherwise, the install process terminates with an error.  
+After several interactive confirmations, Kaiten-yaki will ask you to input a passphrase. This passphrase will be applied to the encryption of the LUKS volume. Make sure you use identical passphrases between all installations of the distributions in a computer. Otherwise, the install process terminates with an error, except the first distribution installation.  
 
 ## Second stage : GUI/TUI installer
 After the first script finishes, the GUI/TUI installer starts automatically. Configure it as usual and run it. Ensure you map the following correctly.
@@ -166,7 +166,7 @@ At the end of the GUI/TUI installing, do not reboot the system. Click "Continue"
 ## Third stage: Finalizing
 After GUI/TUI installer quits without rebooting, the final part of the install process automatically starts. 
 
-In this section, Kaiten-yaki put the encryption key of the LUKS volume into the ramfs initial stage to allow the Linux kernel to decrypt the LUKS partition which contains root logical volume. So, the system will ask you passphrase only once when GRUB starts. 
+In this section, Kaiten-yaki put the encryption key of the LUKS volume into the ramfs initial stage to allow the Linux kernel to decrypt the LUKS partition which contains root logical volume. Thus, the system will ask you passphrase only once when GRUB starts. 
 
 You can reboot the system if you see the "Ready to reboot" message on the console. 
 
