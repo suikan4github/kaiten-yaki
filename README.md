@@ -47,6 +47,9 @@ If you install two or more Void Linux into the EFI system, only the last one can
 # Variants considerations
 Ubuntu has several variants ( flavors ). While while only the MATE flavor is tested, other flavors may work correctly as far as it uses Ubiquity installer.
 
+# Application notes
+- [AP01 : How to recover from the mistyping of the passphrase](appnote/an01_howtorecover.md)
+
 # Acknowledgments
 These scripts are based on the script by [myn's diary](https://myn.hatenablog.jp/entry/install-ubuntu-focal-with-lvm-on-luks). That page contains rich information, hint, and techniques around the encrypted volume and Ubiquity installer. 
 
