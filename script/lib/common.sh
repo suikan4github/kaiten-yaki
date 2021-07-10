@@ -299,7 +299,7 @@ function post_install() {
 	for n in proc sys dev tmp etc/resolv.conf; do mount --rbind "/$n" "${TARGETMOUNTPOINT}/$n"; done
 
 	# Copy all scripts to the target /tmp for using in chroot session. 
-	echo "...Copy files in current dir to ${TARGETMOUNTPOINT}/tmp."
+	echo "...Copying files in current dir to ${TARGETMOUNTPOINT}/tmp."
 	mkdir "${TARGETMOUNTPOINT}/tmp/kaiten-yaki"
 	cp -r ./* -t "${TARGETMOUNTPOINT}/tmp/kaiten-yaki"
 
