@@ -1,10 +1,10 @@
 # AN04 How to make LUKS volume to the favorite partition
-Kaiten-yaki creates the LUKS volume on the 1st partition for the BIOS system ( 2nd partition for the UEFI system ) by default. Also, Kaiten-yaki assigns all space for the  LUKS volume, except the space for the EFI partition. 
+Kaiten-yaki creates the LUKS volume on the 1st partition for the BIOS system ( 2nd partition for the EFI system ) by default. Also, Kaiten-yaki assigns all space for the  LUKS volume, except the space for the EFI partition. 
 
 This application note explains how to use the favorite partition with favorite size for LUKS volume. 
 
 ## Step 1: Making partitions
-To use custom partitioning, the user must create all partitions by themselves. The user can do it with the popular partitioning tool like gparted. It is recommended to set the partition table as  MBR and GPT for BIOS and UEFI systems, respectively. 
+To use custom partitioning, the user must create all partitions by themselves. The user can do it with the popular partitioning tool like gparted. It is recommended to set the partition table as  MBR and GPT for BIOS and EFI systems, respectively. 
 
 In this documentation, we assume the user wants to use /dev/sdb3 as LUKS partition to install Ubuntu. 
 ## Step 2: Configuration

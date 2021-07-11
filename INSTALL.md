@@ -76,13 +76,13 @@ export EFISIZE="200M"
 export LVSWAPSIZE="8G"
 
 # Usually, these names can be left untouched. 
-# If you change, keep them consistent through all instllation in your system.
+# If you change, keep them consistent through all installation in your system.
 export CRYPTPARTNAME="luks_volume"
 export VGNAME="vg1"
 export LVSWAPNAME="swap"
 
 # Do not touch this parameter, unless you understand what you are doing.
-# 1 : Overwrite the existing logical volume as root vlume. 
+# 1 : Overwrite the existing logical volume as root volume. 
 # 0 : Create new logical volume as root volume. 
 export OVERWRITEINSTALL=0
 
