@@ -1,4 +1,4 @@
-# How to recover from the mistyping of the passphrase
+# AN01 : How to recover from the mistyping of the passphrase
 The mistyping of the passphrase is painful, in the full disk encrypted Linux. 
 
 In the usual encrypted Ubuntu install by Ubiquity, mistyping os passphrase is warn by the kernel, and prompted to re-type. But in the full encrypted system, the user sees a boring message and command prompt. Usually, the user just gives up and reboot. It adds tens of second to reboot, and discourage the under to use a long passphrase. 
