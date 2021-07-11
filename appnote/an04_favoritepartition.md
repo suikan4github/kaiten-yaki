@@ -6,11 +6,11 @@ This application note explains how to use the favorite partition with favorite s
 ## Step 1: Making partitions
 To use custom partitioning, the user must create all partitions by themselves. The user can do it with the popular partitioning tool like gparted. It is recommended to set the partition table as  MBR and GPT for BIOS and EFI systems, respectively. 
 
-In this documentation, we assume the user wants to use /dev/sda5 as LUKS partition to install Ubuntu. 
+In this documentation, we assume the user wants to use /dev/sda5 as LUKS partition to install Ubuntu, as example. 
 ## Step 2: Configuration
 Next user must configure the config.sh. 
 
-The first parameter to edit is **DEV** parameter which represents the target device. In this example, it must be set as /dev/sdb.
+The first parameter to edit is **DEV** parameter which represents the target device. In this example, it must be set as /dev/sda.
 ```sh
 export DEV="/dev/sda"
 ```
@@ -41,3 +41,4 @@ Now, it's a time to run Kaiten-yaki
 ```sh
 source kaiten-yaki-ubuntu
 ```
+All other operations are same with usual install. 
