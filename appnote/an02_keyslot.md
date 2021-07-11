@@ -47,7 +47,7 @@ Key Slot 7: DISABLED
 If there is still a vacant LUKS key slot, the user can install another distribution without deleting the existing slot. But if there is not vacant LUKS key slot at all, the user must delete an occupied but unused slot. To know such a slot, the user must mark all the occupied and used slots. 
 
 First of all, check the LUKS key slot for the user passphrase. Run the followings command. 
-```shell
+```sh
 cryptsetup -v --test-passphrase luksOpen /dev/sdXN
 ```
 Where X is a, b, c..., N is 1, 2, 3...
@@ -63,7 +63,7 @@ We can see the slot 0 is used.
 
 Next, run the following command **for each** installation of distribution. This command shows the slot number which stores the key of the passphrase file passing to the kernel. /etc/luks/boot_os.keyfile is created by Kaiten-yaki, during the installation
 
-```shell
+```sh
 sudo cryptsetup -v --test-passphrase luksOpen /dev/sdXN --key-file /etc/luks/boot_os.keyfile
 ```
 Followings are the sample execution : 
@@ -75,7 +75,7 @@ Command successful.
 By repeating this command inside all installations, the user can list up the occupied and used slots. The other slots are occupied but not used. 
 
 Finally, the user can delete the appropriate occupied but not used LUKS key slot by the following command. 
-```shell
+```sh
 sudo cryptsetup luksKillSlot /dev/sdXN key_slot_number_to_delete
 ```
 # Conclusion

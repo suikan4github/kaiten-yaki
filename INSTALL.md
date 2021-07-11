@@ -6,7 +6,7 @@ Installation requires mainly 2 steps.
 - Run the kaiten-yaki script
 
 You can execute the install script without the command line parameter. For example :
-```shell
+```sh
 source ubuntu-kaiten-yaki.sh
 ```
 The first stage of the script is preparation like: erasing a disk, format partition, and encryption. This is the most critical stage of the entire installation process. This part is controlled by the configuration parameter. Thus, you have to edit the config.txt carefully. 
