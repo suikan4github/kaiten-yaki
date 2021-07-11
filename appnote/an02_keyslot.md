@@ -1,4 +1,4 @@
-# Managing LUKS key slots
+# AN02 Managing LUKS key slots
 If somebody wants to install two or three distributions into a system, Kaiten-yaki works perfectly. There is no problem at all. 
 
 On the other hand, some extreme cases like installing distributions as many as possible, or repeating the overwrite installation unveils the limitation of the number of the LUKS key slots. The user must understand and must manage the LUKS key slots well, to handle these cases. 
