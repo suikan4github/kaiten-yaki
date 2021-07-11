@@ -70,9 +70,9 @@ function confirmation(){
 		return 1 # with error status
 	fi	# if YES
 
-	# For sure ask to be sure to erase. 
+	# For sure ask to erase. 
 	if [ "${ERASEALL}" -ne 0 ] ; then
-		echo "Are you sure you want to erase entire ${DEV}? [Y/N]"
+		echo "Are you sure you want to erase entire \"${DEV}\"? [Y/N]"
 		read -r YESNO
 		if [ "${YESNO}" != "Y" ] && [ "${YESNO}" != "y" ] ; then
 			cat <<-HEREDOC 
@@ -83,6 +83,20 @@ function confirmation(){
 		return 1 # with error status
 		fi	# if YES
 	fi	# if erase all
+
+	# For sure ask to overwrite. 
+	if [ "${OVERWRITEINSTALL}" -ne 0 ] ; then
+		echo "Are you sure you want to overwrite \"${LVROOTNAME}\" in \"${VGNAME}\"? [Y/N]"
+		read -r YESNO
+		if [ "${YESNO}" != "Y" ] && [ "${YESNO}" != "y" ] ; then
+			cat <<-HEREDOC 
+		...Check your config.sh. The variable OVERWRITEINSTALL is ${OVERWRITEINSTALL}.
+
+		...Installation process terminated..
+		HEREDOC
+		return 1 # with error status
+		fi	# if YES
+	fi	# if overwrite
 
 	# ----- Set Passphrase -----
 	# Input passphrase
@@ -110,7 +124,7 @@ function confirmation(){
 
 
 # ******************************************************************************* 
-#                                Pre-install stage 
+#                           Common Pre-install stage 
 # ******************************************************************************* 
 
 function pre_install() {
@@ -124,32 +138,38 @@ function pre_install() {
 			# Zap existing partition table and create new GPT
 			echo "...Initializing \"${DEV}\" with GPT."
 			sgdisk --zap-all "${DEV}"
+			if is_error ; then return 1 ; fi; 	# If error, terminate
 			# Create EFI partition and format it
 			echo "...Creating an EFI partition on \"${DEV}\"."
 			# shellcheck disable=SC2140
 			sgdisk --new="${EFIPARTITION}":0:+"${EFISIZE}" --change-name="${EFIPARTITION}":"EFI System"  --typecode="${EFIPARTITION}":ef00 "${DEV}"  
+			if is_error ; then return 1 ; fi; 	# If error, terminate
 			echo "...Formatting the EFI parttion."
 			mkfs.vfat -F 32 -n EFI-SP "${DEV}${EFIPARTITION}"
+			if is_error ; then return 1 ; fi; 	# If error, terminate
 			# Create Linux partition
 			echo "...Creating a Linux partition on ${DEV}."
 			# shellcheck disable=SC2140
 			sgdisk --new="${CRYPTPARTITION}":0:0    --change-name="${CRYPTPARTITION}":"Linux LUKS" --typecode="${CRYPTPARTITION}":8309 "${DEV}"
+			if is_error ; then return 1 ; fi; 	# If error, terminate
 			# Then print them
 			sgdisk --print "${DEV}"
 		else # BIOS
 			# Zap existing partition table
 			echo "...Erasing partition table of \"${DEV}\"."
 			dd if=/dev/zero of="${DEV}" bs=512 count=1
+			if is_error ; then return 1 ; fi; 	# If error, terminate
 			# Create MBR and allocate max storage for Linux partition
 			echo "...Creating a Linux partition on ${DEV} with MBR."
 			sfdisk "${DEV}" <<- HEREDOC
 			2M,,L
 			HEREDOC
+			if is_error ; then return 1 ; fi; 	# If error, terminate
 		fi	# if EFI firmware
 
 		# Encrypt the partition to install Linux
 		echo "...Initializing \"${DEV}${CRYPTPARTITION}\" as crypt partition"
-		printf %s "${PASSPHRASE}" | cryptsetup luksFormat --type=luks1 --key-file - --batch-mode "${DEV}${CRYPTPARTITION}"
+		printf %s "${PASSPHRASE}" | cryptsetup luksFormat --iter-time "${ITERTIME}" --type=luks1 --key-file - --batch-mode "${DEV}${CRYPTPARTITION}"
 
 	fi	# if erase all
 
@@ -180,8 +200,10 @@ function pre_install() {
 	else
 		echo "...Initializing a physical volume on \"${CRYPTPARTNAME}\""
 		pvcreate /dev/mapper/"${CRYPTPARTNAME}"
+		if [ $? -ne 0 ] ; then deactivate_and_close; return 1 ; fi;
 		echo "...And then creating Volume group \"${VGNAME}\"."
 		vgcreate "${VGNAME}" /dev/mapper/"${CRYPTPARTNAME}"
+		if [ $? -ne 0 ] ; then deactivate_and_close; return 1 ; fi;
 	fi # if /dev/volume-groupt exist
 
 	# Create a SWAP Logical Volume on VG, if it doesn't exist
@@ -190,6 +212,7 @@ function pre_install() {
 	else
 		echo "...Creating logical volume \"${LVSWAPNAME}\" on \"${VGNAME}\"."
 		lvcreate -L "${LVSWAPSIZE}" -n "${LVSWAPNAME}" "${VGNAME}" 
+		if [ $? -ne 0 ] ; then deactivate_and_close; return 1 ; fi;
 	fi	# if /dev/mapper/swap volume already exit. 
 
 	# Create a ROOT Logical Volume on VG. 
@@ -217,6 +240,7 @@ function pre_install() {
 		else # not exist and not overwrite install
 			echo "...Creating logical volume \"${LVROOTNAME}\" on \"${VGNAME}\"."
 			lvcreate -l "${LVROOTSIZE}" -n "${LVROOTNAME}" "${VGNAME}"
+			if [ $? -ne 0 ] ; then deactivate_and_close; return 1 ; fi;
 		fi
 	fi
 
@@ -259,6 +283,54 @@ function para_install_msg() {
 	return 0
 }
 
+
+# ******************************************************************************* 
+#                  Common post-install stage
+# ******************************************************************************* 
+# In side this script, the chrooted job is parameterrized as by evn variable TARGETCHROOTEDJOB
+function post_install() {
+	## Mount the target file system
+	# ${TARGETMOUNTPOINT} is created by the GUI/TUI installer
+	echo "...Mounting /dev/mapper/${VGNAME}-${LVROOTNAME} on ${TARGETMOUNTPOINT}."
+	mount /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" "${TARGETMOUNTPOINT}"
+
+	# And mount other directories
+	echo "...Mounting all other dirs."
+	for n in proc sys dev tmp etc/resolv.conf; do mount --rbind "/$n" "${TARGETMOUNTPOINT}/$n"; done
+
+	# Copy all scripts to the target /tmp for using in chroot session. 
+	echo "...Copying files in current dir to ${TARGETMOUNTPOINT}/tmp."
+	mkdir "${TARGETMOUNTPOINT}/tmp/kaiten-yaki"
+	cp -r ./* -t "${TARGETMOUNTPOINT}/tmp/kaiten-yaki"
+
+	# Change root and create the keyfile and ramfs image for Linux kernel. 
+	# The here-document is script executed under chroot. At here we call 
+	# the distribution dependent script "lib/chrooted_job_${DISTRIBUTIONSIGNATURE}.sh",
+	# which was copied to /temp at previous code.
+	echo "...Chroot to ${TARGETMOUNTPOINT}. and execute chrooted_job_${DISTRIBUTIONSIGNATURE}.sh"
+	# shellcheck disable=SC2086
+	cat <<- HEREDOC | chroot "${TARGETMOUNTPOINT}" /bin/bash
+		cd /tmp/kaiten-yaki
+		# Execute copied script
+		source "lib/chrooted_job_${DISTRIBUTIONSIGNATURE}.sh"
+	HEREDOC
+
+	# Unmount all. -l ( lazy ) option is added to supress the busy error. 
+	echo "...Unmounting all."
+	umount -R -l "${TARGETMOUNTPOINT}"
+
+	# Finishing message
+	cat <<- HEREDOC
+	****************** Post-install process finished ******************
+
+	...Ready to reboot.
+	HEREDOC
+
+	return 0
+	
+} # End of post_install_local()
+
+
 # ******************************************************************************* 
 #              Deactivate all LV in the VG and close LUKS volume
 # ******************************************************************************* 
@@ -280,13 +352,15 @@ function deactivate_and_close(){
 # ******************************************************************************* 
 function on_unexpected_installer_quit(){
 	echo "***** ERROR : The GUI/TUI installer terminated unexpectedly. *****" 
-	if [ "${OVERWRITEINSTALL}" -eq 0 ] ; then	# If not over install, volume is new. So delete it
+	if [ "${OVERWRITEINSTALL}" -ne 0 ] ; then	# If overwrite install, keep the volume
+		echo "...Keep logical volume \"${VGNAME}-${LVROOTNAME}\" untouched."
+	else # if not overwrite istall, delete the new volume
 		echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}\"."
 		lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" 
 	fi
 	# Deactivate all lg and close the LUKS volume
 	deactivate_and_close
-	echo "...The new logical volume has been deleted. You can retry Kaiten-yaki again." 
+	echo "...You can retry Kaiten-yaki again." 
 }
 
 
@@ -315,4 +389,21 @@ function distribution_check(){
 
 	# no error
 	return 0
+}
+
+
+# ******************************************************************************* 
+#              Error report and return revsers status.  
+# ******************************************************************************* 
+function is_error() {
+	if [ $? -eq 0 ] ; then # Is previous job OK? 
+		return 1	# If OK, return error ( because it was not error )
+	else
+		cat <<- HEREDOC
+		**** ERROR ! ****
+
+		Installation process terminated. 
+		HEREDOC
+		return 0	# If error, return OK ( because it was error )
+	fi;
 }

@@ -8,29 +8,38 @@ export DEV="/dev/sda"
 # Whether you want to erase all contents of the storage device or not.
 # 1 : Yes, I want to erase all.
 # 0 : No, I don't. I want to add to the existing LUKS volume. 
-export ERASEALL=1
+export ERASEALL=0
 
-# Logical Volume name for your Linux installation. Keep it unique from other distribution.
+# Logical Volume name for your Linux installation. 
+# Keep it unique from other distribution.
 export LVROOTNAME="anko"
 
 # Logical volume size of the Linux installation.
-# 30% mean, new logical volume will use 30% of the free space in the LVM volume group.
-# For example, assume the free space is 100GB, and LVROOTSIZE is 30%FREE. Script will create 30GB logical volume.  
+# 30% mean, new logical volume will use 30% of the free space 
+# in the LVM volume group. For example, assume the free space is 100GB, 
+# and LVROOTSIZE is 30%FREE. Script will create 30GB logical volume.  
 export LVROOTSIZE="50%FREE"
 
-# Set the size of EFI partition and swap partition. The unit is Byte. you can use M,G... notation.
+# Set the size of EFI partition and swap partition. 
+# The unit is Byte. You can use M,G... notation.
 export EFISIZE="200M"
 export LVSWAPSIZE="8G"
 
 # Usually, these names can be left untouched. 
-# If you change, keep them consistent through all instllation in your system.
+# If you change, keep them consistent through all installation in your system.
 export CRYPTPARTNAME="luks_volume"
 export VGNAME="vg1"
 export LVSWAPNAME="swap"
 
-# Do not touch this parameter, unless you understand precisely what you are doing.
-# 1 : Overwrite the existing logical volume as root vlume. 0 : Create new logical volume as root volume. 
+# Do not touch this parameter, unless you understand what you are doing.
+# 1 : Overwrite the existing logical volume as root volume. 
+# 0 : Create new logical volume as root volume. 
 export OVERWRITEINSTALL=0
+
+# Do not touch this parameter, unless you understand what you are doing.
+# This is a paameter value of the --iter-time option for cyrptsetup command. 
+# If you specify 1000, that means 1000mSec. 0 means compile default.  
+export ITERTIME=0
 
 # Void Linux only. Ignored in Ubuntu.
 # The font size of the void-installer
