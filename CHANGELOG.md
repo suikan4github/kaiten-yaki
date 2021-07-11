@@ -4,7 +4,10 @@ Record of the modification in project development.
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- [Issue 13 : Add ITERTIME configuration parameter to config.txt #13](https://github.com/suikan4github/kaiten-yaki/issues/13)
+- [Issue 13 : Add ITERTIME configuration parameter to config.txt](https://github.com/suikan4github/kaiten-yaki/issues/13)
+- [Issue 18 : Add a consideration of the number of key slot](https://github.com/suikan4github/kaiten-yaki/issues/18)
+- [Issue 20 : Add a consideration of LUKS stretching](https://github.com/suikan4github/kaiten-yaki/issues/20)
+- [Issue 21 : Add a document of how to recover from the mistyping of passphrase](https://github.com/suikan4github/kaiten-yaki/issues/21)
 
 ### Changed
 - [Issue 5 : OVERWRITEINSTALL confirmation is missing](https://github.com/suikan4github/kaiten-yaki/issues/5)
