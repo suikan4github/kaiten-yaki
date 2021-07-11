@@ -2,10 +2,19 @@
 Record of the modification in project development.
 
 ## [Unreleased] - yyyy-mm-dd
-
+Added ITERTIME parameter and corrected other small issues. Application notes AN01-04 are added. 
+The Followings are tested distributions 
+- Ubuntu 20.04.2
+- Ubuntu MATE 20.04.2
+- Ubuntu 21.04
+- Void Linux glibc 20210218 mate
+- Void Linux musl 20210218 mate
+- VOid Linux glibc 20210218 base
+See [Testing before release v1.1.0](https://github.com/suikan4github/kaiten-yaki/issues/16).
 ### Added
 - [Issue 13 : Add ITERTIME configuration parameter to config.txt](https://github.com/suikan4github/kaiten-yaki/issues/13)
 - [Issue 18 : Add a consideration of the number of key slot](https://github.com/suikan4github/kaiten-yaki/issues/18)
+- [Issue 19 : Add a consideration of more flexible partitioning](https://github.com/suikan4github/kaiten-yaki/issues/19)
 - [Issue 20 : Add a consideration of LUKS stretching](https://github.com/suikan4github/kaiten-yaki/issues/20)
 - [Issue 21 : Add a document of how to recover from the mistyping of passphrase](https://github.com/suikan4github/kaiten-yaki/issues/21)
 
