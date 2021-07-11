@@ -2,14 +2,23 @@
 Record of the modification in project development.
 
 ## [Unreleased] - yyyy-mm-dd
-Added ITERTIME parameter and corrected other small issues. Application notes AN01-04 are added. 
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Known Issue
+
+## [1.1.0] - 2021-07-11
+Added ITERTIME parameter and corrected other small issues. Application notes AN01 - AN04 are added. 
 The Followings are tested distributions 
 - Ubuntu 20.04.2
 - Ubuntu MATE 20.04.2
 - Ubuntu 21.04
 - Void Linux glibc 20210218 mate
 - Void Linux musl 20210218 mate
-- VOid Linux glibc 20210218 base
+- Void Linux glibc 20210218 base
+
 See [Testing before release v1.1.0](https://github.com/suikan4github/kaiten-yaki/issues/16).
 ### Added
 - [Issue 13 : Add ITERTIME configuration parameter to config.txt](https://github.com/suikan4github/kaiten-yaki/issues/13)
@@ -48,5 +57,6 @@ See [Testing before release v1.1.0](https://github.com/suikan4github/kaiten-yaki
 ### Known Issue
 
 
-[Unreleased]: https://github.com/suikan4github/kaiten-yaki/compare/v1.0.0...develop
+[Unreleased]: https://github.com/suikan4github/kaiten-yaki/compare/v1.1.0...develop
+[1.1.0]: https://github.com/suikan4github/kaiten-yaki/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/suikan4github/kaiten-yaki/compare/v0.0.0...v1.0.0
