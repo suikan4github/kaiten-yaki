@@ -74,6 +74,9 @@ function main() {
 	#                                Post-install stage 
 	# ******************************************************************************* 
 
+	# We don't need special option for BTRFSOPTION. 
+	export BTRFSOPTION=""
+
 	# Distribution dependent finalizing. Embedd encryption key into the ramfs image. 
 	# The script is parameterized by env-variable to fit to the distribution 
 	post_install

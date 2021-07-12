@@ -291,8 +291,11 @@ function para_install_msg() {
 function post_install() {
 	## Mount the target file system
 	# ${TARGETMOUNTPOINT} is created by the GUI/TUI installer
+	# ${BTRFSOPTION} is defined by the caller of this function for BTRFS formated volume.
+	# ${BTRFSOPTION} have to be NOT quoted. Otherwise, mount will receive an empty
+	# string as first option, when the veraible is empty. 
 	echo "...Mounting /dev/mapper/${VGNAME}-${LVROOTNAME} on ${TARGETMOUNTPOINT}."
-	mount /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" "${TARGETMOUNTPOINT}"
+	mount ${BTRFSOPTION} /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" "${TARGETMOUNTPOINT}"
 
 	# And mount other directories
 	echo "...Mounting all other dirs."

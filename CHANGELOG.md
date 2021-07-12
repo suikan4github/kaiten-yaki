@@ -7,6 +7,8 @@ Record of the modification in project development.
 ### Deprecated
 ### Removed
 ### Fixed
+- [Issue 24 : Fail to install the ubuntu when the / volume is btrfs](https://github.com/suikan4github/kaiten-yaki/issues/24)
+
 ### Known Issue
 
 ## [1.1.0] - 2021-07-11
