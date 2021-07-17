@@ -45,6 +45,11 @@ Following is the example. The (lvm/vg1-mate) is dependent on the system. It has 
 ls
 set prefix=(lvm/vg1-mate)/boot/grub
 ```
+Note that above example assume the root volume format is usual one ( ex: ext4, jfs, xfs ). If the root volume is formatted by btrfs, above prefix doesn't work, it should contain the sub-volume name in the path :
+```
+ls
+set prefix=(lvm/vg1-mate)/@/boot/grub
+```
 
 Then, the third step is the same with the BIOS systems. 
 
