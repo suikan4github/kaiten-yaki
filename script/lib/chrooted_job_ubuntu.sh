@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Include configuration. This sript file have to be executed at Kaiten-yaki/script dir
-# shellcheck disable=SC1091
-source config.sh
-
 # Create a key file for LUKS and register it as contents of the initramfs image
 function chrooted_job() {
 	# Mount the rest of partitions by target /etc/fstab
