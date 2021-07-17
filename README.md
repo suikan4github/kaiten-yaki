@@ -8,6 +8,7 @@ The followings are the list of functionalities:
 - Automatic detection of BIOS/EFI firmware and create MBR/GPT, respectively.
 - Create an EFI partition, if needed.
 - Support multiple boot in a LUKS partition.
+- Support btrfs in addition to the major file systems. 
 - The "/boot" is located in the same logical volume as the "/". 
 - The swap logical volume is located inside the encrypted volume. 
 - You need to type a passphrase only once in the boot sequence. 
