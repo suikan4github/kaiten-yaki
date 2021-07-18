@@ -142,7 +142,7 @@ In the case of Void Linux
 ```bash
 source void-kaiten-yaki.sh
 ```
-After several interactive confirmations, Kaiten-yaki will ask you to input a passphrase. This passphrase will be applied to the encryption of the LUKS volume. Make sure you use identical passphrases between all installations of the distributions in a computer. Otherwise, the install process terminates with an error, except the first distribution installation.  
+After printing the configuration parameters, Kaiten-yaki will ask you to input a passphrase. This passphrase will be applied to the encryption of the LUKS volume. Make sure you use identical passphrases between all installations of the distributions in a computer. Otherwise, the install process terminates with an error, except the first distribution installation.  
 
 ## Second stage : GUI/TUI installer
 After the first script finishes, the GUI/TUI installer starts automatically. Configure it as usual and run it. Ensure you map the following correctly.
