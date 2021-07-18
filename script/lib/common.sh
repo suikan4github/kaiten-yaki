@@ -57,11 +57,21 @@ function confirmation(){
 	# For surre ask the your config.sh is edited
 	cat <<- HEREDOC
 
-	The destination logical volume label is "${LVROOTNAME}"
-	"${LVROOTNAME}" uses ${LVROOTSIZE} of the LVM volume group.
-	Are you sure to install? [Y/N]
+	LUKS volume partition : ${DEV}${CRYPTPARTITION} 
+	LUKS volume name      : "${CRYPTPARTNAME}" 
+	Volume group name     : "${VGNAME}"
+	Root volume name      : "${VGNAME}-${LVROOTNAME}"
+	Swap volume name      : "${VGNAME}-${LVSWAPNAME}"
+	Size of "${VGNAME}-${LVROOTNAME}" : ${LVROOTSIZE}
 	HEREDOC
 
+	if [ "${ERASEALL}" -ne 0 ] ; then
+		echo "Going to erase entire disk ${DEV}."
+	elif [ "${OVERWRITEINSTALL}" -ne 0 ] ; then
+		echo "Going to overwrite the logical volume \"${VGNAME}-${LVROOTNAME}\"."
+	else
+		echo "Going to create a new logical volume \"${VGNAME}-${LVROOTNAME}\"."
+	fi
 
 
 	# ----- Set Passphrase -----
