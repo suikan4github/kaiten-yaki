@@ -6,6 +6,7 @@ Record of the modification in project development.
 ### Changed
 - [Issue 25 : Refactoring: Sourcing config.sys is not needed in the chrooted_job](https://github.com/suikan4github/kaiten-yaki/issues/25)
 - [Issue 26 : Update AN01 for btrfs](https://github.com/suikan4github/kaiten-yaki/issues/26)
+- [Issue 27 : Eliminates the confirmation dialog](https://github.com/suikan4github/kaiten-yaki/issues/27)
 
 ### Deprecated
 ### Removed
