@@ -48,11 +48,8 @@ If you install two or more Void Linux into the EFI system, only the last one can
 # Variants considerations
 Ubuntu has several variants ( flavors ). While while only the MATE flavor is tested, other flavors may work correctly as far as it uses Ubiquity installer.
 
-# Application notes
-- [AN01 : How to recover from the mistyping of the passphrase](appnote/an01_howtorecover.md)
-- [AN02 : Managing LUKS key slots](appnote/an02_keyslot.md)
-- [AN03 : The ITERTIME parameter and vulnerability](appnote/an03_itertime.md)
-- [AN04 : How to make LUKS volume to the favorite partition](appnote/an04_favoritepartition.md)
+# Other resources
+See [Wiki](wiki/) for the application notes and the useful links. 
 
 # Acknowledgments
 These scripts are based on the script by [myn's diary](https://myn.hatenablog.jp/entry/install-ubuntu-focal-with-lvm-on-luks). That page contains rich information, hint, and techniques around the encrypted volume and Ubiquity installer. 
