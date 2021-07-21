@@ -61,8 +61,10 @@ function confirmation(){
 	LUKS volume name      : "${CRYPTPARTNAME}" 
 	Volume group name     : "${VGNAME}"
 	Root volume name      : "${VGNAME}-${LVROOTNAME}"
+	Root volume size      : "${LVROOTSIZE}"
 	Swap volume name      : "${VGNAME}-${LVSWAPNAME}"
-	Size of "${VGNAME}-${LVROOTNAME}" : ${LVROOTSIZE}
+	Swap volume size      : "${LVSWAPSIZE}"
+	--iter-time parameter : ${ITERTIME}
 	HEREDOC
 
 	if [ "${ERASEALL}" -ne 0 ] ; then
