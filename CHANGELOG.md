@@ -14,6 +14,7 @@ Record of the modification in project development.
 
 ### Fixed
 - [Issue 24 : Fail to install the ubuntu when the / volume is btrfs](https://github.com/suikan4github/kaiten-yaki/issues/24)
+- [Issue 29 : Item should be added to /etc/dracut.conf.d/10-crypt.conf , rather than be overwritten](https://github.com/suikan4github/kaiten-yaki/issues/29)
 
 ### Known Issue
 

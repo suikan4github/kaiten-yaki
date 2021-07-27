@@ -28,9 +28,9 @@ function chrooted_job() {
 	echo "...Adding LUKS volume info to /etc/crypttab."
 	echo "${CRYPTPARTNAME} UUID=$(blkid -s UUID -o value ${DEV}${CRYPTPARTITION}) /etc/luks/boot_os.keyfile luks,discard" >> /etc/crypttab
 
-	# Add key file to the list of the intems in initfsram. 
+	# Add key file to the list of the intems in initramfs. 
 	# See https://cryptsetup-team.pages.debian.net/cryptsetup/README.initramfs.html for detail
-	echo "...Directing to include keyfile into the initfsram"
+	echo "...Directing to include keyfile into the initramfs"
 	echo "KEYFILE_PATTERN=/etc/luks/*.keyfile" >> /etc/cryptsetup-initramfs/conf-hook
 	echo "UMASK=0077" >> /etc/initramfs-tools/initramfs.conf
 

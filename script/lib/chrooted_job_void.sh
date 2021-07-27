@@ -28,10 +28,10 @@ function chrooted_job() {
 	echo "...Adding LUKS volume info to /etc/crypttab."
 	echo "${CRYPTPARTNAME} UUID=$(blkid -s UUID -o value ${DEV}${CRYPTPARTITION}) /etc/luks/boot_os.keyfile luks,discard" >> /etc/crypttab
 
-	# Add key file to the list of the intems in initfsram. 
+	# Add key file to the list of the intems in initramfs. 
 	# See https://man7.org/linux/man-pages/man5/dracut.conf.5.html for details.
-	echo "...Directing to include keyfile into the initfsram"
-	echo 'install_items+=" /etc/luks/boot_os.keyfile /etc/crypttab " ' > /etc/dracut.conf.d/10-crypt.conf
+	echo "...Directing to include keyfile into the initramfs"
+	echo 'install_items+=" /etc/luks/boot_os.keyfile /etc/crypttab " ' >> /etc/dracut.conf.d/10-crypt.conf
 
 	# Finally, update the ramfs initial image with the key file. 
 	echo "...Upadting initramfs."
