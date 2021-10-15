@@ -27,9 +27,10 @@ As depicted above, the LVM volume group has only one physical volume.
 These scripts are tested with the following environment. 
 - VMWare Workstation 15.5.7 ( EFI/BIOS )
 - ThinkPad X220 (BIOS)
-- Ubuntu 20.04.2 amd64 desktop
+- Ubuntu 20.04.3 amd64 desktop
 - Ubuntu 21.04 amd64 desktop
-- Ubuntu Mate 20.04.2 amd64 desktop
+- Ubuntu 21.10 amd64 desktop
+- Ubuntu Mate 20.04.3 amd64 desktop
 - void-live-x86_64-20210218-mate.iso
 - void-live-x86_64-musl-20210218-mate.iso
 - void-live-x86_64-20210218.iso
