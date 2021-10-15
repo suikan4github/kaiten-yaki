@@ -9,6 +9,23 @@ Record of the modification in project development.
 ### Fixed
 ### Known Issue
 
+## [1.2.0] - 2021-10-16
+### Added
+### Changed
+- [Issue 25 : Refactoring: Sourcing config.sys is not needed in the chrooted_job](https://github.com/suikan4github/kaiten-yaki/issues/25)
+- [Issue 26 : Update AN01 for btrfs](https://github.com/suikan4github/kaiten-yaki/issues/26)
+- [Issue 27 : Eliminates the confirmation dialog](https://github.com/suikan4github/kaiten-yaki/issues/27)
+
+### Deprecated
+### Removed
+- [Issue 28 : Move application notes to Wiki](https://github.com/suikan4github/kaiten-yaki/issues/28)
+
+### Fixed
+- [Issue 24 : Fail to install the ubuntu when the / volume is btrfs](https://github.com/suikan4github/kaiten-yaki/issues/24)
+- [Issue 29 : Item should be added to /etc/dracut.conf.d/10-crypt.conf , rather than be overwritten](https://github.com/suikan4github/kaiten-yaki/issues/29)
+
+### Known Issue
+
 ## [1.1.0] - 2021-07-11
 Added ITERTIME parameter and corrected other small issues. Application notes AN01 - AN04 are added. 
 The Followings are tested distributions 
@@ -57,6 +74,7 @@ See [Testing before release v1.1.0](https://github.com/suikan4github/kaiten-yaki
 ### Known Issue
 
 
-[Unreleased]: https://github.com/suikan4github/kaiten-yaki/compare/v1.1.0...develop
+[Unreleased]: https://github.com/suikan4github/kaiten-yaki/compare/v1.2.0...develop
+[1.2.0]: https://github.com/suikan4github/kaiten-yaki/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/suikan4github/kaiten-yaki/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/suikan4github/kaiten-yaki/compare/v0.0.0...v1.0.0

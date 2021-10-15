@@ -57,46 +57,24 @@ function confirmation(){
 	# For surre ask the your config.sh is edited
 	cat <<- HEREDOC
 
-	The destination logical volume label is "${LVROOTNAME}"
-	"${LVROOTNAME}" uses ${LVROOTSIZE} of the LVM volume group.
-	Are you sure to install? [Y/N]
+	LUKS volume partition : ${DEV}${CRYPTPARTITION} 
+	LUKS volume name      : "${CRYPTPARTNAME}" 
+	Volume group name     : "${VGNAME}"
+	Root volume name      : "${VGNAME}-${LVROOTNAME}"
+	Root volume size      : "${LVROOTSIZE}"
+	Swap volume name      : "${VGNAME}-${LVSWAPNAME}"
+	Swap volume size      : "${LVSWAPSIZE}"
+	--iter-time parameter : ${ITERTIME}
 	HEREDOC
-	read -r YESNO
-	if [ "${YESNO}" != "Y" ] && [ "${YESNO}" != "y" ] ; then
-		cat <<- HEREDOC 
 
-		...Installation process terminated..
-		HEREDOC
-		return 1 # with error status
-	fi	# if YES
-
-	# For sure ask to erase. 
 	if [ "${ERASEALL}" -ne 0 ] ; then
-		echo "Are you sure you want to erase entire \"${DEV}\"? [Y/N]"
-		read -r YESNO
-		if [ "${YESNO}" != "Y" ] && [ "${YESNO}" != "y" ] ; then
-			cat <<-HEREDOC 
-		...Check your config.sh. The variable ERASEALL is ${ERASEALL}.
+		echo "Going to erase entire disk ${DEV}."
+	elif [ "${OVERWRITEINSTALL}" -ne 0 ] ; then
+		echo "Going to overwrite the logical volume \"${VGNAME}-${LVROOTNAME}\"."
+	else
+		echo "Going to create a new logical volume \"${VGNAME}-${LVROOTNAME}\"."
+	fi
 
-		...Installation process terminated..
-		HEREDOC
-		return 1 # with error status
-		fi	# if YES
-	fi	# if erase all
-
-	# For sure ask to overwrite. 
-	if [ "${OVERWRITEINSTALL}" -ne 0 ] ; then
-		echo "Are you sure you want to overwrite \"${LVROOTNAME}\" in \"${VGNAME}\"? [Y/N]"
-		read -r YESNO
-		if [ "${YESNO}" != "Y" ] && [ "${YESNO}" != "y" ] ; then
-			cat <<-HEREDOC 
-		...Check your config.sh. The variable OVERWRITEINSTALL is ${OVERWRITEINSTALL}.
-
-		...Installation process terminated..
-		HEREDOC
-		return 1 # with error status
-		fi	# if YES
-	fi	# if overwrite
 
 	# ----- Set Passphrase -----
 	# Input passphrase
@@ -291,8 +269,11 @@ function para_install_msg() {
 function post_install() {
 	## Mount the target file system
 	# ${TARGETMOUNTPOINT} is created by the GUI/TUI installer
+	# ${BTRFSOPTION} is defined by the caller of this function for BTRFS formated volume.
+	# ${BTRFSOPTION} have to be NOT quoted. Otherwise, mount will receive an empty
+	# string as first option, when the veraible is empty. 
 	echo "...Mounting /dev/mapper/${VGNAME}-${LVROOTNAME} on ${TARGETMOUNTPOINT}."
-	mount /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" "${TARGETMOUNTPOINT}"
+	mount ${BTRFSOPTION} /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" "${TARGETMOUNTPOINT}"
 
 	# And mount other directories
 	echo "...Mounting all other dirs."

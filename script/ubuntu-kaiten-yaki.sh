@@ -53,6 +53,15 @@ function main() {
 	#                                Post-install stage 
 	# ******************************************************************************* 
 
+	# If the target volume is formated by btrfs, Ubiquity install the root into the
+	# @ sub-volume. Thus, mount command inside post_install have to use special option
+	# to specify @ as mount target. 
+	if lsblk -o NAME,FSTYPE | grep -i "${VGNAME}-${LVROOTNAME}" | grep -i "btrfs" > /dev/null ; then 
+		export BTRFSOPTION="-o subvol=@"
+	else
+		export BTRFSOPTION=""
+	fi
+
 	# Distribution dependent finalizing. Embedd encryption key into the ramfs image.
 	# The script is parameterized by env-variable to fit to the distribution 
 	post_install

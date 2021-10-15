@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Include configuration. This sript file have to be executed at Kaiten-yaki/script dir
-# shellcheck disable=SC1091
-source config.sh
-
 # Create a key file for LUKS and register it as contents of the initramfs image
 function chrooted_job() {
 	# Mount the rest of partitions by target /etc/fstab
@@ -32,8 +28,9 @@ function chrooted_job() {
 	echo "...Adding LUKS volume info to /etc/crypttab."
 	echo "${CRYPTPARTNAME} UUID=$(blkid -s UUID -o value ${DEV}${CRYPTPARTITION}) /etc/luks/boot_os.keyfile luks,discard" >> /etc/crypttab
 
-	# Add key file to the list of the intems in initfsram. 
-	echo "...Registering key file to the ramfs"
+	# Add key file to the list of the intems in initramfs. 
+	# See https://cryptsetup-team.pages.debian.net/cryptsetup/README.initramfs.html for detail
+	echo "...Directing to include keyfile into the initramfs"
 	echo "KEYFILE_PATTERN=/etc/luks/*.keyfile" >> /etc/cryptsetup-initramfs/conf-hook
 	echo "UMASK=0077" >> /etc/initramfs-tools/initramfs.conf
 

@@ -9,31 +9,32 @@ You can execute the install script without the command line parameter. For examp
 ```sh
 source ubuntu-kaiten-yaki.sh
 ```
-The first stage of the script is preparation like: erasing a disk, format partition, and encryption. This is the most critical stage of the entire installation process. This part is controlled by the configuration parameter. Thus, you have to edit the config.txt carefully. 
+The first stage of the script is preparation like: erasing a disk, format partition, and encryption. This is the most critical stage of the entire installation process. This part is controlled by the configuration parameter. Thus, you have to edit the config.sh carefully. 
 
 In the second stage, the distribution-dependent GUI/TUI installer is invoked from the running script. That is the Ubiquity/void-installer of Ubuntu/Void Linux, respectively. 
 
-The third configure the target Linux system to decrypt the encrypted volume automatically, without prompting user to type passphrase. In this stage, Everything is automatic. 
+The third stage configures the target Linux system to decrypt the encrypted volume automatically, without prompting user to type passphrase. In this stage, Everything is automatic. 
 # Installation
 Follow the steps below. 
 
 ## Shell preparation
-First of all, promote the shell to root. Almost of the procedure in the installation requires root privilege. Note that the scripts require Bash. 
+First of all, promote the shell to root. Kaiten-yaki script requires root permission to edit the storage device. Note that the scripts require Bash as shell. 
 
 In the case of Ubuntu installation:
-```bash
+```sh
 # Promote to the root user
 sudo -i /bin/bash
 ```
 In the case of Void Linux installation: 
-```bash
+```sh
+# Promote to the root user
 sudo -i /bin/bash
 xbps-install -Su xbps nano
 ```
-The nano is an editor package to configure the config.txt. The choice of editor is up to you. Kaiten-yaki script doesn't have a dependency on nano editor.
+The nano is an editor package to configure the config.sh. The choice of editor is up to you. Kaiten-yaki script doesn't have a dependency on nano editor.
 
 And then, go to the kaiten-yaki/script directory. 
-```bash
+```sh
 cd /the/downloaded/directory/kaiten-yaki/script
 ```
 Now, ready to configure. 
@@ -43,13 +44,13 @@ This is a very critical part of the installation. The configuration parameters a
 Followings are the set of the default settings of the parameters : 
 - Install to  **/dev/sda** (DEV).
 - Do not erase the entire disk (ERASEALL).
-- Overwrite install is disabled.
+- Do not overwrite the existing logical volume (OVERWRITEINSTALL).
 - In the case of EFI firmware, 200MB is allocated to the EFI partition (EFISIZE).
 - Create a logical volume group named "vg1" in the encrypted volume (VGNAME)
 - Create a swap logical volume named "swap" in the "vg1". The size is 8GB (LVSWAPNAME,LVSWAPSIZE)
 - Create a logical volume named **"anko"** as root volume,  in the "vg1". The size of the new volume is the **50%** of the free space (LVROOTNAME, LVROOTSIZE).
 
-```bash
+```sh
 # Configuration parameters for Kaiten-Yaki 
 
 # Storage device to install the linux.  
@@ -120,11 +121,11 @@ And set the following parameters as same as the previous installation.
 - VGNAME
 - CRYPTPARTNAME
 
-Kaiten-yaki will leave the "bad" logical volume and allow you to overwrite it by GUI/TUI installer. 
+Kaiten-yaki will leave the LUKS encrypted partition and allow you to overwrite the "bad" logical volume by GUI/TUI installer. 
 ### About ITERTIME parameter
 This parameter is recommended to left as default value (=0), unless you understand what it mean well. 
 
-The ITERTIME parameter is passed as --iter-time parameter to the [cryptosetup command](https://man7.org/linux/man-pages/man8/cryptsetup.8.html), when script setup the LUKS crypto volume. 
+The ITERTIME parameter is passed as --iter-time parameter to the [cryptosetup command](https://man7.org/linux/man-pages/man8/cryptsetup.8.html), when script setup the LUKS crypto volume. See [AN03](https://github.com/suikan4github/kaiten-yaki/wiki/AN03:-The-ITERTIME-parameter-and-vulnerability)
 
 The unit of value is milliseconds. The target linux kernel may take this duration, to calculate a hash value from the given passphrase. You can change this duration through this parameter. 
 
@@ -134,15 +135,15 @@ The smaller value gives the weaker security.
 After you set the configuration parameters correctly, execute the following command from the shell. Again, you have to be promoted as the root user, and you have to use Bash.  
 
 In the case of Ubuntu :
-```bash
+```sh
 source ubuntu-kaiten-yaki.sh
 ```
 
 In the case of Void Linux
-```bash
+```sh
 source void-kaiten-yaki.sh
 ```
-After several interactive confirmations, Kaiten-yaki will ask you to input a passphrase. This passphrase will be applied to the encryption of the LUKS volume. Make sure you use identical passphrases between all installations of the distributions in a computer. Otherwise, the install process terminates with an error, except the first distribution installation.  
+After printing the configuration parameters, Kaiten-yaki will prompt you to input a passphrase. This passphrase will be applied to the encryption of the LUKS volume. Make sure you use identical passphrases between all installations of the distributions in a computer. Otherwise, the install process terminates with an error, except the case of the ERASEALL configuration parameter is 1.  
 
 ## Second stage : GUI/TUI installer
 After the first script finishes, the GUI/TUI installer starts automatically. Configure it as usual and run it. Ensure you map the following correctly.
@@ -152,12 +153,12 @@ Target Directory | Host Volume            | Comment
 /                | /dev/mapper/vg1-ubuntu | Host volume name is up to your configuration parameter.
 swap             | /dev/mapper/swap       | Only the first distribution installation requires this mapping.
 
-During the GUI/TUI installer copying files, Kaiten-yaki modifies the /etc/default/grub of the target system. This is the pretty dirty way. But if we don't modify this file, GUI/TUI installer fails at last. 
+During the GUI/TUI installer copying files, Kaiten-yaki modifies the /etc/default/grub of the target system. This is a pretty dirty way. But if we don't modify this file, GUI/TUI installer fails at last. 
 
 ![Ubuntu Partitioning](image/ubuntu_partitioning.png)
 ![Void Partitioning](image/void_partitioning.png)
 
-## Do not reboot
+### Do not reboot
 At the end of the GUI/TUI installing, do not reboot the system. Click "Continue" and just exit the GUI/TUI installer without rebooting. Otherwise, we cannot finalize the entire installation process. 
 
 ![Ubuntu done](image/ubuntu_done.png)
@@ -166,7 +167,7 @@ At the end of the GUI/TUI installing, do not reboot the system. Click "Continue"
 ## Third stage: Finalizing
 After GUI/TUI installer quits without rebooting, the final part of the install process automatically starts. 
 
-In this section, Kaiten-yaki put the encryption key of the LUKS volume into the ramfs initial stage to allow the Linux kernel to decrypt the LUKS partition which contains root logical volume. Thus, the system will ask you passphrase only once when GRUB starts. 
+In this section, Kaiten-yaki put the encryption key of the LUKS volume into the initramfs image to allow the Linux kernel  decrypting the LUKS partition which contains root logical volume. Thus, the system will ask you the passphrase only once when GRUB starts. 
 
 You can reboot the system if you see the "Ready to reboot" message on the console. 
 
