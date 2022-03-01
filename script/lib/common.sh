@@ -42,6 +42,34 @@ function confirmation(){
 		return 1 # with error status
 	fi # "-" is found in the volume name.
 
+	# Sanity check for lvext1 volume suffix
+	if [ "${USELVEXT1}" -ne 0 ] ; then
+		if echo "${LVEXT1SUFFIX}" | grep "-" -i > /dev/null ; then	# "-" is found in the volume name.
+			cat <<- HEREDOC 
+			***** ERROR : LVEXT1SUFFIX is "${LVEXT1SUFFIX}" *****
+			..."-" is not allowed in the volume name. 
+			...Check configuration in your config.sh
+
+			...Installation process terminated..
+			HEREDOC
+			return 1 # with error status
+		fi # "-" is found in the volume suffix.
+	fi # USELVEXT1
+
+	# Sanity check for lvext2 volume suffix
+	if [ "${USELVEXT2}" -ne 0 ] ; then
+		if echo "${LVEXT2SUFFIX}" | grep "-" -i > /dev/null ; then	# "-" is found in the volume name.
+			cat <<- HEREDOC 
+			***** ERROR : LVEXT2SUFFIX is "${LVEXT2SUFFIX}" *****
+			..."-" is not allowed in the volume name. 
+			...Check configuration in your config.sh
+
+			...Installation process terminated..
+			HEREDOC
+			return 1 # with error status
+		fi # "-" is found in the volume suffix.
+	fi # USELVEXT2
+
 	# Sanity check for swap volume name
 	if echo "${LVSWAPNAME}" | grep "-" -i > /dev/null ; then	# "-" is found in the volume name.
 		cat <<- HEREDOC 
@@ -62,6 +90,23 @@ function confirmation(){
 	Volume group name     : "${VGNAME}"
 	Root volume name      : "${VGNAME}-${LVROOTNAME}"
 	Root volume size      : "${LVROOTSIZE}"
+	HEREDOC
+
+	if [ "${USELVEXT1}" -ne 0 ] ; then
+		cat <<- HEREDOC
+		Extra volume name 1   : "${VGNAME}-${LVROOTNAME}${LVEXT1SUFFIX}"
+		Extra volume size 1   : "${LVEXT1SIZE}"
+		HEREDOC
+	fi	# USELVEXT1
+
+	if [ "${USELVEXT2}" -ne 0 ] ; then
+		cat <<- HEREDOC
+		Extra volume name 2   : "${VGNAME}-${LVROOTNAME}${LVEXT2SUFFIX}"
+		Extra volume size 2   : "${LVEXT2SIZE}"
+		HEREDOC
+	fi	# USELVEXT2
+
+	cat <<- HEREDOC
 	Swap volume name      : "${VGNAME}-${LVSWAPNAME}"
 	Swap volume size      : "${LVSWAPSIZE}"
 	--iter-time parameter : ${ITERTIME}
@@ -207,7 +252,7 @@ function pre_install() {
 			return 1 # with error status
 		fi
 	else	# not exsit
-		if [ "${OVERWRITEINSTALL}" -ne 0 ] ; then
+		if [ "${OVERWRITEINSTALL}" -ne 0 ] ; then # not exist and overwrite install
 			cat <<- HEREDOC 
 			***** ERROR : Logical volume "${VGNAME}-${LVROOTNAME}" doesn't exist while overwrite install. *****
 			...Check consistency of your config.txt.
@@ -219,6 +264,69 @@ function pre_install() {
 			echo "...Creating logical volume \"${LVROOTNAME}\" on \"${VGNAME}\"."
 			lvcreate -l "${LVROOTSIZE}" -n "${LVROOTNAME}" "${VGNAME}"
 			if [ $? -ne 0 ] ; then deactivate_and_close; return 1 ; fi;
+
+			if [ "${USELVEXT1}" -ne 0 ] ; then	# if using extra volume 1
+				if [ -e /dev/mapper/"${VGNAME}-${LVROOTNAME}${LVEXT1SUFFIX}" ] ; then # if extra volume 1 exist
+					cat <<- HEREDOC 
+					***** ERROR : Logical volume "${VGNAME}-${LVROOTNAME}${LVEXT1SUFFIX}" exists while non-overwrite install. *****
+					...Check consistency of your config.txt.
+					HEREDOC
+					# Remove newly created root volume
+					echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}\"."
+					lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" 					
+					# Deactivate all lg and close the LUKS volume
+					deactivate_and_close
+					return 1 # with error status
+				else
+					echo "...Creating logical volume \"${LVROOTNAME}${LVEXT1SUFFIX}\" on \"${VGNAME}\"."
+					lvcreate -l "${LVEXT1SIZE}" -n "${LVROOTNAME}${LVEXT1SUFFIX}" "${VGNAME}"
+					if [ $? -ne 0 ] ; then 	# if fail
+						# Remove newly created root volume
+						echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}\"."
+						lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" 					
+						# Deactivate all lg and close the LUKS volume
+						deactivate_and_close; 
+						return 1 ; 
+					fi;
+				fi
+			fi
+
+			if [ "${USELVEXT2}" -ne 0 ] ; then	# if using extra volume 2
+				if [ -e /dev/mapper/"${VGNAME}-${LVROOTNAME}${LVEXT2SUFFIX}" ] ; then # if extra volume 2 exist
+					cat <<- HEREDOC 
+					***** ERROR : Logical volume "${VGNAME}-${LVROOTNAME}${LVEXT2SUFFIX}" exists while non-overwrite install. *****
+					...Check consistency of your config.txt.
+					HEREDOC
+					# Remove newly created root volume
+					echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}\"."
+					lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" 
+					if [ "${USELVEXT1}" -ne 0 ] ; then	# if using extra volume 1
+						# Remove newly created extra volume 1
+						echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}${LVEXT1SUFFIX}\"."
+						lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}${LVEXT1SUFFIX}" 					
+					fi
+					# Deactivate all lg and close the LUKS volume
+					deactivate_and_close
+					return 1 # with error status
+				else
+					echo "...Creating logical volume \"${LVROOTNAME}${LVEXT2SUFFIX}\" on \"${VGNAME}\"."
+					lvcreate -l "${LVEXT2SIZE}" -n "${LVROOTNAME}${LVEXT2SUFFIX}" "${VGNAME}"
+					if [ $? -ne 0 ] ; then 	# if fail
+						# Remove newly created root volume
+						echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}\"."
+						lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" 					
+						if [ "${USELVEXT1}" -ne 0 ] ; then	# if using extra volume 1
+							# Remove newly created extra volume 1
+							echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}${LVEXT1SUFFIX}\"."
+							lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}${LVEXT1SUFFIX}" 					
+						fi
+						# Deactivate all lg and close the LUKS volume
+						deactivate_and_close; 
+						return 1 ; 
+					fi;
+				fi
+			fi
+
 		fi
 	fi
 
@@ -338,6 +446,19 @@ function on_unexpected_installer_quit(){
 	else # if not overwrite istall, delete the new volume
 		echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}\"."
 		lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" 
+
+		if [ "${USELVEXT1}" -ne 0 ] ; then	# if using extra volume 1
+			# Remove newly created extra volume 1
+			echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}${LVEXT1SUFFIX}\"."
+			lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}${LVEXT1SUFFIX}" 					
+		fi
+
+		if [ "${USELVEXT2}" -ne 0 ] ; then	# if using extra volume 2
+			# Remove newly created extra volume 2
+			echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}${LVEXT2SUFFIX}\"."
+			lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}${LVEXT2SUFFIX}" 					
+		fi
+
 	fi
 	# Deactivate all lg and close the LUKS volume
 	deactivate_and_close
