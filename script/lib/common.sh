@@ -359,7 +359,17 @@ function para_install_msg() {
 	fi
 
 	# Root volume mapping
-	echo "/                : /dev/mapper/${VGNAME}-${LVROOTNAME}"
+		echo "/                : /dev/mapper/${VGNAME}-${LVROOTNAME}"
+
+	# If USELVEXT1 exist.
+	if [ "${USELVEXT1}" -ne 0 ] ; then
+		echo "LVEXT1           : /dev/mapper/${VGNAME}${LVEXT1SUFFIX}"
+	fi
+
+	# If USELVEXT2 exist.
+	if [ "${USELVEXT2}" -ne 0 ] ; then
+		echo "LVEXT2           : /dev/mapper/${VGNAME}${LVEXT2SUFFIX}"
+	fi
 
 	# In case of erased storage, add this mapping
 	if [ "${ERASEALL}" -ne 0 ] ; then
