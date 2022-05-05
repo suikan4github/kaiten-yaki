@@ -363,12 +363,12 @@ function para_install_msg() {
 
 	# If USELVEXT1 exist.
 	if [ "${USELVEXT1}" -ne 0 ] ; then
-		echo "LVEXT1           : /dev/mapper/${VGNAME}${LVEXT1SUFFIX}"
+		echo "LVEXT1           : /dev/mapper/${VGNAME}-${LVROOTNAME}${LVEXT1SUFFIX}"
 	fi
 
 	# If USELVEXT2 exist.
 	if [ "${USELVEXT2}" -ne 0 ] ; then
-		echo "LVEXT2           : /dev/mapper/${VGNAME}${LVEXT2SUFFIX}"
+		echo "LVEXT2           : /dev/mapper/${VGNAME}-${LVROOTNAME}${LVEXT2SUFFIX}"
 	fi
 
 	# In case of erased storage, add this mapping
