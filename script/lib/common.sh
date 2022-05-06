@@ -272,9 +272,9 @@ function pre_install() {
 			return 1 # with error status
 		else # not exist and not overwrite install
 			echo "...Creating logical volume \"${LVROOTNAME}\" on \"${VGNAME}\"."
-			IS_ROOT_CREATED=1
 			lvcreate -l "${LVROOTSIZE}" -n "${LVROOTNAME}" "${VGNAME}"
 			if [ $? -ne 0 ] ; then deactivate_and_close; return 1 ; fi;
+			IS_ROOT_CREATED=1
 
 			# Create extended volumes if needed
 			create_ext_lv
@@ -388,6 +388,29 @@ function post_install() {
 # ******************************************************************************* 
 
 function deactivate_and_close(){
+
+
+	if [ "${IS_ROOT_CREATED}" -ne 0 ] ; then	# if extra volume 1 created
+		# Remove newly created root volume
+		echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}\"."
+		lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" 
+	fi
+
+
+	if [ "${IS_LVEXT1_CREATED}" -ne 0 ] ; then	# if extra volume 1 created
+		# Remove newly created extra volume 1
+		echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}${LVEXT1SUFFIX}\"."
+		lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}${LVEXT1SUFFIX}" 					
+	fi
+
+	if [ "${IS_LVEXT2_CREATED}" -ne 0 ] ; then	# if extra volume 2 created
+		# Remove newly created extra volume 2
+		echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}${LVEXT2SUFFIX}\"."
+		lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}${LVEXT2SUFFIX}" 					
+	fi
+
+
+
 	echo "...Deactivating all logical volumes in volume group \"${VGNAME}\"."
 	vgchange -a n "${VGNAME}"
 	echo "...Closing LUKS volume \"${CRYPTPARTNAME}\"."
@@ -406,22 +429,6 @@ function on_unexpected_installer_quit(){
 	echo "***** ERROR : The GUI/TUI installer terminated unexpectedly. *****" 
 	if [ "${OVERWRITEINSTALL}" -ne 0 ] ; then	# If overwrite install, keep the volume
 		echo "...Keep logical volume \"${VGNAME}-${LVROOTNAME}\" untouched."
-	else # if not overwrite istall, delete the new volume
-		echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}\"."
-		lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" 
-
-		if [ "${USELVEXT1}" -ne 0 ] ; then	# if using extra volume 1
-			# Remove newly created extra volume 1
-			echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}${LVEXT1SUFFIX}\"."
-			lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}${LVEXT1SUFFIX}" 					
-		fi
-
-		if [ "${USELVEXT2}" -ne 0 ] ; then	# if using extra volume 2
-			# Remove newly created extra volume 2
-			echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}${LVEXT2SUFFIX}\"."
-			lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}${LVEXT2SUFFIX}" 					
-		fi
-
 	fi
 	# Deactivate all lg and close the LUKS volume
 	deactivate_and_close
@@ -467,16 +474,12 @@ function create_ext_lv() {
 			echo "...Logical volume \"${VGNAME}-${LVROOTNAME}${LVEXT1SUFFIX}\" already exists. OK."
 		else
 			echo "...Creating logical volume \"${LVROOTNAME}${LVEXT1SUFFIX}\" on \"${VGNAME}\"."
-			IS_LVEXT1_CREATED=1
 			lvcreate -l "${LVEXT1SIZE}" -n "${LVROOTNAME}${LVEXT1SUFFIX}" "${VGNAME}"
 			if [ $? -ne 0 ] ; then 	# if fail
 				echo "***** ERROR : failed to create "${VGNAME}-${LVROOTNAME}${LVEXT1SUFFIX}" . *****"
-				# Remove newly created root volume
-				if [ "${IS_ROOT_CREATED}" -ne 0 ] ; then # Is root created in this installation?
-					echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}\"."
-					lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" 					
-				fi
 				return 1 ; 
+			else					# if success
+				IS_LVEXT1_CREATED=1	# Mark this volume is created 
 			fi;
 		fi
 	fi
@@ -486,21 +489,12 @@ function create_ext_lv() {
 			echo "...Logical volume \"${VGNAME}-${LVROOTNAME}${LVEXT2SUFFIX}\" already exists. OK."
 		else
 			echo "...Creating logical volume \"${LVROOTNAME}${LVEXT2SUFFIX}\" on \"${VGNAME}\"."
-			IS_LVEXT2_CREATED=1
 			lvcreate -l "${LVEXT2SIZE}" -n "${LVROOTNAME}${LVEXT2SUFFIX}" "${VGNAME}"
 			if [ $? -ne 0 ] ; then 	# if fail
 				echo "***** ERROR : failed to create "${VGNAME}-${LVROOTNAME}${LVEXT1SUFFIX}" . *****"
-				# Remove newly created root volume
-				if [ "${IS_ROOT_CREATED}" -ne 0 ] ; then # newly created root must be deleted
-					echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}\"."
-					lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" 					
-				fi
-				if [ "${IS_LVEXT1_CREATED}" -ne 0 ] ; then	# Is LV EXT1 created in this volue? 
-					# Remove newly created extra volume 1
-					echo "...Deleting the new logical volume \"${VGNAME}-${LVROOTNAME}${LVEXT1SUFFIX}\"."
-					lvremove -f /dev/mapper/"${VGNAME}"-"${LVROOTNAME}${LVEXT1SUFFIX}" 					
-				fi
 				return 1 ; 
+			else					# if success
+				IS_LVEXT2_CREATED=1	# Mark this volume is created
 			fi;
 		fi
 	fi
