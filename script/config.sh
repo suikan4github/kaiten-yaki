@@ -69,9 +69,6 @@ export OVERWRITEINSTALL=0
 # If you specify 1000, that means 1000mSec. 0 means compile default.  
 export ITERTIME=0
 
-# Void Linux only. Ignored in Ubuntu.
-# The font size of the void-installer
-export XTERMFONTSIZE=11
 
 # !!!!!!!!!!!!!! DO NOT EDIT FOLLOWING LINES. !!!!!!!!!!!!!!
 
@@ -91,11 +88,3 @@ else
 # BIOS firmware
 export CRYPTPARTITION=1
 fi  # EFI firmware
-
-# Detect the GUI environment
-# This code is not efered. Just left because it is interestintg code. 
-if env | grep -w -e XDG_SESSION_TYPE -e DISPLAY -e WAYLAND_DISPLAY > /dev/null ; then
-    export GUIENV=1    # set 1 if GUI env.
-else
-    export GUIENV=0    # set 0 if not GUI env.
-fi
