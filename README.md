@@ -1,11 +1,11 @@
 # Kaiten-yaki: Full disk encryption install script for Linux
-Kaiten-yaki is a script set to install Linux to your AMD64 desktop system. With these scripts, you can install Ubuntu/Void Linux to an encrypted partition easily. 
+Kaiten-yaki v1.3.0 is a script set to install Linux to your AMD64 desktop system. With these scripts, you can install Ubuntu/Void Linux to an encrypted partition easily. 
 
 The followings are the list of functionalities: 
 - Ubuntu and Void Linux.
 - Help to install from LiveCD/USB.
 - Invoke GUI/TUI installer automatically at the middle of script execution, for the ease of installation.
-- Automatic detection of BIOS/EFI firmware and create MBR/GPT, respectively.
+- Automatic detection of EFI firmware and create GPT( The BIOS detection and MBR creation function exist. But it is not maintained from v1.3.0  ).
 - Create an EFI partition, if needed.
 - Support multiple boot in a LUKS partition.
 - Support btrfs in addition to the major file systems. 

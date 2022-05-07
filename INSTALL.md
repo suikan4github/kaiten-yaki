@@ -48,7 +48,8 @@ Followings are the set of the default settings of the parameters :
 - In the case of EFI firmware, 200MB is allocated to the EFI partition (EFISIZE).
 - Create a logical volume group named "vg1" in the encrypted volume (VGNAME)
 - Create a swap logical volume named "swap" in the "vg1". The size is 8GB (LVSWAPNAME,LVSWAPSIZE)
-- Create a logical volume named **"anko"** as root volume,  in the "vg1". The size of the new volume is the **50%** of the free space (LVROOTNAME, LVROOTSIZE).
+- Create a logical volume named **"anko"** as root volume,  in the "vg1". The size of the new volume is the **10GB**  (LVROOTNAME, LVROOTSIZE).
+- No Extra volumes will be created (USELVEXT1, LVEXT1SUFFIX, LVEXT1SIZE, USELVEXT2, LVEXT2SUFFIX, LVEXT2SIZE).
 
 ```sh
 # Configuration parameters for Kaiten-Yaki 
@@ -65,16 +66,52 @@ export ERASEALL=0
 # Keep it unique from other distribution.
 export LVROOTNAME="anko"
 
-# Logical volume size of the Linux installation.
-# 30% mean, new logical volume will use 30% of the free space 
-# in the LVM volume group. For example, assume the free space is 100GB, 
-# and LVROOTSIZE is 30%FREE. Script will create 30GB logical volume.  
-export LVROOTSIZE="50%FREE"
+# Suffix of the optional logical volumes. 
+# If you want to have optional OVs, set USELVEXT# to 1. 
+# Then, the suffix will be added to the LVROOTNAME. 
+# For example, Assume you have setting below : 
+# LVROOTNAME="anko"
+# USELVEXT1=1
+# LVEXT1SUFFIX="_home"
+# USELVEXT2=0
+# LVEXT2SUFFIX="_var"
+# You will have
+# anko
+# anko_home
+# You will not have anko_var because the USELVEXT2=0.
+export USELVEXT1=0
+export LVEXT1SUFFIX="_home"
+export USELVEXT2=0
+export LVEXT2SUFFIX="_var"
+
+
+# Volume size parameters. 
+# Note that the order of the volume creation is : 
+# 1. EFI if needed
+# 2. SWAP
+# 3. LVROOT
+# 4. LVEXT1 if needed
+# 5. LVEXT2 if needed
 
 # Set the size of EFI partition and swap partition. 
 # The unit is Byte. You can use M,G... notation.
+# You CANNOT use the % notation. 
 export EFISIZE="200M"
+
+# Logical volume size of the swap volumes. 
 export LVSWAPSIZE="8G"
+
+# Logical volume size of the Linux installation.
+# There are four posibble way to specify the volume. 
+# nnnM, nnnG, nnnT : Absolute size speicification. nnnMbyte, nnnGByte, nnnT byte.  
+# mm%VG : Use mm% of the entire volume group. 
+# mm%FREE : Use mm% of the avairable storage are in the volume group. 
+export LVROOTSIZE="10G"
+
+# Logical volume size of the optional volumes. 
+export LVEXT1SIZE="30G"
+export LVEXT2SIZE="10G"
+
 
 # Usually, these names can be left untouched. 
 # If you change, keep them consistent through all installation in your system.
@@ -92,15 +129,22 @@ export OVERWRITEINSTALL=0
 # If you specify 1000, that means 1000mSec. 0 means compile default.  
 export ITERTIME=0
 
+
 ```
 
 There are several restrictions : 
 - For the first distribution installation, you must set ERASEALL to 1, to erase the entire storage device and create a LUKS partition. Kaiten-yaki script creates a maximum LUKS partition as possible. 
-- The LVROOTNAME must be unique among all installations in a computer. Otherwise, Kaiten-yaki terminates in a middle. 
-- The LVSWAPNAME must be identical among all installations in a computer. Otherwise, Kaiten-yaki creates an unnecessary logical volume. This is a waste of storage resources. 
+- The CRYPTPARTNAME and VGNAME must be unique among all installations in a physical disk. Otherwise, Kaiten-yaki terminates in a middle. 
+- The LVSWAPNAME must be identical among all installations in a physical disk. Otherwise, Kaiten-yaki creates an unnecessary logical volume. This is a waste of storage resources. 
 - The EFISIZE and the LVSWAPSIZE are refereed during the first distribution installation only. 
-- The LVROOTSIZE is the size of a logical volume to create. This is a relative value to the existing free space in the volume group. If you want to install 3 distributions in a computer, you may want to set 33%FREE, 50%FREE, and 100%FREE for the first, second, and third distribution installation, respectively. 
-- The name with "-" is not allowed for the VGNAME, LVROOTNAME, and LVSWAPNAME. I saw some installer doesn't work if "-" in in the name. 
+- The LVROOTSIZE, LVEXT1SIZE, LVEXT2SIZE are the size of a logical volumes to create. There are several way to specify the size ( where n is number) :
+    - nnnM : New logical volume size is nnn**MByte**.
+    - nnnG : New logical volume size is nnn**GByte**.
+    - nnnT : New logical volume size is nnn**TByte**.
+    - nn%VG :  New logical volume size is nn% of the **entire volume group**.
+    - nn%FREE : New logical volume size is nn% of the **free space** in the volume group.
+- The name with "-" is not allowed for the VGNAME, LVROOTNAME, and LVSWAPNAME. I saw some distribution installer doesn't work if "-" in in the name. 
+
 ### About the overwrite-install
 The OVERWRITEINSTALL parameter allows you to use an existing logical volume as the root volume of the new installation.
 This is very dangerous because of several aspects like destroying the wrong volume and the risk of security. But sometimes it is
@@ -127,6 +171,28 @@ The ITERTIME parameter is passed as --iter-time parameter to the [cryptosetup co
 The unit of value is milliseconds. The target linux kernel may take this duration, to calculate a hash value from the given passphrase. You can change this duration through this parameter. 
 
 The smaller value gives the weaker security. 
+
+### About the extra logical volume
+From ver 1.3.0, Kaiten-yaki support two extra volume in addition to LVROOT and LVSWAP. 
+- LVEXT1
+- LVEXT2
+
+The usage of the extra logical volume is up to the user. Typically, user may want to use it for example separated /home partition. 
+
+The name of the extra volume is the concatenation of the LVROOTNAME and LVEXTnSUFFIX ( where n is 1 or 2 ). For example, let's assume following configuration : 
+- LVROOTNAME="FOO"
+- LVEXT1SUFFIX="_BAR"
+
+Thus, the name of the LVEXT1 is "FOO_BAR". 
+
+### Partition and logical volume creation order. 
+Kaiten-yaki creates the partition/volume in the following order :
+1. EFI partition
+1. LUKS partition
+1. LVSWAP
+1. LVROOT
+1. LVEXT1
+1. LVEXT2 
 
 ## First stage: Setting up the volumes
 After you set the configuration parameters correctly, execute the following command from the shell. Again, you have to be promoted as the root user, and you have to use Bash.  
