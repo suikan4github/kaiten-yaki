@@ -257,7 +257,8 @@ function pre_install() {
 		echo "...Swap volume already exist. Skipped to create. No problem."
 	else
 		echo "...Creating logical volume \"${LVSWAPNAME}\" on \"${VGNAME}\"."
-		lvcreate "${LVSWAPSIZE}" -n "${LVSWAPNAME}" "${VGNAME}" 
+		# Too use the bash IFS, first parameter is not quoted.  
+		lvcreate ${LVSWAPSIZE} -n "${LVSWAPNAME}" "${VGNAME}" 
 		if [ $? -ne 0 ] ; then deactivate_and_close; return 1 ; fi;
 	fi	# if /dev/mapper/swap volume already exit. 
 
@@ -290,7 +291,8 @@ function pre_install() {
 			return 1 # with error status
 		else # not exist and not overwrite install
 			echo "...Creating logical volume \"${LVROOTNAME}\" on \"${VGNAME}\"."
-			lvcreate "${LVROOTSIZE}" -n "${LVROOTNAME}" "${VGNAME}"
+			# Too use the bash IFS, first parameter is not quoted.  
+			lvcreate ${LVROOTSIZE} -n "${LVROOTNAME}" "${VGNAME}"
 			if [ $? -ne 0 ] ; then deactivate_and_close; return 1 ; fi;
 			IS_ROOT_CREATED=1
 
@@ -492,7 +494,8 @@ function create_ext_lv() {
 			echo "...Logical volume \"${VGNAME}-${LVROOTNAME}${LVEXT1SUFFIX}\" already exists. OK."
 		else
 			echo "...Creating logical volume \"${LVROOTNAME}${LVEXT1SUFFIX}\" on \"${VGNAME}\"."
-			lvcreate  "${LVEXT1SIZE}" -n "${LVROOTNAME}${LVEXT1SUFFIX}" "${VGNAME}"
+			# Too use the bash IFS, first parameter is not quoted.  
+			lvcreate  ${LVEXT1SIZE} -n "${LVROOTNAME}${LVEXT1SUFFIX}" "${VGNAME}"
 			if [ $? -ne 0 ] ; then 	# if fail
 				echo "***** ERROR : failed to create "${VGNAME}-${LVROOTNAME}${LVEXT1SUFFIX}" . *****"
 				return 1 ; 
@@ -507,7 +510,8 @@ function create_ext_lv() {
 			echo "...Logical volume \"${VGNAME}-${LVROOTNAME}${LVEXT2SUFFIX}\" already exists. OK."
 		else
 			echo "...Creating logical volume \"${LVROOTNAME}${LVEXT2SUFFIX}\" on \"${VGNAME}\"."
-			lvcreate "${LVEXT2SIZE}" -n "${LVROOTNAME}${LVEXT2SUFFIX}" "${VGNAME}"
+			# Too use the bash IFS, first parameter is not quoted.  
+			lvcreate ${LVEXT2SIZE} -n "${LVROOTNAME}${LVEXT2SUFFIX}" "${VGNAME}"
 			if [ $? -ne 0 ] ; then 	# if fail
 				echo "***** ERROR : failed to create "${VGNAME}-${LVROOTNAME}${LVEXT1SUFFIX}" . *****"
 				return 1 ; 
