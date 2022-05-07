@@ -81,6 +81,9 @@ function main() {
 	# The script is parameterized by env-variable to fit to the distribution 
 	post_install
 
+	# Free LUKS volume as swap volume.
+	swapoff -a
+
 	# Normal end
 	return 0
 
