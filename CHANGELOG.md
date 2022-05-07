@@ -3,6 +3,8 @@ Record of the modification in project development.
 
 ## [Unreleased] - yyyy-mm-dd
 ### Added
+- [Issue 31 : Add extra partition functionality.](https://github.com/suikan4github/kaiten-yaki/issues/31)
+
 ### Changed
 ### Deprecated
 ### Removed
