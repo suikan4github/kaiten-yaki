@@ -143,20 +143,21 @@ function confirmation(){
 
 	
 	# Add -l or -L parameter to the size. The lvcreate command have two size parameter. 
-	# -L ###[M|G|T|m|g|t] : Size by absolute value. 
 	# -l ###%[FREE|VG|PVS|ORIGIN] : Size by relative value. 
+	# -L ###[M|G|T|m|g|t] : Size by absolute value. 
+	# Too preven the duplicated match, awk exists the process after it match the /%/ pattern. 
 	# If Unit is not specified, installation will fail. 
 
-	LVSWAPSIZE=$(echo "${LVSWAPSIZE}" | awk '/M|G|T|m|g|t/{print "-L", $0} /%/ {print "-l", $0}')
+	LVSWAPSIZE=$(echo "${LVSWAPSIZE}" | awk '/%/{print "-l", $0; exit} /M|G|T|m|g|t/{print "-L", $0}')
 	export LVSWAPSIZE	
 	
-	LVROOTSIZE=$(echo "${LVROOTSIZE}" | awk '/M|G|T|m|g|t/{print "-L", $0} /%/ {print "-l", $0}')
+	LVROOTSIZE=$(echo "${LVROOTSIZE}" | awk '/%/{print "-l", $0; exit} /M|G|T|m|g|t/{print "-L", $0}')
 	export LVROOTSIZE
 
-	LVEXT1SIZE=$(echo "${LVEXT1SIZE}" | awk '/M|G|T|m|g|t/{print "-L", $0} /%/ {print "-l", $0}')
+	LVEXT1SIZE=$(echo "${LVEXT1SIZE}" | awk '/%/{print "-l", $0; exit} /M|G|T|m|g|t/{print "-L", $0}')
 	export LVEXT1SIZE
 
-	LVEXT2SIZE=$(echo "${LVEXT2SIZE}" | awk '/M|G|T|m|g|t/{print "-L", $0} /%/ {print "-l", $0}')
+	LVEXT2SIZE=$(echo "${LVEXT2SIZE}" | awk '/%/{print "-l", $0; exit} /M|G|T|m|g|t/{print "-L", $0}')
 	export LVEXT2SIZE
 
 	# succesfull return
