@@ -1,14 +1,25 @@
 #!/bin/bash
 
+# #####################################
+
+# Test setup. 
+# /dev/sdb/
+# ERASEALL
+# LVROOT 10%
+# LVEXT1 90%
+# LVEXT2 10%
+
+# #####################################
+
 # Configuration parameters for Kaiten-Yaki 
 
 # Storage device to install the linux.  
-export DEV="/dev/sda"
+export DEV="/dev/sdb"
 
 # Whether you want to erase all contents of the storage device or not.
 # 1 : Yes, I want to erase all.
 # 0 : No, I don't. I want to add to the existing LUKS volume. 
-export ERASEALL=0
+export ERASEALL=1
 
 # Logical Volume name for your Linux installation. 
 # Keep it unique from other distribution.
@@ -27,9 +38,9 @@ export LVROOTNAME="anko"
 # anko
 # anko_home
 # You will not have anko_var because the USELVEXT2=0.
-export USELVEXT1=0
+export USELVEXT1=1
 export LVEXT1SUFFIX="_home"
-export USELVEXT2=0
+export USELVEXT2=1
 export LVEXT2SUFFIX="_var"
 
 # Logical volume size of the Linux installation.
@@ -55,8 +66,8 @@ export LVSWAPSIZE="8G"
 
 # Usually, these names can be left untouched. 
 # If you change, keep them consistent through all installation in your system.
-export CRYPTPARTNAME="luks_volume"
-export VGNAME="vg1"
+export CRYPTPARTNAME="luks_test"
+export VGNAME="vg_test"
 export LVSWAPNAME="swap"
 
 # Do not touch this parameter, unless you understand what you are doing.
