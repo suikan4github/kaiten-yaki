@@ -69,9 +69,6 @@ export OVERWRITEINSTALL=0
 # If you specify 1000, that means 1000mSec. 0 means compile default.  
 export ITERTIME=0
 
-# Void Linux only. Ignored in Ubuntu.
-# The font size of the void-installer
-export XTERMFONTSIZE=11
 
 # !!!!!!!!!!!!!! DO NOT EDIT FOLLOWING LINES. !!!!!!!!!!!!!!
 
