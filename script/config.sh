@@ -88,11 +88,3 @@ else
 # BIOS firmware
 export CRYPTPARTITION=1
 fi  # EFI firmware
-
-# Detect the GUI environment
-# This code is not efered. Just left because it is interestintg code. 
-if env | grep -w -e XDG_SESSION_TYPE -e DISPLAY -e WAYLAND_DISPLAY > /dev/null ; then
-    export GUIENV=1    # set 1 if GUI env.
-else
-    export GUIENV=0    # set 0 if not GUI env.
-fi
