@@ -32,26 +32,34 @@ export LVEXT1SUFFIX="_home"
 export USELVEXT2=0
 export LVEXT2SUFFIX="_var"
 
-# Logical volume size of the Linux installation.
-# 30% mean, new logical volume will use 30% of the free space 
-# in the LVM volume group. For example, assume the free space is 100GB, 
-# and LVROOTSIZE is 30%FREE. Script will create 30GB logical volume.  
+
+# Volume size parameters. 
 # Note that the order of the volume creation is : 
 # 1. EFI if needed
 # 2. SWAP
 # 3. LVROOT
 # 4. LVEXT1 if needed
 # 5. LVEXT2 if needed
-export LVROOTSIZE="10%FREE"
-
-# Logical volume size of the optional volumes. 
-export LVEXT1SIZE="90%FREE"
-export LVEXT2SIZE="100%FREE"
 
 # Set the size of EFI partition and swap partition. 
 # The unit is Byte. You can use M,G... notation.
+# You CANNOT use the % notation. 
 export EFISIZE="200M"
+
+# Logical volume size of the swap volumes. 
 export LVSWAPSIZE="8G"
+
+# Logical volume size of the Linux installation.
+# There are four posibble way to specify the volume. 
+# nnnM, nnnG, nnnT : Absolute size speicification. nnnMbyte, nnnGByte, nnnT byte.  
+# mm%VG : Use mm% of the entire volume group. 
+# mm%FREE : Use mm% of the avairable storage are in the volume group. 
+export LVROOTSIZE="10G"
+
+# Logical volume size of the optional volumes. 
+export LVEXT1SIZE="30G"
+export LVEXT2SIZE="10G"
+
 
 # Usually, these names can be left untouched. 
 # If you change, keep them consistent through all installation in your system.
