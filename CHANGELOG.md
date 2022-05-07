@@ -8,6 +8,8 @@ Record of the modification in project development.
 ### Changed
 ### Deprecated
 ### Removed
+- [Issue 35 : Remove XTERMFONTSIZE variable.](https://github.com/suikan4github/kaiten-yaki/issues/35)
+
 ### Fixed
 - [Issue 32 : Ubuntu 22.04 fails to deactivate the swap](https://github.com/suikan4github/kaiten-yaki/issues/32)
 
