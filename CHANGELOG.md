@@ -4,6 +4,7 @@ Record of the modification in project development.
 ## [Unreleased] - yyyy-mm-dd
 ### Added
 - [Issue 31 : Add extra partition functionality.](https://github.com/suikan4github/kaiten-yaki/issues/31)
+- [Issue 35 : Support "M/G/T" as size prefix.](https://github.com/suikan4github/kaiten-yaki/issues/35)
 
 ### Changed
 ### Deprecated

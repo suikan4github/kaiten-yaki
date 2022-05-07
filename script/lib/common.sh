@@ -141,6 +141,25 @@ function confirmation(){
 		return 1 # with error status
 	fi	# passphrase validation
 
+	
+	# Add -l or -L parameter to the size. The lvcreate command have two size parameter. 
+	# -l ###%[FREE|VG|PVS|ORIGIN] : Size by relative value. 
+	# -L ###[M|G|T|m|g|t] : Size by absolute value. 
+	# Too preven the duplicated match, awk exists the process after it match the /%/ pattern. 
+	# If Unit is not specified, installation will fail. 
+
+	LVSWAPSIZE=$(echo "${LVSWAPSIZE}" | awk '/%/{print "-l", $0; exit} /M|G|T|m|g|t/{print "-L", $0}')
+	export LVSWAPSIZE	
+	
+	LVROOTSIZE=$(echo "${LVROOTSIZE}" | awk '/%/{print "-l", $0; exit} /M|G|T|m|g|t/{print "-L", $0}')
+	export LVROOTSIZE
+
+	LVEXT1SIZE=$(echo "${LVEXT1SIZE}" | awk '/%/{print "-l", $0; exit} /M|G|T|m|g|t/{print "-L", $0}')
+	export LVEXT1SIZE
+
+	LVEXT2SIZE=$(echo "${LVEXT2SIZE}" | awk '/%/{print "-l", $0; exit} /M|G|T|m|g|t/{print "-L", $0}')
+	export LVEXT2SIZE
+
 	# succesfull return
 	return 0
 }
@@ -239,7 +258,8 @@ function pre_install() {
 		echo "...Swap volume already exist. Skipped to create. No problem."
 	else
 		echo "...Creating logical volume \"${LVSWAPNAME}\" on \"${VGNAME}\"."
-		lvcreate -L "${LVSWAPSIZE}" -n "${LVSWAPNAME}" "${VGNAME}" 
+		# Too use the bash IFS, first parameter is not quoted.  
+		lvcreate ${LVSWAPSIZE} -n "${LVSWAPNAME}" "${VGNAME}" 
 		if [ $? -ne 0 ] ; then deactivate_and_close; return 1 ; fi;
 	fi	# if /dev/mapper/swap volume already exit. 
 
@@ -272,7 +292,8 @@ function pre_install() {
 			return 1 # with error status
 		else # not exist and not overwrite install
 			echo "...Creating logical volume \"${LVROOTNAME}\" on \"${VGNAME}\"."
-			lvcreate -l "${LVROOTSIZE}" -n "${LVROOTNAME}" "${VGNAME}"
+			# Too use the bash IFS, first parameter is not quoted.  
+			lvcreate ${LVROOTSIZE} -n "${LVROOTNAME}" "${VGNAME}"
 			if [ $? -ne 0 ] ; then deactivate_and_close; return 1 ; fi;
 			IS_ROOT_CREATED=1
 
@@ -474,7 +495,8 @@ function create_ext_lv() {
 			echo "...Logical volume \"${VGNAME}-${LVROOTNAME}${LVEXT1SUFFIX}\" already exists. OK."
 		else
 			echo "...Creating logical volume \"${LVROOTNAME}${LVEXT1SUFFIX}\" on \"${VGNAME}\"."
-			lvcreate -l "${LVEXT1SIZE}" -n "${LVROOTNAME}${LVEXT1SUFFIX}" "${VGNAME}"
+			# Too use the bash IFS, first parameter is not quoted.  
+			lvcreate  ${LVEXT1SIZE} -n "${LVROOTNAME}${LVEXT1SUFFIX}" "${VGNAME}"
 			if [ $? -ne 0 ] ; then 	# if fail
 				echo "***** ERROR : failed to create "${VGNAME}-${LVROOTNAME}${LVEXT1SUFFIX}" . *****"
 				return 1 ; 
@@ -489,7 +511,8 @@ function create_ext_lv() {
 			echo "...Logical volume \"${VGNAME}-${LVROOTNAME}${LVEXT2SUFFIX}\" already exists. OK."
 		else
 			echo "...Creating logical volume \"${LVROOTNAME}${LVEXT2SUFFIX}\" on \"${VGNAME}\"."
-			lvcreate -l "${LVEXT2SIZE}" -n "${LVROOTNAME}${LVEXT2SUFFIX}" "${VGNAME}"
+			# Too use the bash IFS, first parameter is not quoted.  
+			lvcreate ${LVEXT2SIZE} -n "${LVROOTNAME}${LVEXT2SUFFIX}" "${VGNAME}"
 			if [ $? -ne 0 ] ; then 	# if fail
 				echo "***** ERROR : failed to create "${VGNAME}-${LVROOTNAME}${LVEXT1SUFFIX}" . *****"
 				return 1 ; 
