@@ -9,6 +9,8 @@ Record of the modification in project development.
 ### Deprecated
 ### Removed
 ### Fixed
+- [Issue 32 : Ubuntu 22.04 fails to deactivate the swap](https://github.com/suikan4github/kaiten-yaki/issues/32)
+
 ### Known Issue
 
 ## [1.2.0] - 2021-10-16
