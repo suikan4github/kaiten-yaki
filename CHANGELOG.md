@@ -8,6 +8,8 @@ Record of the modification in project development.
 
 ### Changed
 ### Deprecated
+- [Issue 34 : BIOS support should be obsoleted ](https://github.com/suikan4github/kaiten-yaki/issues/34)
+
 ### Removed
 - [Issue 35 : Remove XTERMFONTSIZE variable.](https://github.com/suikan4github/kaiten-yaki/issues/35)
 
