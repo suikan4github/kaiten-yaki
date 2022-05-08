@@ -82,7 +82,13 @@ function main() {
 	post_install
 
 	# Free LUKS volume as swap volume.
+	echo "...Disabling swap to release the LUKS volume."
 	swapoff -a
+
+	# Deleting the passphrase information. 
+	echo "...Deleting passphrase information."
+	PASSPHRASE=""
+	export PASSPHRASE
 
 	# Normal end
 	return 0
