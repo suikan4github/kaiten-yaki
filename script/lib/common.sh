@@ -139,6 +139,9 @@ function confirmation(){
 		...Installation process terminated..
 		HEREDOC
 		return 1 # with error status
+	else
+		# Clear the PASSPHRASE for checking because we don't use it anymore. 
+		PASSPHRASE_C=""
 	fi	# passphrase validation
 
 	
