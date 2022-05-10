@@ -395,12 +395,29 @@ function post_install() {
 	echo "...Unmounting all."
 	umount -R -l "${TARGETMOUNTPOINT}"
 
+	echo "...Post install process finished."
+
+	# Free LUKS volume as swap volume.
+	echo "...Disabling swap to release the LUKS volume."
+	swapoff -a
+
+	# Close LUKS
 	echo "...Deactivating all logical volumes in volume group \"${VGNAME}\"."
 	vgchange -a n "${VGNAME}"
 	echo "...Closing LUKS volume \"${CRYPTPARTNAME}\"."
 	cryptsetup close  "${CRYPTPARTNAME}"
 
-	echo "...Post install process finished."
+	# Deleting the passphrase information. 
+	echo "...Deleting passphrase information."
+	PASSPHRASE=""
+	export PASSPHRASE
+
+	# Finishing message
+	cat <<- HEREDOC
+	****************** Install process finished ******************
+
+	...Ready to reboot.
+	HEREDOC
 
 	return 0
 	

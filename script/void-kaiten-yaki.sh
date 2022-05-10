@@ -81,22 +81,6 @@ function main() {
 	# The script is parameterized by env-variable to fit to the distribution 
 	post_install
 
-	# Free LUKS volume as swap volume.
-	echo "...Disabling swap to release the LUKS volume."
-	swapoff -a
-
-	# Deleting the passphrase information. 
-	echo "...Deleting passphrase information."
-	PASSPHRASE=""
-	export PASSPHRASE
-
-	# Finishing message
-	cat <<- HEREDOC
-	****************** Install process finished ******************
-
-	...Ready to reboot.
-	HEREDOC
-
 	# Normal end
 	return 0
 
