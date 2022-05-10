@@ -42,7 +42,7 @@ export LVEXT2SUFFIX="_var"
 # 5. LVEXT2 if needed
 
 # Set the size of EFI partition and swap partition. 
-# The unit is Byte. You can use M,G... notation.
+# The unit is Byte. You can use M,G[Kaiten-Yaki]  notation.
 # You CANNOT use the % notation. 
 export EFISIZE="200M"
 

@@ -81,13 +81,13 @@ function para_install_local() {
 	# Distrobution dependent message
 	cat <<- HEREDOC
 
-	************************ CAUTION! CAUTION! CAUTION! ****************************
-	
-	Make sure to click "Continue Testing",  at the end of the Ubiquity installer.
-	Just exit the installer without rebooting. Other wise, your system
-	is unable to boot. 
-
-	Type return key to start Ubiquity.
+	**************** CAUTION! CAUTION! CAUTION! ********************
+	[Kaiten-Yaki] 
+	[Kaiten-Yaki] Make sure to click "Continue Testing",  at the end of  
+	[Kaiten-Yaki] the Ubiquity installer. Just exit the installer without  
+	[Kaiten-Yaki] rebooting. Otherwise, your system becomes unable to boot. 
+	[Kaiten-Yaki] 
+	[Kaiten-Yaki] Type return key to start Ubiquity.
 	HEREDOC
 
 	# waiting for a console input
@@ -134,12 +134,12 @@ function grub_check_and_modify_local() {
 
 	# Make target GRUB aware to the crypt partition
 	# This must do it after start of the file copy by installer, but before the end of the file copy.
-	echo "...Adding GRUB_ENABLE_CRYPTODISK entry to ${TARGETMOUNTPOINT}/etc/default/grub "
+	echo "[Kaiten-Yaki] Adding GRUB_ENABLE_CRYPTODISK entry to ${TARGETMOUNTPOINT}/etc/default/grub "
 	echo "GRUB_ENABLE_CRYPTODISK=y" >> ${TARGETMOUNTPOINT}/etc/default/grub
 
 	# And then, wait for the end of installer process
-	echo "...Waiting for the end of GUI/TUI installer."
-	echo "...Again, DO NOT reboot/restart here. Just exit the GUI/TUI installer."
+	echo "[Kaiten-Yaki] Waiting for the end of GUI/TUI installer."
+	echo "[Kaiten-Yaki] Again, DO NOT reboot/restart here. Just exit the GUI/TUI installer."
 	wait $INSTALLER_PID
 
 	# succesfull return
