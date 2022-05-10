@@ -7,6 +7,9 @@ Record of the modification in project development.
 - [Issue 33 : Support "M/G/T" as size prefix.](https://github.com/suikan4github/kaiten-yaki/issues/33)
 
 ### Changed
+- [Issue 38 : "Ready to reboot" message should be changed](https://github.com/suikan4github/kaiten-yaki/issues/38)
+- [Issue 39 : Change message style](https://github.com/suikan4github/kaiten-yaki/issues/39)
+
 ### Deprecated
 - [Issue 34 : BIOS support should be obsoleted ](https://github.com/suikan4github/kaiten-yaki/issues/34)
 
@@ -16,7 +19,6 @@ Record of the modification in project development.
 ### Fixed
 - [Issue 32 : Ubuntu 22.04 fails to deactivate the swap](https://github.com/suikan4github/kaiten-yaki/issues/32)
 - [Issue 36 : Clear the PASSPHRASE variable at the end of installation](https://github.com/suikan4github/kaiten-yaki/issues/36)
-- [Issue 38 : "Ready to reboot" message should be changed](https://github.com/suikan4github/kaiten-yaki/issues/38)
 
 ### Known Issue
 
