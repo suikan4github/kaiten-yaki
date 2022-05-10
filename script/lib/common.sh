@@ -395,12 +395,12 @@ function post_install() {
 	echo "...Unmounting all."
 	umount -R -l "${TARGETMOUNTPOINT}"
 
-	# Finishing message
-	cat <<- HEREDOC
-	****************** Post-install process finished ******************
+	echo "...Deactivating all logical volumes in volume group \"${VGNAME}\"."
+	vgchange -a n "${VGNAME}"
+	echo "...Closing LUKS volume \"${CRYPTPARTNAME}\"."
+	cryptsetup close  "${CRYPTPARTNAME}"
 
-	...Ready to reboot.
-	HEREDOC
+	echo "...Post install process finished."
 
 	return 0
 	

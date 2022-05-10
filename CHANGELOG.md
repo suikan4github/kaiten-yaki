@@ -16,6 +16,7 @@ Record of the modification in project development.
 ### Fixed
 - [Issue 32 : Ubuntu 22.04 fails to deactivate the swap](https://github.com/suikan4github/kaiten-yaki/issues/32)
 - [Issue 36 : Clear the PASSPHRASE variable at the end of installation](https://github.com/suikan4github/kaiten-yaki/issues/36)
+- [Issue 38 : "Ready to reboot" message should be changed](https://github.com/suikan4github/kaiten-yaki/issues/38)
 
 ### Known Issue
 

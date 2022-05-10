@@ -90,6 +90,13 @@ function main() {
 	PASSPHRASE=""
 	export PASSPHRASE
 
+	# Finishing message
+	cat <<- HEREDOC
+	****************** Install process finished ******************
+
+	...Ready to reboot.
+	HEREDOC
+
 	# Normal end
 	return 0
 
