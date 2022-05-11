@@ -25,15 +25,20 @@ As depicted above, the LVM volume group has only one physical volume.
 
 # Tested environment
 These scripts are tested with the following environment. 
-- VMWare Workstation 15.5.7 ( EFI/BIOS )
-- ThinkPad X220 (BIOS)
-- Ubuntu 20.04.3 amd64 desktop
-- Ubuntu 21.04 amd64 desktop
-- Ubuntu 21.10 amd64 desktop
-- Ubuntu Mate 20.04.3 amd64 desktop
-- void-live-x86_64-20210218-mate.iso
-- void-live-x86_64-musl-20210218-mate.iso
-- void-live-x86_64-20210218.iso
+- VMVare Workstation 15.5.7 ( EFI )
+- Ubuntu 22.04 amd64 desktop
+- void-live-x86_64-20210930-xfce.iso
+- void-live-x86_64-20210930.iso
+- Followings are the tested environment of the Kaiten-Yaki v1.2.0
+    - VMWare Workstation 15.5.7 ( EFI/BIOS )
+    - ThinkPad X220 (BIOS)
+    - Ubuntu 20.04.3 amd64 desktop
+    - Ubuntu 21.04 amd64 desktop
+    - Ubuntu 21.10 amd64 desktop
+    - Ubuntu Mate 20.04.3 amd64 desktop
+    - void-live-x86_64-20210218-mate.iso
+    - void-live-x86_64-musl-20210218-mate.iso
+    - void-live-x86_64-20210218.iso
 
 # Installation
 Rough procedure of the installation is as followings : 
@@ -43,11 +48,8 @@ Rough procedure of the installation is as followings :
 
 The detail procedure is explained in the [INSTALL.md](INSTALL.md).
 
-# Known issues
-If you install two or more Void Linux into the EFI system, only the last one can boot without trouble. This is not the problem of Kaiten-yaki. 
-
 # Variants considerations
-Ubuntu has several variants ( flavors ). While while only the MATE flavor is tested, other flavors may work correctly as far as it uses Ubiquity installer.
+Ubuntu has several variants ( flavors ). While while only the Ubuntu desktop is tested, other flavors may work correctly as far as it uses Ubiquity installer.
 
 # Other resources
 See [Wiki](https://github.com/suikan4github/kaiten-yaki/wiki) for the application notes and the useful links. 
