@@ -2,15 +2,15 @@
 Kaiten-yaki v1.3.0 is a script set to install Linux to your AMD64 desktop system. With these scripts, you can install Ubuntu/Void Linux to an encrypted partition easily. 
 
 The followings are the list of functionalities: 
-- Ubuntu and Void Linux.
+- Ubuntu and Void Linux support.
 - Help to install from LiveCD/USB.
 - Invoke GUI/TUI installer automatically at the middle of script execution, for the ease of installation.
-- Automatic detection of EFI firmware and create GPT( The BIOS detection and MBR creation function exist. But it is not maintained from v1.3.0  ).
+- Automatic detection of EFI firmware and create GPT (The BIOS detection and MBR creation function exist. But they are not maintained from v1.3.0).
 - Create an EFI partition, if needed.
 - Support multiple boot in a LUKS partition.
 - Support btrfs in addition to the major file systems. 
-- The "/boot" is located in the same logical volume as the "/". 
-- The swap logical volume is located inside the encrypted volume. 
+- The "/boot" is located in the same encrypted logical volume with the "/". 
+- The swap is located in the same encrypted logical volume with the "/". 
 - You need to type a passphrase only once in the boot sequence. 
 
 With the configuration parameters, you can customize each installation.  For example, you can configure the system to have 2, 3, or 4,... distributions in an HDD/SSD, as you want. 

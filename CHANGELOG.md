@@ -3,6 +3,14 @@ Record of the modification in project development.
 
 ## [Unreleased] - yyyy-mm-dd
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Known Issue
+
+## [1.3.0] - 2022-05-15
+### Added
 - [Issue 31 : Add extra partition functionality.](https://github.com/suikan4github/kaiten-yaki/issues/31)
 - [Issue 33 : Support "M/G/T" as size prefix.](https://github.com/suikan4github/kaiten-yaki/issues/33)
 
@@ -87,7 +95,8 @@ See [Testing before release v1.1.0](https://github.com/suikan4github/kaiten-yaki
 ### Known Issue
 
 
-[Unreleased]: https://github.com/suikan4github/kaiten-yaki/compare/v1.2.0...develop
+[Unreleased]: https://github.com/suikan4github/kaiten-yaki/compare/v1.3.0...develop
+[1.3.0]: https://github.com/suikan4github/kaiten-yaki/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/suikan4github/kaiten-yaki/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/suikan4github/kaiten-yaki/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/suikan4github/kaiten-yaki/compare/v0.0.0...v1.0.0
