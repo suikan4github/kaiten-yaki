@@ -5,13 +5,13 @@ The followings are the list of functionalities:
 - Ubuntu and Void Linux support.
 - Help to install from LiveCD/USB.
 - Invoke GUI/TUI installer automatically at the middle of script execution, for the ease of installation.
-- Automatic detection of EFI firmware and create GPT (The BIOS detection and MBR creation function exist. But they are not maintained from v1.3.0).
+- Automatic detection of EFI firmware and create GPT (The BIOS detection and MBR creation function exist. But they are not test from v1.3.0).
 - Create an EFI partition, if needed.
 - Support multiple boot in a LUKS partition.
 - Support btrfs in addition to the major file systems. 
 - The "/boot" is located in the same encrypted logical volume with the "/". 
 - The swap is located in the same encrypted logical volume with the "/". 
-- You need to type a passphrase only once in the boot sequence. 
+- You need to type a passphrase only once in the boot sequence of the installed system. 
 
 With the configuration parameters, you can customize each installation.  For example, you can configure the system to have 2, 3, or 4,... distributions in an HDD/SSD, as you want. 
 
