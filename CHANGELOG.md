@@ -9,6 +9,27 @@ Record of the modification in project development.
 ### Fixed
 ### Known Issue
 
+## [1.3.0] - 2022-05-15
+### Added
+- [Issue 31 : Add extra partition functionality.](https://github.com/suikan4github/kaiten-yaki/issues/31)
+- [Issue 33 : Support "M/G/T" as size prefix.](https://github.com/suikan4github/kaiten-yaki/issues/33)
+
+### Changed
+- [Issue 38 : "Ready to reboot" message should be changed](https://github.com/suikan4github/kaiten-yaki/issues/38)
+- [Issue 39 : Change message style](https://github.com/suikan4github/kaiten-yaki/issues/39)
+
+### Deprecated
+- [Issue 34 : BIOS support should be obsoleted ](https://github.com/suikan4github/kaiten-yaki/issues/34)
+
+### Removed
+- [Issue 35 : Remove XTERMFONTSIZE variable.](https://github.com/suikan4github/kaiten-yaki/issues/35)
+
+### Fixed
+- [Issue 32 : Ubuntu 22.04 fails to deactivate the swap](https://github.com/suikan4github/kaiten-yaki/issues/32)
+- [Issue 36 : Clear the PASSPHRASE variable at the end of installation](https://github.com/suikan4github/kaiten-yaki/issues/36)
+
+### Known Issue
+
 ## [1.2.0] - 2021-10-16
 ### Added
 ### Changed
@@ -74,7 +95,8 @@ See [Testing before release v1.1.0](https://github.com/suikan4github/kaiten-yaki
 ### Known Issue
 
 
-[Unreleased]: https://github.com/suikan4github/kaiten-yaki/compare/v1.2.0...develop
+[Unreleased]: https://github.com/suikan4github/kaiten-yaki/compare/v1.3.0...develop
+[1.3.0]: https://github.com/suikan4github/kaiten-yaki/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/suikan4github/kaiten-yaki/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/suikan4github/kaiten-yaki/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/suikan4github/kaiten-yaki/compare/v0.0.0...v1.0.0

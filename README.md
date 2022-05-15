@@ -1,17 +1,17 @@
 # Kaiten-yaki: Full disk encryption install script for Linux
-Kaiten-yaki is a script set to install Linux to your AMD64 desktop system. With these scripts, you can install Ubuntu/Void Linux to an encrypted partition easily. 
+Kaiten-yaki v1.3.0 is a script set to install Linux to your AMD64 desktop system. With these scripts, you can install Ubuntu/Void Linux to an encrypted partition easily. 
 
 The followings are the list of functionalities: 
-- Ubuntu and Void Linux.
+- Ubuntu and Void Linux support.
 - Help to install from LiveCD/USB.
 - Invoke GUI/TUI installer automatically at the middle of script execution, for the ease of installation.
-- Automatic detection of BIOS/EFI firmware and create MBR/GPT, respectively.
+- Automatic detection of EFI firmware and create GPT (The BIOS detection and MBR creation function exist. But they are not test from v1.3.0).
 - Create an EFI partition, if needed.
 - Support multiple boot in a LUKS partition.
 - Support btrfs in addition to the major file systems. 
-- The "/boot" is located in the same logical volume as the "/". 
-- The swap logical volume is located inside the encrypted volume. 
-- You need to type a passphrase only once in the boot sequence. 
+- The "/boot" is located in the same encrypted logical volume with the "/". 
+- The swap is located in the same encrypted logical volume with the "/". 
+- You need to type a passphrase only once in the boot sequence of the installed system. 
 
 With the configuration parameters, you can customize each installation.  For example, you can configure the system to have 2, 3, or 4,... distributions in an HDD/SSD, as you want. 
 
@@ -25,15 +25,20 @@ As depicted above, the LVM volume group has only one physical volume.
 
 # Tested environment
 These scripts are tested with the following environment. 
-- VMWare Workstation 15.5.7 ( EFI/BIOS )
-- ThinkPad X220 (BIOS)
-- Ubuntu 20.04.3 amd64 desktop
-- Ubuntu 21.04 amd64 desktop
-- Ubuntu 21.10 amd64 desktop
-- Ubuntu Mate 20.04.3 amd64 desktop
-- void-live-x86_64-20210218-mate.iso
-- void-live-x86_64-musl-20210218-mate.iso
-- void-live-x86_64-20210218.iso
+- VMVare Workstation 15.5.7 ( EFI )
+- Ubuntu 22.04 amd64 desktop
+- void-live-x86_64-20210930-xfce.iso
+- void-live-x86_64-20210930.iso
+- Followings are the tested environment of the Kaiten-Yaki v1.2.0
+    - VMWare Workstation 15.5.7 ( EFI/BIOS )
+    - ThinkPad X220 (BIOS)
+    - Ubuntu 20.04.3 amd64 desktop
+    - Ubuntu 21.04 amd64 desktop
+    - Ubuntu 21.10 amd64 desktop
+    - Ubuntu Mate 20.04.3 amd64 desktop
+    - void-live-x86_64-20210218-mate.iso
+    - void-live-x86_64-musl-20210218-mate.iso
+    - void-live-x86_64-20210218.iso
 
 # Installation
 Rough procedure of the installation is as followings : 
@@ -43,11 +48,8 @@ Rough procedure of the installation is as followings :
 
 The detail procedure is explained in the [INSTALL.md](INSTALL.md).
 
-# Known issues
-If you install two or more Void Linux into the EFI system, only the last one can boot without trouble. This is not the problem of Kaiten-yaki. 
-
 # Variants considerations
-Ubuntu has several variants ( flavors ). While while only the MATE flavor is tested, other flavors may work correctly as far as it uses Ubiquity installer.
+Ubuntu has several variants ( flavors ). While while only the Ubuntu desktop is tested, other flavors may work correctly as far as it uses Ubiquity installer.
 
 # Other resources
 See [Wiki](https://github.com/suikan4github/kaiten-yaki/wiki) for the application notes and the useful links. 

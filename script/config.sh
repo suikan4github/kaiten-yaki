@@ -14,16 +14,52 @@ export ERASEALL=0
 # Keep it unique from other distribution.
 export LVROOTNAME="anko"
 
-# Logical volume size of the Linux installation.
-# 30% mean, new logical volume will use 30% of the free space 
-# in the LVM volume group. For example, assume the free space is 100GB, 
-# and LVROOTSIZE is 30%FREE. Script will create 30GB logical volume.  
-export LVROOTSIZE="50%FREE"
+# Suffix of the optional logical volumes. 
+# If you want to have optional OVs, set USELVEXT# to 1. 
+# Then, the suffix will be added to the LVROOTNAME. 
+# For example, Assume you have setting below : 
+# LVROOTNAME="anko"
+# USELVEXT1=1
+# LVEXT1SUFFIX="_home"
+# USELVEXT2=0
+# LVEXT2SUFFIX="_var"
+# You will have
+# anko
+# anko_home
+# You will not have anko_var because the USELVEXT2=0.
+export USELVEXT1=0
+export LVEXT1SUFFIX="_home"
+export USELVEXT2=0
+export LVEXT2SUFFIX="_var"
+
+
+# Volume size parameters. 
+# Note that the order of the volume creation is : 
+# 1. EFI if needed
+# 2. SWAP
+# 3. LVROOT
+# 4. LVEXT1 if needed
+# 5. LVEXT2 if needed
 
 # Set the size of EFI partition and swap partition. 
-# The unit is Byte. You can use M,G... notation.
+# The unit is Byte. You can use M,G[Kaiten-Yaki]  notation.
+# You CANNOT use the % notation. 
 export EFISIZE="200M"
+
+# Logical volume size of the swap volumes. 
 export LVSWAPSIZE="8G"
+
+# Logical volume size of the Linux installation.
+# There are four posibble way to specify the volume. 
+# nnnM, nnnG, nnnT : Absolute size speicification. nnnMbyte, nnnGByte, nnnT byte.  
+# mm%VG : Use mm% of the entire volume group. 
+# mm%FREE : Use mm% of the avairable storage are in the volume group. 
+export LVROOTSIZE="10G"
+
+# Logical volume size of the optional volumes. 
+export LVEXT1SIZE="30G"
+export LVEXT2SIZE="10G"
+
 
 # Usually, these names can be left untouched. 
 # If you change, keep them consistent through all installation in your system.
@@ -41,9 +77,6 @@ export OVERWRITEINSTALL=0
 # If you specify 1000, that means 1000mSec. 0 means compile default.  
 export ITERTIME=0
 
-# Void Linux only. Ignored in Ubuntu.
-# The font size of the void-installer
-export XTERMFONTSIZE=11
 
 # !!!!!!!!!!!!!! DO NOT EDIT FOLLOWING LINES. !!!!!!!!!!!!!!
 
@@ -63,11 +96,3 @@ else
 # BIOS firmware
 export CRYPTPARTITION=1
 fi  # EFI firmware
-
-# Detect the GUI environment
-# This code is not efered. Just left because it is interestintg code. 
-if env | grep -w -e XDG_SESSION_TYPE -e DISPLAY -e WAYLAND_DISPLAY > /dev/null ; then
-    export GUIENV=1    # set 1 if GUI env.
-else
-    export GUIENV=0    # set 0 if not GUI env.
-fi
