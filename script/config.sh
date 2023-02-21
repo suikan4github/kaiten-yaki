@@ -2,7 +2,7 @@
 
 # Configuration parameters for Kaiten-Yaki 
 
-# Storage device to install the linux.  
+# Storage device to install Linux.  
 export DEV="/dev/sda"
 
 # Whether you want to erase all contents of the storage device or not.
@@ -26,7 +26,7 @@ export LVROOTNAME="anko"
 # You will have
 # anko
 # anko_home
-# You will not have anko_var because the USELVEXT2=0.
+# You will not have anko_var because of the USELVEXT2=0.
 export USELVEXT1=0
 export LVEXT1SUFFIX="_home"
 export USELVEXT2=0
@@ -50,10 +50,10 @@ export EFISIZE="200M"
 export LVSWAPSIZE="8G"
 
 # Logical volume size of the Linux installation.
-# There are four posibble way to specify the volume. 
-# nnnM, nnnG, nnnT : Absolute size speicification. nnnMbyte, nnnGByte, nnnT byte.  
+# There are four posibble ways to specify the volume. 
+# nnnM, nnnG, nnnT : Absolute size specification. nnnMbyte, nnnGByte, nnnT byte.  
 # mm%VG : Use mm% of the entire volume group. 
-# mm%FREE : Use mm% of the avairable storage are in the volume group. 
+# mm%FREE : Use mm% of the available storage in the volume group. 
 export LVROOTSIZE="10G"
 
 # Logical volume size of the optional volumes. 
@@ -85,7 +85,7 @@ if [ -d /sys/firmware/efi ]; then
 export ISEFI=1  # Yes, EFI
 else
 export ISEFI=0  # No, BIOS
-fi # is EFI firmaare? 
+fi # is it EFI firmware? 
 
 # Set partition number based on the firmware type
 if [  ${ISEFI} -ne 0  ] ; then 
