@@ -59,7 +59,7 @@ These scripts are based on the script by [myn's diary](https://myn.hatenablog.jp
 
 Also, the following documents were very important to study how Void Linux installation works. 
 - [Full Disk Encryption](https://docs.voidlinux.org/installation/guides/fde.html) in the Void Handbook. 
-- [Install LVM LUKS](https://wiki.voidlinux.org/Install_LVM_LUKS) (deprecated)
+- [Install LVM LUKS](https://wiki.voidlinux.org/Install_LVM_LUKS) (deprecated)[[archive](https://web.archive.org/web/20201112031114/https://wiki.voidlinux.org/Install_LVM_LUKS)].
 # Kaiten-yaki
 ![](image/i-like-kaiten-yaki.jpg)
 
