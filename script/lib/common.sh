@@ -82,7 +82,7 @@ function confirmation(){
 		return 1 # with error status
 	fi # "-" is found in the volume name.
 
-	# For surre ask the your config.sh is edited
+	# Make sure config.sh is edited
 	cat <<- HEREDOC
 
 	LUKS volume partition : ${DEV}${CRYPTPARTITION} 
@@ -149,7 +149,7 @@ function confirmation(){
 	# -l ###%[FREE|VG|PVS|ORIGIN] : Size by relative value. 
 	# -L ###[M|G|T|m|g|t] : Size by absolute value. 
 	# Too preven the duplicated match, awk exists the process after it match the /%/ pattern. 
-	# If Unit is not specified, installation will fail. 
+	# If the unit is not specified, installation will fail. 
 
 	LVSWAPSIZE=$(echo "${LVSWAPSIZE}" | awk '/%/{print "-l", $0; exit} /M|G|T|m|g|t/{print "-L", $0}')
 	export LVSWAPSIZE	
@@ -180,7 +180,7 @@ function pre_install() {
 	IS_LVEXT1_CREATED=0
 	IS_LVEXT2_CREATED=0
 
-	# ----- Erase entire disk, create partitions, format them  and encrypt the LUKS partition -----
+	# ----- Erase entire disk, create partitions, format them and encrypt the LUKS partition -----
 	if [ "${ERASEALL}" -ne 0 ] ; then
 
 		# Assign specified space and rest of disk to the EFI and LUKS partition, respectively.
@@ -228,7 +228,7 @@ function pre_install() {
 	echo "[Kaiten-Yaki] Opening a crypt partition \"${DEV}${CRYPTPARTITION}\" as \"${CRYPTPARTNAME}\""
 	printf %s "${PASSPHRASE}" | cryptsetup open -d - "${DEV}${CRYPTPARTITION}" "${CRYPTPARTNAME}"
 
-	# Check whether successful open. If mapped, it is successful. 
+	# Check whether it successfully opens. If mapped, it is successful. 
 	if [ ! -e /dev/mapper/"${CRYPTPARTNAME}" ] ; then 
 		cat <<- HEREDOC 
 		***** ERROR : Cannot open LUKS volume "${CRYPTPARTNAME}" on "${DEV}${CRYPTPARTITION}". *****
@@ -240,7 +240,7 @@ function pre_install() {
 	fi	# if crypt volume is unable to open
 
 	# ----- Configure the LVM in LUKS volume -----
-	# Check volume group ${VGNAME} exist or not
+	# Check if volume group ${VGNAME} exist or not
 	if  vgdisplay -s "${VGNAME}" &> /dev/null ; then		# if exist
 		echo "[Kaiten-Yaki] Volume group \"${VGNAME}\" already exist. Skipped to create. No problem."
 		echo "[Kaiten-Yaki] Activating all logical volumes in volume group \"${VGNAME}\"."
@@ -275,7 +275,7 @@ function pre_install() {
 			create_ext_lv
 			if [ $? -ne 0 ] ; then deactivate_and_close; return 1 ; fi;
 
-		else	# exist and not overwriteinstall
+		else	# exist and not overwrite install
 			cat <<- HEREDOC 
 			***** ERROR : Logical volume "${VGNAME}-${LVROOTNAME}" already exists. *****
 			[Kaiten-Yaki] Check LVROOTNAME environment variable in your config.txt.
@@ -360,17 +360,17 @@ function para_install_msg() {
 # ******************************************************************************* 
 #                  Common post-install stage
 # ******************************************************************************* 
-# In side this script, the chrooted job is parameterrized as by evn variable TARGETCHROOTEDJOB
+# Inside this script, the chrooted job is parameterized as by evn variable TARGETCHROOTEDJOB
 function post_install() {
 	## Mount the target file system
-	# ${TARGETMOUNTPOINT} is created by the GUI/TUI installer
+	# ${TARGETMOUNTPOINT} is created by the GUI/TUI installer.
 	# ${BTRFSOPTION} is defined by the caller of this function for BTRFS formated volume.
-	# ${BTRFSOPTION} have to be NOT quoted. Otherwise, mount will receive an empty
+	# ${BTRFSOPTION} have to be NOT quoted. Otherwise, mount will receive an empty.
 	# string as first option, when the veraible is empty. 
 	echo "[Kaiten-Yaki] Mounting /dev/mapper/${VGNAME}-${LVROOTNAME} on ${TARGETMOUNTPOINT}."
 	mount ${BTRFSOPTION} /dev/mapper/"${VGNAME}"-"${LVROOTNAME}" "${TARGETMOUNTPOINT}"
 
-	# And mount other directories
+	# And mount other directories.
 	echo "[Kaiten-Yaki] Mounting all other dirs."
 	for n in proc sys dev tmp etc/resolv.conf; do mount --rbind "/$n" "${TARGETMOUNTPOINT}/$n"; done
 
@@ -401,7 +401,7 @@ function post_install() {
 	echo "[Kaiten-Yaki] Disabling swap to release the LUKS volume."
 	swapoff -a
 
-	# Close LUKS
+	# Close LUKS.
 	echo "[Kaiten-Yaki] Deactivating all logical volumes in volume group \"${VGNAME}\"."
 	vgchange -a n "${VGNAME}"
 	echo "[Kaiten-Yaki] Closing LUKS volume \"${CRYPTPARTNAME}\"."
@@ -412,7 +412,7 @@ function post_install() {
 	PASSPHRASE=""
 	export PASSPHRASE
 
-	# Finishing message
+	# Finishing message.
 	cat <<- HEREDOC
 	****************** Install process finished ******************
 
@@ -464,7 +464,7 @@ function deactivate_and_close(){
 }
 
 # ******************************************************************************* 
-#              Delete the nwe volume if overwrite install, and close all
+#              Delete the new volume if overwrite install, and close all
 # ******************************************************************************* 
 function on_unexpected_installer_quit(){
 	echo "***** ERROR : The GUI/TUI installer terminated unexpectedly. *****" 
@@ -478,7 +478,7 @@ function on_unexpected_installer_quit(){
 
 
 # ******************************************************************************* 
-#              Check whether given signaure is in the system information
+#              Check whether given signature is in the system information
 # ******************************************************************************* 
 function distribution_check(){
 	if ! uname -a | grep "${DISTRIBUTIONSIGNATURE}" -i > /dev/null  ; then	#  Signature is not found in the OS name.
@@ -537,7 +537,7 @@ function create_ext_lv() {
 				echo "***** ERROR : failed to create "${VGNAME}-${LVROOTNAME}${LVEXT1SUFFIX}" . *****"
 				return 1 ; 
 			else					# if success
-				IS_LVEXT2_CREATED=1	# Mark this volume is created
+				IS_LVEXT2_CREATED=1	# Mark this volume as created
 			fi;
 		fi
 	fi
