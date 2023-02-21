@@ -147,7 +147,7 @@ function grub_check_and_modify_local() {
 	# Perhaps, too nervous. Wait 1 more second to avoid the rece condition.
 	sleep 1 # 1sec.
 
-	# Make target GRUB aware to the crypt partition
+	# Make target GRUB aware of the crypt partition
 	# This must do it after start of the file copy by installer, but before the end of the file copy.
 	echo "[Kaiten-Yaki] Adding GRUB_ENABLE_CRYPTODISK entry to ${TARGETMOUNTPOINT}/etc/default/grub "
 	echo "GRUB_ENABLE_CRYPTODISK=y" >> ${TARGETMOUNTPOINT}/etc/default/grub
