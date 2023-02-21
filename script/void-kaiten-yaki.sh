@@ -93,7 +93,7 @@ function para_install_local() {
 	# Show common message to let the operator focus on the critical part
 	para_install_msg
 
-	# Distrobution dependent message
+	# Distribution dependent message
 	cat <<- HEREDOC
 
 	******************** CAUTION! CAUTION! CAUTION! ************************
@@ -105,7 +105,7 @@ function para_install_local() {
 	[Kaiten-Yaki] Type return key to start void-installer.
 	HEREDOC
 
-	# waiting for a console input
+	# Waiting for a console input
 	read -r
 
 	# Start the background target/etc/default/grub checker.
