@@ -20,7 +20,7 @@ function main() {
 	export DISTRIBUTIONSIGNATURE="void"
 	export DISTRIBUTIONNAME="Void Linux"
 
-	# Check whetehr given signature exist or not
+	# Check whether given signature exist or not
 	if ! distribution_check ; then
 		return 1 # with error status
 	fi
@@ -41,7 +41,7 @@ function main() {
 	# This is magical part. I have not understood why this is required. 
 	# Anyway, without this modification, Void Linux doesn't boot. 
 	# Refer https://wiki.voidlinux.org/Install_LVM_LUKS#Installation_using_void-installer
-	# This modification is guaratnteed once only. To allow  re-trying the installation after unexpected GUI/TUI installer quit. 
+	# This modification is guaranteed once only. To allow  re-trying the installation after unexpected GUI/TUI installer quit. 
 	export GRUB_ADDITIONAL_PARAMETERS="rd.auto=1 cryptdevice=${DEV}${CRYPTPARTITION}:${CRYPTPARTNAME} root=/dev/mapper/${VGNAME}-${LVROOTNAME}"
 	if grep "$GRUB_ADDITIONAL_PARAMETERS" /etc/default/grub ; then	# Is additonal parameter already added? 
 		# Yes 
@@ -108,7 +108,7 @@ function para_install_local() {
 	# waiting for a console input
 	read -r
 
-	# Start the background target/etc/default/grub cheker.
+	# Start the background target/etc/default/grub checker.
 	# The definition of this function is down below.
 	grub_check_and_modify_local &
 
@@ -120,8 +120,8 @@ function para_install_local() {
 	
 	# Check if background checker still exist
 	if ps $grub_check_and_modify_id  > /dev/null ; then	# If exists
-		# If exist, the grub was not modifyed -> void-installer termianted unexpectedly
-		# Delete the nwe volume if overwrite install, and close all
+		# If exist, the grub was not modifyed -> void-installer terminated unexpectedly
+		# Delete the new volume if overwrite install, and close all
 		on_unexpected_installer_quit
 		echo "[Kaiten-Yaki] restoring modified /etc/default/grub."
 		sed -i "s#loglevel=4 ${GRUB_ADDITIONAL_PARAMETERS}#loglevel=4#" /etc/default/grub
@@ -144,7 +144,7 @@ function grub_check_and_modify_local() {
 		sleep 1 # 1sec.
 	done # while
 
-	# Perhaps, too neuvous. Wait 1 more sectond to avoid the rece condition.
+	# Perhaps, too nervous. Wait 1 more second to avoid the rece condition.
 	sleep 1 # 1sec.
 
 	# Make target GRUB aware to the crypt partition
