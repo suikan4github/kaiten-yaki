@@ -20,7 +20,7 @@ function main() {
 	export DISTRIBUTIONSIGNATURE="ubuntu"
 	export DISTRIBUTIONNAME="Ubuntu"
 
-	# Check whetehr given signature exist or not
+	# Check whether given signature exist or not
 	if ! distribution_check ; then
 		return 1 # with error status
 	fi
@@ -62,7 +62,7 @@ function main() {
 		export BTRFSOPTION=""
 	fi
 
-	# Distribution dependent finalizing. Embedd encryption key into the ramfs image.
+	# Distribution dependent finalizing. Embed encryption key into the ramfs image.
 	# The script is parameterized by env-variable to fit to the distribution 
 	post_install
 
@@ -78,7 +78,7 @@ function para_install_local() {
 	# Show common message to let the operator focus on the critical part
 	para_install_msg
 
-	# Distrobution dependent message
+	# Distribution dependent message
 	cat <<- HEREDOC
 
 	**************** CAUTION! CAUTION! CAUTION! ********************
@@ -90,7 +90,7 @@ function para_install_local() {
 	[Kaiten-Yaki] Type return key to start Ubiquity.
 	HEREDOC
 
-	# waiting for a console input
+	# Waiting for a console input
 	read -r
 
 	# Start Ubiquity installer 
@@ -112,7 +112,7 @@ function para_install_local() {
 
 
 # ******************************************************************************* 
-# This function will be executed in the foreguround context, to watch the GUI installer. 
+# This function will be executed in the foreground context, to watch the GUI installer. 
 function grub_check_and_modify_local() {
 
 	# While the /etc/default/grub in the install target is NOT existing, keep sleeping.
@@ -123,16 +123,16 @@ function grub_check_and_modify_local() {
 
 		# Check if installer quit unexpectedly
 		if ! ps $INSTALLER_PID  > /dev/null ; then	# If not exists
-			# Delete the nwe volume if overwrite install, and close all
+			# Delete the new volume if overwrite install, and close all
 			on_unexpected_installer_quit
 			return 1 # with error status
 		fi
 	done # while
 
-	# Perhaps, too neuvous. Wait 1 more sectond to avoid the rece condition.
+	# Perhaps, too nervous. Wait 1 more second to avoid the rece condition.
 	sleep 1 # 1sec.
 
-	# Make target GRUB aware to the crypt partition
+	# Make target GRUB aware of the crypt partition
 	# This must do it after start of the file copy by installer, but before the end of the file copy.
 	echo "[Kaiten-Yaki] Adding GRUB_ENABLE_CRYPTODISK entry to ${TARGETMOUNTPOINT}/etc/default/grub "
 	echo "GRUB_ENABLE_CRYPTODISK=y" >> ${TARGETMOUNTPOINT}/etc/default/grub

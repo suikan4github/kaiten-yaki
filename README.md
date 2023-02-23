@@ -5,7 +5,7 @@ The followings are the list of functionalities:
 - Ubuntu and Void Linux support.
 - Help to install from LiveCD/USB.
 - Invoke GUI/TUI installer automatically at the middle of script execution, for the ease of installation.
-- Automatic detection of EFI firmware and create GPT (The BIOS detection and MBR creation function exist. But they are not test from v1.3.0).
+- Automatic detection of EFI firmware and create GPT (The BIOS detection and MBR creation function exist. But they are not tested from v1.3.0).
 - Create an EFI partition, if needed.
 - Support multiple boot in a LUKS partition.
 - Support btrfs in addition to the major file systems. 
@@ -59,7 +59,7 @@ These scripts are based on the script by [myn's diary](https://myn.hatenablog.jp
 
 Also, the following documents were very important to study how Void Linux installation works. 
 - [Full Disk Encryption](https://docs.voidlinux.org/installation/guides/fde.html) in the Void Handbook. 
-- [Install LVM LUKS](https://wiki.voidlinux.org/Install_LVM_LUKS) (deprecated)
+- [Install LVM LUKS](https://wiki.voidlinux.org/Install_LVM_LUKS) (deprecated)[[archive](https://web.archive.org/web/20201112031114/https://wiki.voidlinux.org/Install_LVM_LUKS)].
 # Kaiten-yaki
 ![](image/i-like-kaiten-yaki.jpg)
 
