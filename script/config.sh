@@ -87,12 +87,20 @@ else
 export ISEFI=0  # No, BIOS
 fi # is EFI firmaare? 
 
+# Detect drive type.
+# For NVME drives, partition names should be prefixed by p.
+if [[ ${DEV} == *"nvme"* ]] ; then
+export PARTPREFIX="p"  # Yes, NVME
+else
+export PARTPREFIX=""   # No, regular
+fi
+
 # Set partition number based on the firmware type
 if [  ${ISEFI} -ne 0  ] ; then 
 # EFI firmware
-export EFIPARTITION=1
-export CRYPTPARTITION=2
+export EFIPARTITION=${PARTPREFIX}1
+export CRYPTPARTITION=${PARTPREFIX}2
 else
 # BIOS firmware
-export CRYPTPARTITION=1
+export CRYPTPARTITION=${PARTPREFIX}1
 fi  # EFI firmware
