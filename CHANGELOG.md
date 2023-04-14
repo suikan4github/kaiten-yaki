@@ -9,6 +9,15 @@ Record of the modification in project development.
 ### Fixed
 ### Known Issue
 
+## [1.3.1] - 2023-04-15
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+- [Issue 43 : Partition names should be prefixed by "p" for NVMe](https://github.com/suikan4github/kaiten-yaki/pull/43). Thank you Uraza for your contribution. 
+### Known Issue
+
 ## [1.3.0] - 2022-05-15
 ### Added
 - [Issue 31 : Add extra partition functionality.](https://github.com/suikan4github/kaiten-yaki/issues/31)
@@ -96,6 +105,7 @@ See [Testing before release v1.1.0](https://github.com/suikan4github/kaiten-yaki
 
 
 [Unreleased]: https://github.com/suikan4github/kaiten-yaki/compare/v1.3.0...develop
+[1.3.1]: https://github.com/suikan4github/kaiten-yaki/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/suikan4github/kaiten-yaki/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/suikan4github/kaiten-yaki/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/suikan4github/kaiten-yaki/compare/v1.0.0...v1.1.0
